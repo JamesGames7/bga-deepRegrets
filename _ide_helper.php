@@ -2232,6 +2232,7 @@ namespace Bga\GameFramework\Db {
 
 namespace Bga\GameFramework\Components {
 
+    /** @disregard */
     abstract class Deck extends \Deck
     {
         var $autoreshuffle;
@@ -2979,6 +2980,8 @@ namespace {
      * You shouldn't use this type of exception except if you think the information shown could be critical. Indeed: a
      * generic error message will be shown to the user, so it's going to be difficult for you to see what happened.
      */
+    
+    /** @disregard */
     class BgaSystemException extends feException
     {
         /**
