@@ -1,4 +1,14 @@
-// @ts-ignore
+/**
+ *------
+ * BGA framework: Gregory Isabelli & Emmanuel Colin & BoardGameArena
+ * DeepRegrets implementation : © Connor Rask connor@srask.ca
+ *
+ * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
+ * See http://en.boardgamearena.com/#!doc/Studio for more information.
+ * -----
+ */
+
+ // @ts-ignore
 GameGui = (function () { // this hack required so we fake extend GameGui
     function GameGui() {}
     return GameGui;
