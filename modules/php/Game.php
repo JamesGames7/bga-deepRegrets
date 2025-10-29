@@ -155,6 +155,7 @@ class Game extends \Bga\GameFramework\Table
         // number of colors defined here must correspond to the maximum number of players allowed for the gams.
         $gameinfos = $this->getGameinfos();
         $default_colors = $gameinfos['player_colors'];
+        shuffle($default_colors);
 
         foreach ($players as $player_id => $player) {
             // Now you can access both $player_id and $player array
