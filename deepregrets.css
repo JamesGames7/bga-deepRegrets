@@ -4,10 +4,22 @@
   background-repeat: repeat;
 }
 
-.fgcolorblack {
-  color: #000000;
+.playercolororange {
+  color: #cb5c21;
 }
 
-.fgcolorwhite {
-  color: #ffffff;
+.playercolorteal {
+  color: #439ba0;
+}
+
+.playercolorred {
+  color: #ad3545;
+}
+
+.playercolorgreen {
+  color: #69ba35;
+}
+
+.playercolorblue {
+  color: #488fc7;
 }

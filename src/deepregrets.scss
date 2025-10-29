@@ -9,7 +9,7 @@
     background-repeat: repeat;
 }
 @each $key, $val in v.$colors-list {
-    .fgcolor#{$key} {
+    .playercolor#{$key} {
         color: #{$val};
     }
 }
