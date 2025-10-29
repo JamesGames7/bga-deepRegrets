@@ -9,6 +9,9 @@
  * http://en.doc.boardgamearena.com/Game_meta-information:_gameinfos.inc.php
 */
 
+$colours = ['cb5c21', '439ba0', 'ad3545', '69ba35', '488fc7'];
+shuffle($colours);
+
 $gameinfos = [
     // Name of the game in English (will serve as the basis for translation)
     'game_name' => "Deep Regrets",
@@ -72,7 +75,7 @@ $gameinfos = [
     'language_dependency' => false,
 
     // Colors attributed to players
-    'player_colors' => ['cb5c21', '439ba0', 'ad3545', '69ba35', '488fc7'],                       
+    'player_colors' => $colours,                       
 
     // Favorite colors support : if set to "true", support attribution of favorite colors based on player's preferences (see reattributeColorsBasedOnPreferences PHP method)
     // NB: this parameter is used only to flag games supporting this feature; you must use (or not use) reattributeColorsBasedOnPreferences PHP method to actually enable or disable the feature.

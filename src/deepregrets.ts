@@ -7,7 +7,7 @@ GameGui = (function () { // this hack required so we fake extend GameGui
 // Note: it does not really extend it in es6 way, you cannot call super you have to use dojo way 
 class DeepRegrets extends GameGui<DeepRegretsGamedatas> { 
 	constructor() {
-		//@ts-ignore
+		// @ts-ignore
 		super();
 	}
 	

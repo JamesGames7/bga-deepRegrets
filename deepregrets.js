@@ -22,7 +22,7 @@ GameGui = (function () {
 var DeepRegrets = /** @class */ (function (_super) {
     __extends(DeepRegrets, _super);
     function DeepRegrets() {
-        //@ts-ignore
+        // @ts-ignore
         return _super.call(this) || this;
     }
     DeepRegrets.prototype.setup = function (gamedatas) {
