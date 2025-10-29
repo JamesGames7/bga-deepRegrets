@@ -1,3 +1,0 @@
-interface Card {
-    // Placeholder
-}
