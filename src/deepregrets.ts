@@ -26,6 +26,16 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 	} 
 	public onEnteringState(stateName: string, args: any) {}
 	public onLeavingState(stateName: string) {}
-	public onUpdateActionButtons(stateName: string, args: any) {} 
+	public onUpdateActionButtons(stateName: string, args: any) {
+		switch (stateName) {
+			case "Test":
+				if (this.isCurrentPlayerActive()) {
+					this.statusBar.addActionButton("Click me!", () => this.bgaPerformAction("actClickButton", {"player": this.player_id}));
+				} else {
+					this.statusBar.addActionButton("Activate again", () => this.bgaPerformAction("actActivate", {"player": this.player_id}, {checkAction: false}));
+				}
+				break;
+		}
+	} 
 	public setupNotifications() {}
 }

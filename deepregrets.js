@@ -39,7 +39,19 @@ var DeepRegrets = /** @class */ (function (_super) {
     };
     DeepRegrets.prototype.onEnteringState = function (stateName, args) { };
     DeepRegrets.prototype.onLeavingState = function (stateName) { };
-    DeepRegrets.prototype.onUpdateActionButtons = function (stateName, args) { };
+    DeepRegrets.prototype.onUpdateActionButtons = function (stateName, args) {
+        var _this = this;
+        switch (stateName) {
+            case "Test":
+                if (this.isCurrentPlayerActive()) {
+                    this.statusBar.addActionButton("Click me!", function () { return _this.bgaPerformAction("actClickButton", { "player": _this.player_id }); });
+                }
+                else {
+                    this.statusBar.addActionButton("Activate again", function () { return _this.bgaPerformAction("actActivate", { "player": _this.player_id }, { checkAction: false }); });
+                }
+                break;
+        }
+    };
     DeepRegrets.prototype.setupNotifications = function () { };
     return DeepRegrets;
 }(GameGui));
