@@ -18,7 +18,7 @@ declare(strict_types=1);
 
 namespace Bga\Games\DeepRegrets;
 
-use Bga\Games\DeepRegrets\States\PlayerTurn;
+use Bga\Games\DeepRegrets\States\Start;
 
 class Game extends \Bga\GameFramework\Table
 {
@@ -178,7 +178,7 @@ class Game extends \Bga\GameFramework\Table
         // Activate first player once everything has been initialized and ready.
         $this->activeNextPlayer();
 
-        return PlayerTurn::class;
+        return Start::class;
     }
 
     /**

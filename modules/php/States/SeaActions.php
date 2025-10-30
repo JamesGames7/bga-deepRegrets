@@ -10,13 +10,13 @@ use Bga\GameFramework\States\PossibleAction;
 use Bga\Games\DeepRegrets\Game;
 
 // TODO: Correct values
-class NextPlayer extends GameState
+class SeaActions extends GameState
 {
     function __construct(
         protected Game $game,
     ) {
         parent::__construct($game,
-            id: 49,
+            id: 52,
             type: StateType::ACTIVE_PLAYER,
 
             // optional

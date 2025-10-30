@@ -9,15 +9,15 @@ use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\Games\DeepRegrets\Game;
 
-// TODO: Correct values
-class NextPlayer extends GameState
+class MusterCourage extends GameState
 {
     function __construct(
         protected Game $game,
     ) {
+        // TODO: Correct values
         parent::__construct($game,
-            id: 49,
-            type: StateType::ACTIVE_PLAYER,
+            id: 20,
+            type: StateType::MULTIPLE_ACTIVE_PLAYER,
 
             // optional
             description: clienttranslate('${actplayer} must play a card or pass'),

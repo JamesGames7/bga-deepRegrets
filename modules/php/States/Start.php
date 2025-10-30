@@ -9,19 +9,17 @@ use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\Games\DeepRegrets\Game;
 
-// TODO: Correct values
-class NextPlayer extends GameState
+class Start extends GameState
 {
     function __construct(
         protected Game $game,
     ) {
         parent::__construct($game,
-            id: 49,
-            type: StateType::ACTIVE_PLAYER,
+            id: 10,
+            type: StateType::GAME,
 
             // optional
-            description: clienttranslate('${actplayer} must play a card or pass'),
-            descriptionMyTurn: clienttranslate('${you} must play a card or pass'),
+            description: clienttranslate('Starting the round'),
             transitions: [],
             updateGameProgression: false,
             initialPrivate: null,
