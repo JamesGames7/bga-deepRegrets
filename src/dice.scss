@@ -27,49 +27,49 @@
 }
 #f3 {
   background-color: red;
-  transform: rotateY(-90deg) translateZ(40px);
+  transform: rotateY(180deg) translateZ(40px);
 }
 #f4 {
   background-color: orange;
-  transform: rotateY(180deg) translateZ(40px);
+  transform: rotateY(-90deg) translateZ(40px);
 }
 
 .triangle {
   position: absolute;
-  width: 0;
-  height: 0;
-  border-left: 40px solid transparent;
-  border-right: 40px solid transparent;
-  border-bottom: 57px solid red;
+  width: 80;
+  height: 57.6;
+  background-color: #000000;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
 }
 
 #t1 {
-  transform: translateZ(20px) translateY(-48.5px) rotateX(45deg);
+  transform: translateY(-49px) translateZ(20px) rotateX(45deg);
 }
 
 #t2 {
-  transform: translateX(20px) translateY(-48.5px) rotateY(90deg) rotateX(45deg);
+  transform: translateY(-49px) translateX(20px) rotateY(90deg) rotateX(45deg);
 }
 
 #t3 {
-  transform: translateZ(-20px) translateY(-48.5px) rotateY(180deg) rotateX(45deg);
+  transform: translateY(-49px) translateZ(-20px) rotateY(180deg) rotateX(45deg);
 }
 
 #t4 {
-  transform: translateX(-20px) translateY(-48.5px) rotateY(-90deg) rotateX(45deg);
+  transform: translateY(-49px) translateX(-20px) rotateY(-90deg) rotateX(45deg);
 }
+
 #t5 {
-  transform: translateZ(20px) translateY(111px) rotateX(135deg);
+  transform: translateY(111px) translateZ(20px) rotateX(135deg);
 }
 
 #t6 {
-  transform: translateX(20px) translateY(111px) rotateY(90deg) rotateX(135deg);
+  transform: translateY(111px) translateX(20px) rotateY(90deg) rotateX(135deg);
 }
 
 #t7 {
-  transform: translateZ(-20px) translateY(111px) rotateY(180deg) rotateX(135deg);
+  transform: translateY(111px) translateZ(-20px) rotateY(180deg) rotateX(135deg);
 }
 
 #t8 {
-  transform: translateX(-20px) translateY(111px) rotateY(-90deg) rotateX(135deg);
+  transform: translateY(111px) translateX(-20px) rotateY(-90deg) rotateX(135deg);
 }
