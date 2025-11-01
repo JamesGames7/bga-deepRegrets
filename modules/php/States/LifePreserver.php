@@ -20,9 +20,9 @@ class LifePreserver extends GameState
             type: StateType::ACTIVE_PLAYER,
 
             // optional
-            description: clienttranslate('${actplayer} must play a card or pass'),
-            descriptionMyTurn: clienttranslate('${you} must play a card or pass'),
-            transitions: [],
+            description: clienttranslate('${actplayer} must toss the life preserver to someone else'),
+            descriptionMyTurn: clienttranslate('${you} must toss the life preserver to someone else'),
+            transitions: ["" => 30],
             updateGameProgression: false,
             initialPrivate: null,
         );

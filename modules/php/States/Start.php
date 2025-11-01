@@ -20,7 +20,7 @@ class Start extends GameState
 
             // optional
             description: clienttranslate('Starting the round'),
-            transitions: [],
+            transitions: ["" => 20],
             updateGameProgression: false,
             initialPrivate: null,
         );

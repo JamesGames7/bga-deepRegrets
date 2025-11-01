@@ -20,9 +20,9 @@ class PortActions extends GameState
             type: StateType::ACTIVE_PLAYER,
 
             // optional
-            description: clienttranslate('${actplayer} must play a card or pass'),
-            descriptionMyTurn: clienttranslate('${you} must play a card or pass'),
-            transitions: [],
+            description: clienttranslate('${actplayer} must perform Port actions or pass'),
+            descriptionMyTurn: clienttranslate('${you} must perform Port actions or pass'),
+            transitions: ["pass" => 45, "nextPlayer" => 49],
             updateGameProgression: false,
             initialPrivate: null,
         );

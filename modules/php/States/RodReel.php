@@ -20,9 +20,9 @@ class RodReel extends GameState
             type: StateType::ACTIVE_PLAYER,
 
             // optional
-            description: clienttranslate('${actplayer} must play a card or pass'),
-            descriptionMyTurn: clienttranslate('${you} must play a card or pass'),
-            transitions: [],
+            description: clienttranslate('${actplayer} must choose a rod and / or reel'),
+            descriptionMyTurn: clienttranslate('${you} must choose a rod and / or reel'),
+            transitions: ["nextPlayer" => 31, "donePlayers" => 40],
             updateGameProgression: false,
             initialPrivate: null,
         );

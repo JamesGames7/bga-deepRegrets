@@ -17,12 +17,11 @@ class ActionPlace extends GameState
     ) {
         parent::__construct($game,
             id: 40,
-            type: StateType::ACTIVE_PLAYER,
+            type: StateType::GAME,
 
             // optional
-            description: clienttranslate('${actplayer} must play a card or pass'),
-            descriptionMyTurn: clienttranslate('${you} must play a card or pass'),
-            transitions: [],
+            description: clienttranslate(''),
+            transitions: ["port" => 41, "sea" => 42, "pass" => 45],
             updateGameProgression: false,
             initialPrivate: null,
         );

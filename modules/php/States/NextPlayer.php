@@ -17,12 +17,11 @@ class NextPlayer extends GameState
     ) {
         parent::__construct($game,
             id: 49,
-            type: StateType::ACTIVE_PLAYER,
+            type: StateType::GAME,
 
             // optional
-            description: clienttranslate('${actplayer} must play a card or pass'),
-            descriptionMyTurn: clienttranslate('${you} must play a card or pass'),
-            transitions: [],
+            description: clienttranslate(''),
+            transitions: ["nextPlayer" => 40, "nextRound" => 10, "end" => 98],
             updateGameProgression: false,
             initialPrivate: null,
         );

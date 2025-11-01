@@ -20,9 +20,9 @@ class MusterCourage extends GameState
             type: StateType::MULTIPLE_ACTIVE_PLAYER,
 
             // optional
-            description: clienttranslate('${actplayer} must play a card or pass'),
-            descriptionMyTurn: clienttranslate('${you} must play a card or pass'),
-            transitions: [],
+            description: clienttranslate('Other players must choose which dice to use'),
+            descriptionMyTurn: clienttranslate('${you} must choose which dice to use'),
+            transitions: ["" => 21],
             updateGameProgression: false,
             initialPrivate: null,
         );

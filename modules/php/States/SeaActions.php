@@ -16,13 +16,13 @@ class SeaActions extends GameState
         protected Game $game,
     ) {
         parent::__construct($game,
-            id: 52,
+            id: 42,
             type: StateType::ACTIVE_PLAYER,
 
             // optional
-            description: clienttranslate('${actplayer} must play a card or pass'),
-            descriptionMyTurn: clienttranslate('${you} must play a card or pass'),
-            transitions: [],
+            description: clienttranslate('${actplayer} must perform Sea actions or pass'),
+            descriptionMyTurn: clienttranslate('${you} must perform Sea actions or pass'),
+            transitions: ["pass" => 45, "nextPlayer" => 49],
             updateGameProgression: false,
             initialPrivate: null,
         );

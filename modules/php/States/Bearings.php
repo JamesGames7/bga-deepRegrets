@@ -20,9 +20,9 @@ class Bearings extends GameState
             type: StateType::ACTIVE_PLAYER,
 
             // optional
-            description: clienttranslate('${actplayer} must play a card or pass'),
-            descriptionMyTurn: clienttranslate('${you} must play a card or pass'),
-            transitions: [],
+            description: clienttranslate('${actplayer} must choose to go to sea or port'),
+            descriptionMyTurn: clienttranslate('${you} must choose to go to sea or port'),
+            transitions: ["nextPlayer" => 30, "donePlayers" => 31],
             updateGameProgression: false,
             initialPrivate: null,
         );

@@ -20,9 +20,9 @@ class PassAction extends GameState
             type: StateType::ACTIVE_PLAYER,
 
             // optional
-            description: clienttranslate('${actplayer} must play a card or pass'),
-            descriptionMyTurn: clienttranslate('${you} must play a card or pass'),
-            transitions: [],
+            description: clienttranslate('${actplayer} must choose a passing reward'),
+            descriptionMyTurn: clienttranslate('${you} must choose a passing reward'),
+            transitions: ["nextPlayer" => 49],
             updateGameProgression: false,
             initialPrivate: null,
         );
