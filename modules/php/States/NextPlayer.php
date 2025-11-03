@@ -35,10 +35,5 @@ class NextPlayer extends GameState
 
     function onEnteringState(int $activePlayerId) {
         // the code to run when entering the state
-    }   
-
-    function zombie(int $playerId): string {
-        // the code to run when the player is a Zombie
-        return "";
     }
 }
