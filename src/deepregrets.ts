@@ -32,6 +32,20 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 						<div id="sea_large" class="utility_button"></div>
 						<div id="sea_small" class="utility_button"></div>
 					</div>
+					<div id="shoal_grid">
+						<div class="shoal" id="shoal_1_1"></div>
+						<div class="shoal" id="shoal_2_1"></div>
+						<div class="shoal" id="shoal_3_1"></div>
+						<div class="shoal" id="shoal_graveyard_1"></div>
+						<div class="shoal" id="shoal_1_2"></div>
+						<div class="shoal" id="shoal_2_2"></div>
+						<div class="shoal" id="shoal_3_2"></div>
+						<div class="shoal" id="shoal_graveyard_2"></div>
+						<div class="shoal" id="shoal_1_3"></div>
+						<div class="shoal" id="shoal_2_3"></div>
+						<div class="shoal" id="shoal_3_3"></div>
+						<div class="shoal" id="shoal_graveyard_3"></div>
+					</div>
 				</div>
 				<div id="port_board">
 					<div class="size_buttons">
