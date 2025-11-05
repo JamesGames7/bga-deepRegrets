@@ -104,7 +104,8 @@
   position: relative;
   border-radius: 2px;
   box-shadow: 1px 1px 1px black;
-  zoom: 1;
+  zoom: 0.9;
+  margin-right: 142px;
 }
 #boards #sea_board #shoal_grid {
   display: grid;
