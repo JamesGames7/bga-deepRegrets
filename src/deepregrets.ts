@@ -23,6 +23,52 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 	
 	public setup(gamedatas: any) {
 		this.setupNotifications();
+
+		document.getElementById("game_play_area").insertAdjacentHTML("beforeend", `
+			<div id="boards">
+				<div id="sea_board">
+					<div class="size_buttons">
+						<div id="sea_home" class="utility_button"></div>
+						<div id="sea_large" class="utility_button"></div>
+						<div id="sea_small" class="utility_button"></div>
+					</div>
+				</div>
+				<div id="port_board">
+					<div class="size_buttons">
+						<div id="port_home" class="utility_button"></div>
+						<div id="port_large" class="utility_button"></div>
+						<div id="port_small" class="utility_button"></div>
+					</div>
+				</div>			
+			</div>
+		`)
+
+		document.querySelectorAll(".utility_button").forEach(button => {
+			let id: string = button.id
+			button.addEventListener("click", () => {
+				let board: HTMLElement = document.getElementById(id.substring(0, id.indexOf("_")) + "_board");
+				let curZoom: number = parseFloat((getComputedStyle(board) as any).zoom);
+				let newZoom: number;
+				switch (id.substring(id.indexOf("_") + 1)) {
+					case "home":
+						newZoom = 1;
+						console.warn("home");
+						break;
+					case "large":
+						newZoom = curZoom + 0.1;
+						console.warn("large");
+						break;
+					case "small":
+						newZoom = curZoom - 0.1;
+						console.warn("small");
+						break;
+				}
+				console.log(newZoom);
+				console.log((board.style as any).zoom);
+				(board.style as any).zoom = newZoom.toString();
+				console.log((board.style as any).zoom);
+			});
+		});
 	} 
 	public onEnteringState(stateName: string, args: any) {}
 	public onLeavingState(stateName: string) {}

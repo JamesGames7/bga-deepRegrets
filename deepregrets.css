@@ -88,6 +88,73 @@
   transform: translateY(111px) translateX(-20px) rotateY(-90deg) rotateX(135deg);
 }
 
+#boards {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  row-gap: 10px;
+  flex-wrap: wrap;
+}
+#boards #sea_board {
+  max-width: 667px;
+  width: 100%;
+  aspect-ratio: 667/900;
+  background-image: url("img/sea.jpg");
+  background-size: 100% 100%;
+  position: relative;
+  border-radius: 2px;
+  box-shadow: 1px 1px 1px black;
+  zoom: 1;
+}
+#boards #port_board {
+  max-width: 1200px;
+  width: 100%;
+  aspect-ratio: 1200/810;
+  background-image: url("img/port.jpg");
+  background-size: 100% 100%;
+  position: relative;
+  border-radius: 2px;
+  box-shadow: 1px 1px 1px black;
+  zoom: 1;
+}
+#boards .size_buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 3px;
+  margin: 3px;
+}
+#boards .utility_button {
+  width: 30px;
+  aspect-ratio: 1;
+  background-image: url("img/utilityButtons.png");
+  background-size: 400% 100%;
+  top: 0;
+}
+#boards #sea_large {
+  background-position-x: calc(-1 * 100%);
+  cursor: pointer;
+}
+#boards #sea_small {
+  background-position-x: calc(-2 * 100%);
+  cursor: pointer;
+}
+#boards #sea_home {
+  background-position-x: calc(-0 * 100%);
+  cursor: pointer;
+}
+#boards #port_large {
+  background-position-x: calc(-1 * 100%);
+  cursor: pointer;
+}
+#boards #port_small {
+  background-position-x: calc(-2 * 100%);
+  cursor: pointer;
+}
+#boards #port_home {
+  background-position-x: calc(-0 * 100%);
+  cursor: pointer;
+}
+
 /* the other files */
 #ebd-body {
   background-image: url(img/woodbg.jpg);

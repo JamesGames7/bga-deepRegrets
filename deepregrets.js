@@ -36,6 +36,34 @@ var DeepRegrets = /** @class */ (function (_super) {
     }
     DeepRegrets.prototype.setup = function (gamedatas) {
         this.setupNotifications();
+        document.getElementById("game_play_area").insertAdjacentHTML("beforeend", "\n\t\t\t<div id=\"boards\">\n\t\t\t\t<div id=\"sea_board\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"sea_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div id=\"port_board\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"port_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\t\t\t\n\t\t\t</div>\n\t\t");
+        document.querySelectorAll(".utility_button").forEach(function (button) {
+            var id = button.id;
+            button.addEventListener("click", function () {
+                var board = document.getElementById(id.substring(0, id.indexOf("_")) + "_board");
+                var curZoom = parseFloat(getComputedStyle(board).zoom);
+                var newZoom;
+                console.log(curZoom);
+                switch (id.substring(id.indexOf("_") + 1)) {
+                    case "home":
+                        newZoom = 1;
+                        console.warn("home");
+                        break;
+                    case "large":
+                        newZoom = curZoom + 0.1;
+                        console.warn("large");
+                        break;
+                    case "small":
+                        newZoom = curZoom - 0.1;
+                        console.warn("small");
+                        break;
+                }
+                console.log(newZoom);
+                console.log(board.style.zoom);
+                board.style.zoom = newZoom.toString();
+                console.log(board.style.zoom);
+            });
+        });
     };
     DeepRegrets.prototype.onEnteringState = function (stateName, args) { };
     DeepRegrets.prototype.onLeavingState = function (stateName) { };

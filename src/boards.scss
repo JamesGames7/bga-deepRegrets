@@ -1,0 +1,59 @@
+#boards {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    row-gap: 10px;
+    flex-wrap: wrap;
+
+    #sea_board {
+        // Use zoom to resize
+        max-width: 667px;
+        width: 100%;
+        aspect-ratio: 667 / 900;
+        background-image: url('img/sea.jpg');
+        background-size: 100% 100%;
+        position: relative;
+        border-radius: 2px;
+        box-shadow: 1px 1px 1px black;
+        zoom: 1;
+    }
+
+    #port_board {
+        max-width: 1200px;
+        width: 100%;
+        aspect-ratio: 1200 / 810;
+        background-image: url('img/port.jpg');
+        background-size: 100% 100%;
+        position: relative;
+        border-radius: 2px;
+        box-shadow: 1px 1px 1px black;
+        zoom: 1;
+    }
+
+    .size_buttons {
+        display: flex;
+        flex-direction: row;
+        gap: 3px;
+        margin: 3px;
+    }
+
+    .utility_button {
+        width: 30px;
+        aspect-ratio: 1;
+        background-image: url("img/utilityButtons.png");
+        background-size: 400% 100%;
+        top: 0;
+    }
+
+    $places: "sea", "port";
+    $buttons: ("large": 1, "small": 2, "home": 0);
+
+    @each $place in $places {
+        @each $button, $location in $buttons {
+            ##{$place}_#{$button} {
+                background-position-x: calc(-#{$location} * 100%);
+                cursor: pointer;
+            }
+        }
+    }
+}
