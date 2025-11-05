@@ -43,25 +43,18 @@ var DeepRegrets = /** @class */ (function (_super) {
                 var board = document.getElementById(id.substring(0, id.indexOf("_")) + "_board");
                 var curZoom = parseFloat(getComputedStyle(board).zoom);
                 var newZoom;
-                console.log(curZoom);
                 switch (id.substring(id.indexOf("_") + 1)) {
                     case "home":
                         newZoom = 1;
-                        console.warn("home");
                         break;
                     case "large":
                         newZoom = curZoom + 0.1;
-                        console.warn("large");
                         break;
                     case "small":
                         newZoom = curZoom - 0.1;
-                        console.warn("small");
                         break;
                 }
-                console.log(newZoom);
-                console.log(board.style.zoom);
                 board.style.zoom = newZoom.toString();
-                console.log(board.style.zoom);
             });
         });
     };

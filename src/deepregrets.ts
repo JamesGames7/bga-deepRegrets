@@ -52,21 +52,15 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				switch (id.substring(id.indexOf("_") + 1)) {
 					case "home":
 						newZoom = 1;
-						console.warn("home");
 						break;
 					case "large":
 						newZoom = curZoom + 0.1;
-						console.warn("large");
 						break;
 					case "small":
 						newZoom = curZoom - 0.1;
-						console.warn("small");
 						break;
 				}
-				console.log(newZoom);
-				console.log((board.style as any).zoom);
 				(board.style as any).zoom = newZoom.toString();
-				console.log((board.style as any).zoom);
 			});
 		});
 	} 
