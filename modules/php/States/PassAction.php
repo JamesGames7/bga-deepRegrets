@@ -9,6 +9,15 @@ use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\Games\DeepRegrets\Game;
 
+/**
+ * @brief Action done when a player is passed
+ * @details
+ * 1. When a player passes or on each of their following turns this triggers
+ * 
+ * 2. Can either take a dink or discard a random regret
+ * 
+ * 3. Moves to next player state
+ */
 // TODO: Correct values
 class PassAction extends GameState
 {

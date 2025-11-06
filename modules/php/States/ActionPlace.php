@@ -6,9 +6,16 @@ namespace Bga\Games\DeepRegrets\States;
 
 use Bga\GameFramework\StateType;
 use Bga\GameFramework\States\GameState;
-use Bga\GameFramework\States\PossibleAction;
 use Bga\Games\DeepRegrets\Game;
 
+/**
+ * @brief Handler for different types of actions - 0 notifications.
+ * 
+ * @details
+ * 1. Checks the location the player is currently at
+ * 
+ * 2. Sends them to the relative state
+ */
 // TODO: Correct values
 class ActionPlace extends GameState
 {
@@ -33,7 +40,7 @@ class ActionPlace extends GameState
         return [];
     } 
 
-    function onEnteringState(int $activePlayerId) {
+    function onEnteringState() {
         // the code to run when entering the state
     }   
 

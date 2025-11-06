@@ -9,6 +9,15 @@ use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\Games\DeepRegrets\Game;
 
+/**
+ * @brief Possible actions at the port - 1-2 notification(s)
+ * @details
+ * 1. Player can choose which action to perform or to pass
+ * 
+ * 2. Performs that action - could involve choosing cards and thus +1 notification
+ * 
+ * 3. Move to next player state
+ */
 // TODO: Correct values
 class PortActions extends GameState
 {

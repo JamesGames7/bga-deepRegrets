@@ -6,9 +6,19 @@ namespace Bga\Games\DeepRegrets\States;
 
 use Bga\GameFramework\StateType;
 use Bga\GameFramework\States\GameState;
-use Bga\GameFramework\States\PossibleAction;
 use Bga\Games\DeepRegrets\Game;
 
+/**
+ * @brief Passes active player in main action phase - 0 notifications.
+ * @details
+ * 1. Activate each player in order
+ * 
+ * 2. If all have passed there are 2 options
+ * 
+ * 3. Start the next round
+ * 
+ * 4. End the game: may also handle any final actions within or move to a yet to be created state
+ */
 // TODO: Correct values
 class NextPlayer extends GameState
 {
@@ -33,7 +43,7 @@ class NextPlayer extends GameState
         return [];
     } 
 
-    function onEnteringState(int $activePlayerId) {
+    function onEnteringState() {
         // the code to run when entering the state
     }
 }

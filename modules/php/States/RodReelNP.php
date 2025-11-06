@@ -9,31 +9,26 @@ use Bga\GameFramework\States\GameState;
 use Bga\Games\DeepRegrets\Game;
 
 /**
- * @brief All start of round actions - 5 notifications.
+ * @brief Sets active player for **RodReel** state - 0 notifications.
  * @details
- * 1. Move day tracker
+ * 1. If first time, activate first player
  * 
- * 2. Pass first player
- * 
- * 3. Discard revealed fish at sea
- * 
- * 4. Day effects (Wed / Fri, Thur, Sat)
- * 
- * 5. If at sea, go up one depth *(group to one notification)*
+ * 2. Otherwise activate next player
  */
-// TODO: correct values
-class Start extends GameState
+// TODO: Correct values
+class RodReelNP extends GameState
 {
     function __construct(
         protected Game $game,
     ) {
         parent::__construct($game,
-            id: 10,
+            id: 32,
             type: StateType::GAME,
 
             // optional
-            description: clienttranslate('Starting the round'),
-            transitions: ["" => 20],
+            description: clienttranslate('${actplayer} must play a card or pass'),
+            descriptionMyTurn: clienttranslate('${you} must play a card or pass'),
+            transitions: ["" => 33],
             updateGameProgression: false,
             initialPrivate: null,
         );
@@ -47,5 +42,10 @@ class Start extends GameState
 
     function onEnteringState() {
         // the code to run when entering the state
+    }   
+
+    function zombie(int $playerId): string {
+        // the code to run when the player is a Zombie
+        return "";
     }
 }

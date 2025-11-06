@@ -9,6 +9,15 @@ use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\Games\DeepRegrets\Game;
 
+/**
+ * @brief Possible actions at sea - 1+ notification(s)
+ * @details
+ * 1. Player can choose which action to perform *(fish or abandon ship)* or to pass
+ * 
+ * 2. Performs that action - fishing may take multiple notifications
+ * 
+ * 3. Move to next player state
+ */
 // TODO: Correct values
 class SeaActions extends GameState
 {

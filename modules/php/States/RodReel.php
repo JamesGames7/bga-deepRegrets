@@ -9,6 +9,13 @@ use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\Games\DeepRegrets\Game;
 
+/**
+ * @brief Players choose a rod and a reel - 1 notification.
+ * @details
+ * 1. Active player chooses a rod and / or reel *(automatic if possible)*
+ * 
+ * 2. Either go back a state (repeat) or pass to next state
+ */
 // TODO: Correct values
 class RodReel extends GameState
 {
@@ -16,13 +23,13 @@ class RodReel extends GameState
         protected Game $game,
     ) {
         parent::__construct($game,
-            id: 31,
+            id: 33,
             type: StateType::ACTIVE_PLAYER,
 
             // optional
             description: clienttranslate('${actplayer} must choose a rod and / or reel'),
             descriptionMyTurn: clienttranslate('${you} must choose a rod and / or reel'),
-            transitions: ["nextPlayer" => 31, "donePlayers" => 40],
+            transitions: ["nextPlayer" => 31, "donePlayers" => 49],
             updateGameProgression: false,
             initialPrivate: null,
         );
