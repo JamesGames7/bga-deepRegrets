@@ -33,3 +33,23 @@
 -- Example 2: add a custom field to the standard "player" table
 -- ALTER TABLE `player` ADD `player_my_custom_field` INT UNSIGNED NOT NULL DEFAULT '0';
 
+/*
+Player:
+    Port / Sea / Pass
+    Fishbucks
+    Starting provisions
+
+BgaCards:
+    Regrets
+    Dinks
+    Rods
+    Reels
+    Supplies
+    Fish
+    Dice
+
+Globals:
+    First player
+    Life preserver
+    Day tracker
+*/

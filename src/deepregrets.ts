@@ -78,7 +78,20 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			});
 		});
 	} 
-	public onEnteringState(stateName: string, args: any) {}
+	public onEnteringState(stateName: string, args: any) {
+		switch (stateName) {
+			case "ClientStatesTest":
+				if (this.isCurrentPlayerActive()) {
+					document.getElementById("sea_board").addEventListener("click", () => {
+						this.clientStateTest("sea");
+					});
+					document.getElementById("port_board").addEventListener("click", () => {
+						this.clientStateTest("port");
+					});
+				}
+				break;
+		}
+	}
 	public onLeavingState(stateName: string) {}
 	public onUpdateActionButtons(stateName: string, args: any) {
 		switch (stateName) {
@@ -89,7 +102,18 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					this.statusBar.addActionButton("Activate again", () => this.bgaPerformAction("actActivate", {"player": this.player_id}, {checkAction: false}));
 				}
 				break;
+			case "client_confirmTurn":
+				this.statusBar.addActionButton("Confirm", () => {
+					console.log(args.board);
+					this.bgaPerformAction("actNextState");
+				});
 		}
 	} 
+	public clientStateTest(args: string): void {
+		this.setClientState("client_confirmTurn", {
+			descriptionmyturn: "${you} must confirm you are going to the place",
+			args: {board: args}
+		})
+	}
 	public setupNotifications() {}
 }

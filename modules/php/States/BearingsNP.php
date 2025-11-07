@@ -41,10 +41,5 @@ class BearingsNP extends GameState
 
     function onEnteringState() {
         // the code to run when entering the state
-    }   
-
-    function zombie(int $playerId): string {
-        // the code to run when the player is a Zombie
-        return "";
-    }
+    } 
 }

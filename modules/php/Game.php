@@ -18,7 +18,7 @@ declare(strict_types=1);
 
 namespace Bga\Games\DeepRegrets;
 
-use Bga\Games\DeepRegrets\States\Test;
+use Bga\Games\DeepRegrets\States\ClientStatesTest;
 
 class Game extends \Bga\GameFramework\Table
 {
@@ -176,8 +176,8 @@ class Game extends \Bga\GameFramework\Table
         // TODO: Setup the initial game situation here.
 
         // Activate first player once everything has been initialized and ready.
-
-        return Test::class;
+        $this->activeNextPlayer();
+        return ClientStatesTest::class;
     }
 
     /**

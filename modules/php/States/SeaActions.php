@@ -14,7 +14,7 @@ use Bga\Games\DeepRegrets\Game;
  * @details
  * 1. Player can choose which action to perform *(fish or abandon ship)* or to pass
  * 
- * 2. Performs that action - fishing may take multiple notifications
+ * 2. Performs that action - fishing may take multiple notifications: client states
  * 
  * 3. Move to next player state
  */
