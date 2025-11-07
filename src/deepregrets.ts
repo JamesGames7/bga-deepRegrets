@@ -78,42 +78,9 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			});
 		});
 	} 
-	public onEnteringState(stateName: string, args: any) {
-		switch (stateName) {
-			case "ClientStatesTest":
-				if (this.isCurrentPlayerActive()) {
-					document.getElementById("sea_board").addEventListener("click", () => {
-						this.clientStateTest("sea");
-					});
-					document.getElementById("port_board").addEventListener("click", () => {
-						this.clientStateTest("port");
-					});
-				}
-				break;
-		}
-	}
+	public onEnteringState(stateName: string, args: any) {}
 	public onLeavingState(stateName: string) {}
-	public onUpdateActionButtons(stateName: string, args: any) {
-		switch (stateName) {
-			case "Test":
-				if (this.isCurrentPlayerActive()) {
-					this.statusBar.addActionButton("Click me!", () => this.bgaPerformAction("actClickButton", {"player": this.player_id}));
-				} else {
-					this.statusBar.addActionButton("Activate again", () => this.bgaPerformAction("actActivate", {"player": this.player_id}, {checkAction: false}));
-				}
-				break;
-			case "client_confirmTurn":
-				this.statusBar.addActionButton("Confirm", () => {
-					console.log(args.board);
-					this.bgaPerformAction("actNextState");
-				});
-		}
-	} 
-	public clientStateTest(args: string): void {
-		this.setClientState("client_confirmTurn", {
-			descriptionmyturn: "${you} must confirm you are going to the place",
-			args: {board: args}
-		})
-	}
+	public onUpdateActionButtons(stateName: string, args: any) {} 
+	public clientStateTest(args: string): void {}
 	public setupNotifications() {}
 }

@@ -39,7 +39,7 @@ Player:
     Fishbucks
     Starting provisions
 
-BgaCards:
+Decks:
     Regrets
     Dinks
     Rods

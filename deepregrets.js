@@ -58,46 +58,10 @@ var DeepRegrets = /** @class */ (function (_super) {
             });
         });
     };
-    DeepRegrets.prototype.onEnteringState = function (stateName, args) {
-        var _this = this;
-        switch (stateName) {
-            case "ClientStatesTest":
-                if (this.isCurrentPlayerActive()) {
-                    document.getElementById("sea_board").addEventListener("click", function () {
-                        _this.clientStateTest("sea");
-                    });
-                    document.getElementById("port_board").addEventListener("click", function () {
-                        _this.clientStateTest("port");
-                    });
-                }
-                break;
-        }
-    };
+    DeepRegrets.prototype.onEnteringState = function (stateName, args) { };
     DeepRegrets.prototype.onLeavingState = function (stateName) { };
-    DeepRegrets.prototype.onUpdateActionButtons = function (stateName, args) {
-        var _this = this;
-        switch (stateName) {
-            case "Test":
-                if (this.isCurrentPlayerActive()) {
-                    this.statusBar.addActionButton("Click me!", function () { return _this.bgaPerformAction("actClickButton", { "player": _this.player_id }); });
-                }
-                else {
-                    this.statusBar.addActionButton("Activate again", function () { return _this.bgaPerformAction("actActivate", { "player": _this.player_id }, { checkAction: false }); });
-                }
-                break;
-            case "client_confirmTurn":
-                this.statusBar.addActionButton("Confirm", function () {
-                    console.log(args.board);
-                    _this.bgaPerformAction("actNextState");
-                });
-        }
-    };
-    DeepRegrets.prototype.clientStateTest = function (args) {
-        this.setClientState("client_confirmTurn", {
-            descriptionmyturn: "${you} must confirm you are going to the place",
-            args: { board: args }
-        });
-    };
+    DeepRegrets.prototype.onUpdateActionButtons = function (stateName, args) { };
+    DeepRegrets.prototype.clientStateTest = function (args) { };
     DeepRegrets.prototype.setupNotifications = function () { };
     return DeepRegrets;
 }(GameGui));
