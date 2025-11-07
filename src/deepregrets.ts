@@ -26,7 +26,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 
 		document.getElementById("game_play_area").insertAdjacentHTML("beforeend", `
 			<div id="boards">
-				<div id="sea_board">
+				<div id="sea_board" style="zoom: ${localStorage.getItem("sea_board") || 1}">
 					<div class="size_buttons">
 						<div id="sea_home" class="utility_button"></div>
 						<div id="sea_large" class="utility_button"></div>
@@ -47,7 +47,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 						<div class="shoal" id="shoal_graveyard_3"></div>
 					</div>
 				</div>
-				<div id="port_board">
+				<div id="port_board" style="zoom: ${localStorage.getItem("port_board") || 1}">
 					<div class="size_buttons">
 						<div id="port_home" class="utility_button"></div>
 						<div id="port_large" class="utility_button"></div>
@@ -74,6 +74,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 						newZoom = curZoom - 0.1;
 						break;
 				}
+				localStorage.setItem(board.id, newZoom.toString());
 				(board.style as any).zoom = newZoom.toString();
 			});
 		});
