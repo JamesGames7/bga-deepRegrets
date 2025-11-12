@@ -184,6 +184,7 @@ class Game extends \Bga\GameFramework\Table
         $this->globals->set("lifePreserver", 0);
         $this->globals->set("day", 0);
 
+        // Everything to do with dice deck setup
         $dice = [];
         $dice[] = ['type' => "player", "type_arg" => 1, "nbr" => 15];
         $dice[] = ['type' => "blue", "type_arg" => 0, "nbr" => 9];
@@ -200,6 +201,7 @@ class Game extends \Bga\GameFramework\Table
             } else {
                 $this->dice->moveCard($curDice["id"], "OOP");
             }
+            $counter++;
         }
         $this->dice->shuffle("deck");
 
