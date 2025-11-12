@@ -18,11 +18,18 @@ declare(strict_types=1);
 
 namespace Bga\Games\DeepRegrets;
 
+use Bga\GameFramework\Components\Deck;
 use Bga\Games\DeepRegrets\States\Start;
 
 class Game extends \Bga\GameFramework\Table
 {
-    public static array $CARD_TYPES;
+    public Deck $regrets;
+    public Deck $dinks;
+    public Deck $rods;
+    public Deck $reels;
+    public Deck $supplies;
+    public Deck $fish;
+    public Deck $dice;
 
     /**
      * Your global variables labels:
@@ -52,6 +59,14 @@ class Game extends \Bga\GameFramework\Table
             
             return $args;
         });*/
+
+        $this->regrets = $this->deckFactory->createDeck('regrets');
+        $this->dinks = $this->deckFactory->createDeck('dinks');
+        $this->rods = $this->deckFactory->createDeck('rods');
+        $this->reels = $this->deckFactory->createDeck('reels');
+        $this->supplies = $this->deckFactory->createDeck('supplies');
+        $this->fish = $this->deckFactory->createDeck('fish');
+        $this->dice = $this->deckFactory->createDeck('dice');
     }
 
     /**
@@ -164,6 +179,29 @@ class Game extends \Bga\GameFramework\Table
         $this->reloadPlayersBasicInfos();
 
         // Init global values with their initial values.
+        static::DbQuery("UPDATE `player` SET `provisions` = JSON_OBJECT('canOfWorms', true, 'lifeboat', true);");
+        $this->globals->set("firstPlayer", 0);
+        $this->globals->set("lifePreserver", 0);
+        $this->globals->set("day", 0);
+
+        $dice = [];
+        $dice[] = ['type' => "player", "type_arg" => 1, "nbr" => 15];
+        $dice[] = ['type' => "blue", "type_arg" => 0, "nbr" => 9];
+        $dice[] = ['type' => "green", "type_arg" => 1, "nbr" => 8];
+        $dice[] = ['type' => "orange", "type_arg" => 2, "nbr" => 7];
+        $this->dice->createCards($dice);
+
+        $counter = 0;
+        $ids = array_keys($players);
+        foreach ($this->dice->getCardsOfType("player") as $curDice) {
+            $index = floor($counter / 3);
+            if ($index < count($ids)) {
+                $this->dice->moveCard($curDice["id"], "spent", $ids[$index]);
+            } else {
+                $this->dice->moveCard($curDice["id"], "OOP");
+            }
+        }
+        $this->dice->shuffle("deck");
 
         // Init game statistics.
         //
@@ -173,7 +211,7 @@ class Game extends \Bga\GameFramework\Table
         // $this->tableStats->init('table_teststat1', 0);
         // $this->playerStats->init('player_teststat1', 0);
 
-        // TODO: Setup the initial game situation here.
+        // TODO: Finish setup: Regrets, Items, Dinks, Fish
 
         // Activate first player once everything has been initialized and ready.
         $this->activeNextPlayer();

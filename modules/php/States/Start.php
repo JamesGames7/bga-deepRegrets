@@ -45,7 +45,8 @@ class Start extends GameState
         return [];
     } 
 
-    function onEnteringState() {
+    function onEnteringState(int $activePlayerId) {
         // the code to run when entering the state
+        $this->globals->set("firstPlayer", $activePlayerId);
     }
 }
