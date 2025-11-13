@@ -27,7 +27,7 @@ class BearingsNP extends GameState
 
             // optional
             description: clienttranslate(''),
-            transitions: ["" => 31],
+            transitions: ["" => 31], // LINK - modules\php\States\Bearings.php
             updateGameProgression: false,
             initialPrivate: null,
         );

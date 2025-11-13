@@ -31,7 +31,9 @@ class NextPlayer extends GameState
 
             // optional
             description: clienttranslate(''),
-            transitions: ["nextPlayer" => 40, "nextRound" => 10, "end" => 98],
+            transitions: ["nextPlayer" => 40, "nextRound" => 10, "end" => 98], // LINK - modules\php\States\ActionPlace.php
+                                                                               // LINK - modules\php\States\Start.php
+                                                                               // LINK - modules\php\States\EndScore.php
             updateGameProgression: false,
             initialPrivate: null,
         );

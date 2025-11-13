@@ -28,7 +28,9 @@ class ActionPlace extends GameState
 
             // optional
             description: clienttranslate(''),
-            transitions: ["port" => 41, "sea" => 42, "pass" => 45],
+            transitions: ["port" => 41, "sea" => 42, "pass" => 45], // LINK - modules\php\States\PortActions.php
+                                                                    // LINK - modules\php\States\SeaActions.php
+                                                                    // LINK - modules\php\States\PassAction.php
             updateGameProgression: false,
             initialPrivate: null,
         );

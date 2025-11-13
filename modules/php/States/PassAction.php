@@ -31,7 +31,7 @@ class PassAction extends GameState
             // optional
             description: clienttranslate('${actplayer} must choose a passing reward'),
             descriptionMyTurn: clienttranslate('${you} must choose a passing reward'),
-            transitions: ["nextPlayer" => 49],
+            transitions: ["nextPlayer" => 49], // LINK - modules\php\States\NextPlayer.php
             updateGameProgression: false,
             initialPrivate: null,
         );

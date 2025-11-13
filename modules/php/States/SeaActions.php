@@ -31,7 +31,8 @@ class SeaActions extends GameState
             // optional
             description: clienttranslate('${actplayer} must perform Sea actions or pass'),
             descriptionMyTurn: clienttranslate('${you} must perform Sea actions or pass'),
-            transitions: ["pass" => 45, "nextPlayer" => 49],
+            transitions: ["pass" => 45, "nextPlayer" => 49], // LINK - modules\php\States\PassAction.php
+                                                             // LINK - modules\php\States\NextPlayer.php
             updateGameProgression: false,
             initialPrivate: null,
         );

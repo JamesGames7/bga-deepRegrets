@@ -29,7 +29,8 @@ class RodReel extends GameState
             // optional
             description: clienttranslate('${actplayer} must choose a rod and / or reel'),
             descriptionMyTurn: clienttranslate('${you} must choose a rod and / or reel'),
-            transitions: ["nextPlayer" => 31, "donePlayers" => 49],
+            transitions: ["nextPlayer" => 31, "donePlayers" => 49], // LINK - modules\php\States\RodReelNP.php
+                                                                    // LINK - modules\php\States\NextPlayer.php
             updateGameProgression: false,
             initialPrivate: null,
         );

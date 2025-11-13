@@ -27,7 +27,7 @@ class LifePreserver extends GameState
             // optional
             description: clienttranslate('${actplayer} must toss the life preserver to someone else'),
             descriptionMyTurn: clienttranslate('${you} must toss the life preserver to someone else'),
-            transitions: ["" => 30],
+            transitions: ["" => 30], // LINK - modules\php\States\BearingsNP.php
             updateGameProgression: false,
             initialPrivate: null,
         );

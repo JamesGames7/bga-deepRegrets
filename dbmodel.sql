@@ -40,6 +40,7 @@ Player:
     Starting provisions
 */
 ALTER TABLE `player` ADD `location` varchar(10) DEFAULT 'sea';
+ALTER TABLE `player` ADD `depth` varchar(10) DEFAULT '1';
 ALTER TABLE `player` ADD `fishbucks` INT UNSIGNED NOT NULL DEFAULT '0';
 ALTER TABLE `player` ADD `provisions` JSON;
 ALTER TABLE `player` ADD `madness` INT UNSIGNED NOT NULL DEFAULT '0';

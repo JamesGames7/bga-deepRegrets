@@ -28,7 +28,7 @@ class RodReelNP extends GameState
             // optional
             description: clienttranslate('${actplayer} must play a card or pass'),
             descriptionMyTurn: clienttranslate('${you} must play a card or pass'),
-            transitions: ["" => 33],
+            transitions: ["" => 33], // LINK - modules\php\States\RodReel.php
             updateGameProgression: false,
             initialPrivate: null,
         );

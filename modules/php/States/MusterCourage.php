@@ -31,11 +31,11 @@ class MusterCourage extends GameState
         parent::__construct($game,
             id: 20,
             type: StateType::MULTIPLE_ACTIVE_PLAYER,
-
+            
             // optional
-            description: clienttranslate('Other players must choose which dice to use'),
-            descriptionMyTurn: clienttranslate('${you} must choose which dice to use'),
-            transitions: ["" => 21],
+            description: clienttranslate('Other players must choose which dice to place in their fresh pool'),
+            descriptionMyTurn: clienttranslate('${you} must choose which dice to place in their fresh pool'),
+            transitions: ["" => 21], // LINK - modules\php\States\LifePreserver.php
             updateGameProgression: false,
             initialPrivate: null,
         );
@@ -44,11 +44,20 @@ class MusterCourage extends GameState
     public function getArgs(): array
     {
         // the data sent to the front when entering the state
+
         return [];
     } 
 
     function onEnteringState() {
         // the code to run when entering the state
+        /**
+         * * Check if have dice in fresh pool
+         * * * Choose which to roll
+         * * Roll dice
+         * * * Choose which to place in spent pool
+         */
+        $this->gamestate->setAllPlayersMultiactive();
+        
     }   
 
     function zombie(int $playerId): string {

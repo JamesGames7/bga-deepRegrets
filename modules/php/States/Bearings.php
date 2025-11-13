@@ -29,7 +29,8 @@ class Bearings extends GameState
             // optional
             description: clienttranslate('${actplayer} must choose to go to sea or port'),
             descriptionMyTurn: clienttranslate('${you} must choose to go to sea or port'),
-            transitions: ["nextPlayer" => 30, "donePlayers" => 32],
+            transitions: ["nextPlayer" => 30, "donePlayers" => 32], // LINK - modules\php\States\BearingsNP.php
+                                                                    // LINK - modules\php\States\RodReelNP.php
             updateGameProgression: false,
             initialPrivate: null,
         );
