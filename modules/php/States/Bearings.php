@@ -10,8 +10,8 @@ use Bga\GameFramework\States\PossibleAction;
 use Bga\Games\DeepRegrets\Game;
 
 /**
- * @brief Players choose sea or port - 1 notification.
- * @details
+ * Players choose sea or port - 1 notification.
+ * 
  * 1. Active player chooses to go to sea or port
  * 
  * 2. Either go back a state (repeat) or pass to next state

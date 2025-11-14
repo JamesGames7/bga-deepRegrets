@@ -10,8 +10,8 @@ use Bga\GameFramework\States\PossibleAction;
 use Bga\Games\DeepRegrets\Game;
 
 /**
- * @brief Players choose a rod and a reel - 1 notification.
- * @details
+ * Players choose a rod and a reel - 1 notification.
+ * 
  * 1. Active player chooses a rod and / or reel *(automatic if possible)*
  * 
  * 2. Either go back a state (repeat) or pass to next state

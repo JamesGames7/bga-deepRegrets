@@ -25,6 +25,23 @@ use Bga\Games\DeepRegrets\Game;
 // TODO: Correct values
 class MusterCourage extends GameState
 {
+    private $MADNESS = [
+        0 => 4,
+        1 => 5,
+        2 => 5,
+        3 => 5,
+        4 => 5,
+        5 => 5,
+        6 => 5,
+        7 => 6,
+        8 => 6,
+        9 => 6,
+        10 => 7,
+        11 => 7,
+        12 => 7,
+        13 => 8
+    ];
+
     function __construct(
         protected Game $game,
     ) {
@@ -34,10 +51,10 @@ class MusterCourage extends GameState
             
             // optional
             description: clienttranslate('Other players must choose which dice to place in their fresh pool'),
-            descriptionMyTurn: clienttranslate('${you} must choose which dice to place in their fresh pool'),
+            descriptionMyTurn: clienttranslate(''),
             transitions: ["" => 21], // LINK - modules\php\States\LifePreserver.php
             updateGameProgression: false,
-            initialPrivate: null,
+            initialPrivate: 80, // LINK - modules\php\States\SelectRollPRIV.php
         );
     }
 
@@ -55,9 +72,23 @@ class MusterCourage extends GameState
          * * * Choose which to roll
          * * Roll dice
          * * * Choose which to place in spent pool
+         * ! Private states
          */
         $this->gamestate->setAllPlayersMultiactive();
-        
+        $this->gamestate->initializePrivateStateForAllActivePlayers();
+
+        foreach (array_keys($this->game->loadPlayersBasicInfos()) as $playerId) {
+            $regrets = $this->game->regrets->countCardsInLocation("hand", $playerId);
+            $regrets > 13 ? $regrets = 13 : $regrets = $regrets;
+            $maxDice = $this->MADNESS[$regrets];
+
+            $freshDice = $this->game->dice->countCardsInLocation("fresh", $playerId);
+            $totalDice = $freshDice + $this->game->dice->countCardsInLocation("spent", $playerId);
+
+            if ($freshDice == 0 || $totalDice <= $maxDice) {
+                $this->gamestate->nextPrivateState($playerId, 81);
+            }
+        }
     }   
 
     function zombie(int $playerId): string {

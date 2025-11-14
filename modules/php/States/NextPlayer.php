@@ -9,8 +9,8 @@ use Bga\GameFramework\States\GameState;
 use Bga\Games\DeepRegrets\Game;
 
 /**
- * @brief Passes active player in main action phase - 0 notifications.
- * @details
+ * Passes active player in main action phase - 0 notifications.
+ * 
  * 1. Activate each player in order
  * 
  * 2. If all have passed there are 2 options

@@ -10,8 +10,8 @@ use Bga\GameFramework\States\PossibleAction;
 use Bga\Games\DeepRegrets\Game;
 
 /**
- * @brief Toss life preserver - 1 notification.
- * @details 
+ * Toss life preserver - 1 notification.
+ *  
  * 1. Active player (highest total) chooses a player to receive the life preserver
  */
 // TODO: Correct values

@@ -6,28 +6,22 @@ namespace Bga\Games\DeepRegrets\States;
 
 use Bga\GameFramework\StateType;
 use Bga\GameFramework\States\GameState;
+use Bga\GameFramework\States\PossibleAction;
 use Bga\Games\DeepRegrets\Game;
 
-/**
- * Sets active player for **Bearings** state - 0 notifications.
- * 
- * 1. If first time, activate first player
- * 
- * 2. Otherwise activate next player
- */
 // TODO: Correct values
-class BearingsNP extends GameState
+class SelectRollPRIV extends GameState
 {
     function __construct(
         protected Game $game,
     ) {
         parent::__construct($game,
-            id: 30,
-            type: StateType::GAME,
+            id: 80,
+            type: StateType::PRIVATE,
 
             // optional
-            description: clienttranslate(''),
-            transitions: ["" => 31], // LINK - modules\php\States\Bearings.php
+            descriptionMyTurn: clienttranslate('${you} must choose which fresh dice to reroll'),
+            transitions: ["" => 81],
             updateGameProgression: false,
             initialPrivate: null,
         );
@@ -39,7 +33,17 @@ class BearingsNP extends GameState
         return [];
     } 
 
-    function onEnteringState() {
+    #[PossibleAction]
+    function actChooseDice(int $currentPlayerId): void {
+        
+    }
+
+    function onEnteringState(int $activePlayerId) {
         // the code to run when entering the state
-    } 
+    }   
+
+    function zombie(int $playerId): string {
+        // the code to run when the player is a Zombie
+        return "";
+    }
 }

@@ -9,8 +9,8 @@ use Bga\GameFramework\States\GameState;
 use Bga\Games\DeepRegrets\Game;
 
 /**
- * @brief Sets active player for **RodReel** state - 0 notifications.
- * @details
+ * Sets active player for **RodReel** state - 0 notifications.
+ * 
  * 1. If first time, activate first player
  * 
  * 2. Otherwise activate next player

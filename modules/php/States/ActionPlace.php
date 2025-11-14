@@ -9,9 +9,9 @@ use Bga\GameFramework\States\GameState;
 use Bga\Games\DeepRegrets\Game;
 
 /**
- * @brief Handler for different types of actions - 0 notifications.
+ * Handler for different types of actions - 0 notifications.
  * 
- * @details
+ * 
  * 1. Checks the location the player is currently at
  * 
  * 2. Sends them to the relative state

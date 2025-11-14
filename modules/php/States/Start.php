@@ -9,8 +9,7 @@ use Bga\GameFramework\States\GameState;
 use Bga\Games\DeepRegrets\Game;
 
 /**
- * @brief All start of round actions - 5 notifications.
- * @details
+ * All start of round actions - 5 notifications.
  * 1. Move day tracker
  * 
  * 2. Pass first player
@@ -21,7 +20,6 @@ use Bga\Games\DeepRegrets\Game;
  * 
  * 5. If at sea, go up one depth *(group to one notification)*
  */
-// TODO: correct values
 class Start extends GameState
 {
     function __construct(
@@ -33,7 +31,7 @@ class Start extends GameState
 
             // optional
             description: clienttranslate('Starting the round'),
-            transitions: ["" => 20], // LINK - modules\php\States\MusterCourage.php            
+            transitions: ["" => 20], // LINK - modules\php\States\MusterCourage.php
             updateGameProgression: false,
             initialPrivate: null,
         );

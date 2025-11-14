@@ -10,8 +10,8 @@ use Bga\GameFramework\States\PossibleAction;
 use Bga\Games\DeepRegrets\Game;
 
 /**
- * @brief Possible actions at sea - 1+ notification(s)
- * @details
+ * Possible actions at sea - 1+ notification(s)
+ * 
  * 1. Player can choose which action to perform *(fish or abandon ship)* or to pass
  * 
  * 2. Performs that action - fishing may take multiple notifications: client states
