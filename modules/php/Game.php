@@ -186,10 +186,10 @@ class Game extends \Bga\GameFramework\Table
 
         // Everything to do with dice deck setup
         $dice = [];
-        $dice[] = ['type' => "player", "type_arg" => 1, "nbr" => 15];
+        $dice[] = ['type' => "player", "type_arg" => 0, "nbr" => 15];
         $dice[] = ['type' => "blue", "type_arg" => 0, "nbr" => 9];
-        $dice[] = ['type' => "green", "type_arg" => 1, "nbr" => 8];
-        $dice[] = ['type' => "orange", "type_arg" => 2, "nbr" => 7];
+        $dice[] = ['type' => "green", "type_arg" => 0, "nbr" => 8];
+        $dice[] = ['type' => "orange", "type_arg" => 0, "nbr" => 7];
         $this->dice->createCards($dice);
 
         $counter = 0;
