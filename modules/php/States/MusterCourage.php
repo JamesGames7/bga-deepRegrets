@@ -52,7 +52,7 @@ class MusterCourage extends GameState
             // optional
             description: clienttranslate('Other players must choose which dice to place in their fresh pool'),
             descriptionMyTurn: clienttranslate(''),
-            transitions: ["" => 21], // LINK - modules\php\States\LifePreserver.php
+            transitions: ["" => 29], // LINK - modules\php\States\LifePreserverNP.php
             updateGameProgression: false,
             initialPrivate: 80, // LINK - modules\php\States\SelectRollPRIV.php
         );

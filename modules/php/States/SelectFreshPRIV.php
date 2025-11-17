@@ -62,11 +62,11 @@ class SelectFreshPRIV extends GameState
         $this->game->dice->moveAllCardsInLocation("roll", "spent", $currentPlayerId, $currentPlayerId);
     }
 
-    function onEnteringState(int $activePlayerId) {
+    function onEnteringState(int $playerId) {
         // the code to run when entering the state
-        $this->game->dice->moveAllCardsInLocation("spent", "roll", $activePlayerId, $activePlayerId);
+        $this->game->dice->moveAllCardsInLocation("spent", "roll", $playerId, $playerId);
 
-        foreach ($this->game->dice->getCardsInLocation("roll", $activePlayerId) as $die) {
+        foreach ($this->game->dice->getCardsInLocation("roll", $playerId) as $die) {
             $newSide = \bga_rand(0, 3);
             $id = $die["id"];
 
@@ -74,13 +74,14 @@ class SelectFreshPRIV extends GameState
         }
         // ! Notify
 
-        $regrets = $this->game->regrets->countCardsInLocation("hand", $activePlayerId);
+        $regrets = $this->game->regrets->countCardsInLocation("hand", $playerId);
         $regrets > 13 ? $regrets = 13 : $regrets = $regrets;
         $maxDice = $this->MADNESS[$regrets];
 
-        if ($this->game->dice->countCardsInLocation("roll", $activePlayerId) + $this->game->dice->countCardsInLocation("fresh") <= $maxDice) {
-            $this->gamestate->unsetPrivateState($activePlayerId);
-            $this->gamestate->setPlayerNonMultiactive($activePlayerId, "");
+        if ($this->game->dice->countCardsInLocation("roll", $playerId) + $this->game->dice->countCardsInLocation("fresh", $playerId) <= $maxDice) {
+            $this->gamestate->unsetPrivateState($playerId);
+            $this->game->dice->moveAllCardsInLocation("roll", "fresh", $playerId, $playerId);
+            $this->gamestate->setPlayerNonMultiactive($playerId, "");
         }
     }   
 

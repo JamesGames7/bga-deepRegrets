@@ -33,14 +33,30 @@ class LifePreserver extends GameState
         );
     }
 
-    public function getArgs(): array
+    public function getArgs( int $activePlayerId ): array
     {
         // the data sent to the front when entering the state
-        return [];
+        $otherPlayers = [];
+        foreach (array_keys($this->game->loadPlayersBasicInfos()) as $id) {
+            if ($id != $activePlayerId) {
+                $otherPlayers[] = $id;
+            }
+        }
+        return ["possibleChoices" => $otherPlayers];
     } 
+
+    #[PossibleAction]
+    function actChooseLPPlayer(int $playerId, int $activePlayerId) {
+        if ($playerId != $activePlayerId) {
+            $this->game->globals->set("lifePreserver", $playerId);
+        } else {
+            throw new \BgaUserException("Cannot select yourself");
+        }
+    }
 
     function onEnteringState(int $activePlayerId) {
         // the code to run when entering the state
+        $this->notify->all("test", strval($activePlayerId));
     }   
 
     function zombie(int $playerId): string {
