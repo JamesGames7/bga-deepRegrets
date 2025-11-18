@@ -29,8 +29,7 @@ class Bearings extends GameState
             // optional
             description: clienttranslate('${actplayer} must choose to go to sea or port'),
             descriptionMyTurn: clienttranslate('${you} must choose to go to sea or port'),
-            transitions: ["nextPlayer" => 30, "donePlayers" => 32], // LINK - modules\php\States\BearingsNP.php
-                                                                    // LINK - modules\php\States\RodReelNP.php
+            transitions: ["" => 30], // LINK - modules\php\States\BearingsNP.php
             updateGameProgression: false,
             initialPrivate: null,
         );
@@ -41,6 +40,17 @@ class Bearings extends GameState
         // the data sent to the front when entering the state
         return [];
     } 
+
+    #[PossibleAction]
+    function actChooseLocation(string $location, int $activePlayerId): void {
+        if ($location == "sea" || $location == "port") {
+            $this->game->DbQuery("UPDATE `player` SET `location` = $location WHERE `player_id` = $activePlayerId");
+            // ! Notify
+            $this->gamestate->nextState("");
+        } else {
+            throw new \BgaUserException("Not a valid location");
+        }
+    }
 
     function onEnteringState(int $activePlayerId) {
         // the code to run when entering the state

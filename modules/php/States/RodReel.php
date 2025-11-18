@@ -29,21 +29,45 @@ class RodReel extends GameState
             // optional
             description: clienttranslate('${actplayer} must choose a rod and / or reel'),
             descriptionMyTurn: clienttranslate('${you} must choose a rod and / or reel'),
-            transitions: ["nextPlayer" => 31, "donePlayers" => 49], // LINK - modules\php\States\RodReelNP.php
-                                                                    // LINK - modules\php\States\NextPlayer.php
+            transitions: ["" => 31], // LINK - modules\php\States\RodReelNP.php
             updateGameProgression: false,
             initialPrivate: null,
         );
     }
 
-    public function getArgs(): array
+    public function getArgs(int $activePlayerId): array
     {
         // the data sent to the front when entering the state
-        return [];
+        $totalRods = $this->game->rods->countCardsInLocation("hand", $activePlayerId) + $this->game->rods->countCardsInLocation("equip", $activePlayerId);
+        $totalReels = $this->game->reels->countCardsInLocation("hand", $activePlayerId) + $this->game->reels->countCardsInLocation("equip", $activePlayerId);
+        return [
+            "rodsChoice" => $totalRods > 1,
+            "reelsChoice" => $totalReels > 1
+        ];
     } 
+
+    #[PossibleAction]
+    function actChooseRodReel(int $rodId, int $reelId, int $activePlayerId): void {
+        // ! Client states to choose rod & reel?
+        $this->game->rods->moveCard($rodId, "equip", $activePlayerId);
+        $this->game->reels->moveCard($reelId, "equip", $activePlayerId);
+        // ! Notify
+
+        $this->gamestate->nextState("");
+    }
 
     function onEnteringState(int $activePlayerId) {
         // the code to run when entering the state
+        $totalRods = $this->game->rods->countCardsInLocation("hand", $activePlayerId) + $this->game->rods->countCardsInLocation("equip", $activePlayerId);
+        $totalReels = $this->game->reels->countCardsInLocation("hand", $activePlayerId) + $this->game->reels->countCardsInLocation("equip", $activePlayerId);
+        if ($totalRods <= 1 && $totalReels <= 1) {
+            $this->game->rods->moveAllCardsInLocation("hand", "equip", $activePlayerId, $activePlayerId);
+            $this->game->reels->moveAllCardsInLocation("hand", "equip", $activePlayerId, $activePlayerId);
+            $this->gamestate->nextState("");
+        } else {
+            $this->game->rods->moveAllCardsInLocation("equip", "hand", $activePlayerId, $activePlayerId);
+            $this->game->reels->moveAllCardsInLocation("equip", "hand", $activePlayerId, $activePlayerId);
+        }
     }   
 
     function zombie(int $playerId): string {

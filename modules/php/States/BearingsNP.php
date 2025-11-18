@@ -27,7 +27,8 @@ class BearingsNP extends GameState
 
             // optional
             description: clienttranslate(''),
-            transitions: ["" => 31], // LINK - modules\php\States\Bearings.php
+            transitions: ["nextPlayer" => 31, "donePlayers" => 32, "skipPhase" => 40], // LINK - modules\php\States\Bearings.php
+                                                                                       // LINK - modules\php\States\RodReelNP.php
             updateGameProgression: false,
             initialPrivate: null,
         );
@@ -39,7 +40,22 @@ class BearingsNP extends GameState
         return [];
     } 
 
-    function onEnteringState() {
+    function onEnteringState(int $activePlayerId) {
         // the code to run when entering the state
+        if ($this->globals->get("day") > 1) {
+            if (!$this->globals->get("firstPlayerReached")) {
+                $this->globals->set("firstPlayerReached", true);
+                $this->gamestate->changeActivePlayer($this->globals->get("firstPlayer"));
+            } else {
+                $this->game->activeNextPlayer();
+                if ($this->game->getActivePlayerId() == $this->globals->get("firstPlayer")) {
+                    $this->gamestate->nextState("donePlayers");
+                }
+            }
+            $this->gamestate->nextState("nextPlayer");
+        } else {
+            $this->globals->set("firstPlayerReached", false);
+            $this->gamestate->nextState("skipPhase");
+        }
     } 
 }
