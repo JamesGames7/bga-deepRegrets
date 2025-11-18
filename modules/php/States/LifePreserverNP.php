@@ -63,6 +63,6 @@ class LifePreserverNP extends GameState
         $maxId = $playerIds[array_search($maxVal, $totals)];
 
         $this->gamestate->changeActivePlayer($maxId);
-        $this->gamestate->nextState("");
+        return "";
     }
 }

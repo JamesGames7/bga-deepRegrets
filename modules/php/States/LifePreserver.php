@@ -49,6 +49,7 @@ class LifePreserver extends GameState
     function actChooseLPPlayer(int $playerId, int $activePlayerId) {
         if ($playerId != $activePlayerId) {
             $this->game->globals->set("lifePreserver", $playerId);
+            return "";
         } else {
             throw new \BgaUserException("Cannot select yourself");
         }

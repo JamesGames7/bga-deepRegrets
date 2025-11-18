@@ -42,11 +42,11 @@ class Bearings extends GameState
     } 
 
     #[PossibleAction]
-    function actChooseLocation(string $location, int $activePlayerId): void {
+    function actChooseLocation(string $location, int $activePlayerId) {
         if ($location == "sea" || $location == "port") {
             $this->game->DbQuery("UPDATE `player` SET `location` = $location WHERE `player_id` = $activePlayerId");
             // ! Notify
-            $this->gamestate->nextState("");
+            return "";
         } else {
             throw new \BgaUserException("Not a valid location");
         }

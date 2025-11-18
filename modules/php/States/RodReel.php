@@ -47,13 +47,13 @@ class RodReel extends GameState
     } 
 
     #[PossibleAction]
-    function actChooseRodReel(int $rodId, int $reelId, int $activePlayerId): void {
+    function actChooseRodReel(int $rodId, int $reelId, int $activePlayerId) {
         // ! Client states to choose rod & reel?
         $this->game->rods->moveCard($rodId, "equip", $activePlayerId);
         $this->game->reels->moveCard($reelId, "equip", $activePlayerId);
         // ! Notify
 
-        $this->gamestate->nextState("");
+        return "";
     }
 
     function onEnteringState(int $activePlayerId) {
@@ -63,7 +63,7 @@ class RodReel extends GameState
         if ($totalRods <= 1 && $totalReels <= 1) {
             $this->game->rods->moveAllCardsInLocation("hand", "equip", $activePlayerId, $activePlayerId);
             $this->game->reels->moveAllCardsInLocation("hand", "equip", $activePlayerId, $activePlayerId);
-            $this->gamestate->nextState("");
+            return "";
         } else {
             $this->game->rods->moveAllCardsInLocation("equip", "hand", $activePlayerId, $activePlayerId);
             $this->game->reels->moveAllCardsInLocation("equip", "hand", $activePlayerId, $activePlayerId);

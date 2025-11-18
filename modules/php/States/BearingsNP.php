@@ -49,13 +49,13 @@ class BearingsNP extends GameState
             } else {
                 $this->game->activeNextPlayer();
                 if ($this->game->getActivePlayerId() == $this->globals->get("firstPlayer")) {
-                    $this->gamestate->nextState("donePlayers");
+                    return "donePlayers";
                 }
             }
-            $this->gamestate->nextState("nextPlayer");
+            return "nextPlayer";
         } else {
             $this->globals->set("firstPlayerReached", false);
-            $this->gamestate->nextState("skipPhase");
+            return "skipPhase";
         }
     } 
 }
