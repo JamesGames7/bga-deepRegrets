@@ -1,5 +1,6 @@
 <?php 
 
+require_once("Fish.php");
 class Lists {
     public array $fish;
     public Item $items;
@@ -71,7 +72,7 @@ class Lists {
             new Fish("Mermaid", 4, "middling", "foul", 2, 4, null, null, function () {}, function () {}, 9, 4),
             new Fish("Stoor Worm", 5, "large", "foul", 2, 7, null, null, function () {}, null, 10, 4),
             new Fish("Barreleye", 2, "small", "fair", 3, 3, null, function () {}, null, function () {}, 11, 4),
-            new Fish("Mass of Eyes", 4, "large", "foul", 4, 7, null, function () {}, null, function () {}, 12, 4),
+            new Fish("Mass of Eyes", 4, "large", "foul", 3, 7, null, function () {}, null, function () {}, 12, 4),
             new Fish("Cruachan Spawn", 4, "large", "foul", 2, 5, null, null, function () {}, null, 0, 5),
             new Fish("Deep Dweller", null, "", "foul", 2, null, null, function () {}, null, null, 1, 5),
             new Fish("Colossal Squid", null, "large", "fair", 2, 3, function () {}, function () {}, null, null, 2, 5),

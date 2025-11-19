@@ -20,6 +20,8 @@ namespace Bga\Games\DeepRegrets;
 
 use Bga\GameFramework\Components\Deck;
 use Bga\Games\DeepRegrets\States\Start;
+use Lists;
+require_once("Lists.php");
 
 class Game extends \Bga\GameFramework\Table
 {
@@ -30,6 +32,7 @@ class Game extends \Bga\GameFramework\Table
     public Deck $supplies;
     public Deck $fish;
     public Deck $dice;
+    public Lists $lists;
 
     /**
      * Your global variables labels:
@@ -67,6 +70,7 @@ class Game extends \Bga\GameFramework\Table
         $this->supplies = $this->deckFactory->createDeck('supplies');
         $this->fish = $this->deckFactory->createDeck('fish');
         $this->dice = $this->deckFactory->createDeck('dice');
+        $this->lists = new Lists;
     }
 
     /**
@@ -204,6 +208,45 @@ class Game extends \Bga\GameFramework\Table
             $counter++;
         }
         $this->dice->shuffle("deck");
+
+        // Everything for fish setup
+        $fish1 = [];
+        $fish2 = [];
+        $fish3 = [];
+        $count = 0;
+
+        foreach ($this->lists->getFish() as $curFish) {
+            $temp = ['type' => $count, 'type_arg' => 0, 'nbr' => 1];
+            switch ($curFish->getDepth()) {
+                case 1:
+                    $fish1[] = $temp;
+                    break;
+                case 2:
+                    $fish2[] = $temp;
+                    break;
+                case 3:
+                    $fish3[] = $temp;
+                    break;
+            }
+            $count++;
+        }
+
+        $this->fish->createCards($fish1, "depth1");
+        $this->fish->createCards($fish2, "depth2");
+        $this->fish->createCards($fish3, "depth3");
+
+        $this->fish->shuffle("depth1");
+        $this->fish->shuffle("depth2");
+        $this->fish->shuffle("depth3");
+
+        for ($i = 1; $i <= 3; $i++) {
+            for ($j = 1; $j <= 3; $j++) {
+                $shoalNum = ($i - 1) * 3 + $j;
+                $this->fish->pickCardsForLocation(13, "depth$i", "shoal$shoalNum");
+                $this->fish->shuffle("shoal$shoalNum");
+            }
+        }
+        
 
         // Init game statistics.
         //

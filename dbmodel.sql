@@ -63,8 +63,8 @@ Decks:
     - type: id
     - type_arg: id
     Fish
-    - type: depth
-    - type_arg: id
+    - type: id
+    - type_arg: shoal
     Dice
     - type: colour
     - type_arg: value
