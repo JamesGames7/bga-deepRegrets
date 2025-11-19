@@ -46,7 +46,7 @@ class Start extends GameState
     function onEnteringState(int $activePlayerId) {
         // Updates what day it is
         $this->globals->set("day", $this->globals->get("day") + 1);
-        $this->game->DbQuery("UPDATE TABLE `player` SET `passed` = 'true'");
+        $this->game->DbQuery("UPDATE `player` SET `passed` = 'false'");
 
         // Changes active player
         // TODO: Notifications

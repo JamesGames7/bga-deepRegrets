@@ -13,7 +13,7 @@ class Fish {
     private $eatAbility;
     private $x;
     private $y;
-    public function __construct($name, $difficulty, $size, $type, $depth, $sellValue, $permanentAbility, $revealAbility, $catchAbility, $eatAbility, $x, $y) {
+    public function __construct(string $name, int|null $difficulty, string $size, string $type, int $depth, int|null $sellValue, callable|null $permanentAbility, callable|null $revealAbility, callable|null $catchAbility, callable|null $eatAbility, int $x, int $y) {
         $this->name = $name;
         $this->difficulty = $difficulty;
         $this->size = $size;
