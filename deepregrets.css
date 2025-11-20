@@ -254,7 +254,6 @@ Setup in js:
 #boards #sea_board .shoal {
   width: 100%;
   height: 100%;
-  background-color: red;
   border-radius: 10px;
 }
 #boards #sea_board #shoal_1_1 {
