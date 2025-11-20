@@ -1,5 +1,24 @@
-/* Assumes setup is scene -> dice -> all faces */
+/*
+Setup in js:
+			<div id="scene">
+				<div class="redP" id="dice">
+					<div class="face" id="f1"></div>
+					<div class="face" id="f2"></div>
+					<div class="face" id="f3"></div>
+					<div class="face" id="f4"></div>
+					<div class="triangle top" id="t1"></div>
+					<div class="triangle top" id="t2"></div>
+					<div class="triangle top" id="t3"></div>
+					<div class="triangle top" id="t4"></div>
+					<div class="triangle bottom" id="t5"></div>
+					<div class="triangle bottom" id="t6"></div>
+					<div class="triangle bottom" id="t7"></div>
+					<div class="triangle bottom" id="t8"></div>
+				</div>
+			</div>
+*/
 #scene {
+  z-index: 10;
   perspective: 1000px;
 }
 
@@ -12,33 +31,111 @@
   transition: transform 2s ease-out;
 }
 .face {
+  background-image: url('img/dice/sides.jpg');
+  background-size: 900% 400%;
   position: absolute;
   width: 80px;
   height: 120px;
+
+  $types: ("blueP", "blueT", "greenP", "greenT", "omen", "redP", "tealP", "orangeP", "orangeT");
+  $displacement: 0%;
+  @each $type in $types {
+    @at-root .#{$type} & {
+      background-position-x: $displacement;
+      $displacement: $displacement - 100%;
+    }
+  }
 }
 
 #f1 {
-  background-color: blue;
+  background-position-y: 0;
   transform: translateZ(40px);
 }
 #f2 {
-  background-color: green;
+  background-position-y: -100%;  
   transform: rotateY(90deg) translateZ(40px);
 }
 #f3 {
-  background-color: red;
+  background-position-y: -200%;
   transform: rotateY(180deg) translateZ(40px);
 }
 #f4 {
-  background-color: orange;
+  background-position-y: -300%;
   transform: rotateY(-90deg) translateZ(40px);
+}
+
+.top {
+  background-image: url("img/dice/tops.png");
+  background-size: 200% 200%;
+
+  @at-root .greenP & {
+    background-position: -100% 0;
+  }
+  @at-root .blueP & {
+    background-position: -100% 0;
+  }
+  @at-root .redP & {
+    background-position: -100% 0;
+  }
+  @at-root .orangeP & {
+    background-position: -100% 0;
+  }
+  @at-root .tealP & {
+    background-position: -100% 0;
+  }
+
+  @at-root .omen & {
+    background-position: 0 -100%;
+  }
+
+  @at-root .greenT & {
+    background-position: 0 0;
+  }
+  @at-root .blueT & {
+    background-position: 0 0;
+  }
+  @at-root .orangeT & {
+    background-position: 0 0;
+  }
+}
+
+.bottom {
+  background-image: url("img/dice/bottoms.png");
+  background-size: 300% 300%;
+
+  @at-root .greenP & {
+    background-position: -200% -200%;
+  }
+  @at-root .blueP  & {
+    background-position: -100% -200%;
+  }
+  @at-root .orangeP & {
+    background-position: -200% 0;
+  }
+  @at-root .redP & {
+    background-position: -200% -100%;
+  }
+  @at-root .tealP & {
+    background-position: 0 -200%;
+  }
+  @at-root .omen & {
+    background-position: -100% -100%;
+  }
+  @at-root .greenT & {
+    background-position: -100% 0;
+  }
+  @at-root .blueT & {
+    background-position: -100% 0;
+  }
+  @at-root .orangeT & {
+    background-position: -100% 0;
+  }
 }
 
 .triangle {
   position: absolute;
   width: 80px;
   height: 57.6px;
-  background-color: #000000;
   clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
 }
 
