@@ -36,7 +36,9 @@ var DeepRegrets = /** @class */ (function (_super) {
     }
     DeepRegrets.prototype.setup = function (gamedatas) {
         this.setupNotifications();
-        document.getElementById("game_play_area").insertAdjacentHTML("beforeend", "\n\t\t\t<div id=\"boards\">\n\t\t\t\t<div id=\"sea_board\" style=\"zoom: ".concat(localStorage.getItem("sea_board") || ((document.getElementById("board").clientWidth / 726) > 1 ? document.getElementById("board").clientWidth / 726 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"sea_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"shoal_grid\">\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_graveyard_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_graveyard_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_graveyard_3\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div id=\"port_board\" style=\"zoom: ").concat(localStorage.getItem("port_board") || ((document.getElementById("board").clientWidth / 1500) > 1 ? document.getElementById("board").clientWidth / 1500 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"port_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\t\t\t\n\t\t\t</div>\n\t\t"));
+        document.getElementById("game_play_area").insertAdjacentHTML("beforeend", "\n\t\t\t<div id=\"scene\">\n\t\t\t\t<div class=\"redP\" id=\"dice\">\n\t\t\t\t\t<div class=\"face\" id=\"f1\"></div>\n\t\t\t\t\t<div class=\"face\" id=\"f2\"></div>\n\t\t\t\t\t<div class=\"face\" id=\"f3\"></div>\n\t\t\t\t\t<div class=\"face\" id=\"f4\"></div>\n\t\t\t\t\t<div class=\"triangle top\" id=\"t1\"></div>\n\t\t\t\t\t<div class=\"triangle top\" id=\"t2\"></div>\n\t\t\t\t\t<div class=\"triangle top\" id=\"t3\"></div>\n\t\t\t\t\t<div class=\"triangle top\" id=\"t4\"></div>\n\t\t\t\t\t<div class=\"triangle bottom\" id=\"t5\"></div>\n\t\t\t\t\t<div class=\"triangle bottom\" id=\"t6\"></div>\n\t\t\t\t\t<div class=\"triangle bottom\" id=\"t7\"></div>\n\t\t\t\t\t<div class=\"triangle bottom\" id=\"t8\"></div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t<div id=\"boards\">\n\t\t\t\t<div id=\"sea_board\" style=\"zoom: ".concat(localStorage.getItem("sea_board") || ((document.getElementById("board").clientWidth / 726) > 1 ? document.getElementById("board").clientWidth / 726 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"sea_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"shoal_grid\">\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_graveyard_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_graveyard_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_graveyard_3\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div id=\"port_board\" style=\"zoom: ").concat(localStorage.getItem("port_board") || ((document.getElementById("board").clientWidth / 1500) > 1 ? document.getElementById("board").clientWidth / 1500 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"port_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\t\t\t\n\t\t\t</div>\n\t\t"));
+        diceSetup("dice");
+        diceRotation("dice");
         document.querySelectorAll(".utility_button").forEach(function (button) {
             var boards = document.getElementById("boards");
             var id = button.id;
@@ -85,3 +87,60 @@ define([
 ], function (dojo, declare) {
     return declare("bgagame.deepregrets", ebg.core.gamegui, new DeepRegrets());
 });
+// Three equations for brightness of dice based on rotation
+// Depends on angle: main side, top side, bottom side (45deg off each other)
+var faceEq = function (x) { return (1 / 4 * Math.cos(-19 * Math.PI / 180 * Math.cos(x + Math.PI / 4) + Math.PI / 2) + 9 / 10); };
+var topEq = function (x) { return (1 / 4 * Math.cos(-19 * Math.PI / 180 * Math.cos(x + Math.PI / 4) + Math.PI / 4) + 9 / 10); };
+var bottomEq = function (x) { return (1 / 4 * Math.cos(-19 * Math.PI / 180 * Math.cos(x + Math.PI / 4) + 3 * Math.PI / 4) + 9 / 10); };
+// Original setup of dice
+function diceSetup(elementId) {
+    // Element to apply to
+    var el = document.getElementById(elementId);
+    // Finding the rotation on correct axis
+    var style = window.getComputedStyle(el).transform;
+    var rotateY;
+    if (style.includes("matrix3d")) {
+        var matrix = style.slice(9, -1).split(",").map(parseFloat);
+        rotateY = -Math.atan2(matrix[2], matrix[0]);
+    }
+    else {
+        rotateY = 0;
+    }
+    // For each side (90deg off each other)
+    var add = 0;
+    ["f1", "f2", "f3", "f4"].forEach(function (id) {
+        document.getElementById(id).style.filter = "brightness(".concat(faceEq(rotateY + add), ")");
+        add += Math.PI / 2;
+    });
+    ["t1", "t2", "t3", "t4"].forEach(function (id) {
+        document.getElementById(id).style.filter = "brightness(".concat(topEq(rotateY + add), ")");
+        add += Math.PI / 2;
+    });
+    ["t5", "t6", "t7", "t8"].forEach(function (id) {
+        document.getElementById(id).style.filter = "brightness(".concat(bottomEq(rotateY + add), ")");
+        add += Math.PI / 2;
+    });
+}
+// EventListener for when it rotates (for now click)
+function diceRotation(elementId) {
+    var el = document.getElementById(elementId);
+    var rot = 0;
+    el.addEventListener("click", function () {
+        // Set rotation / transformation
+        rot += 810;
+        el.style.transform = "rotateY(".concat(rot, "deg)");
+        // Start time
+        var start = performance.now();
+        function update(t) {
+            // Find how long it's been
+            var progress = Math.min((t - start) / 1000, 2);
+            diceSetup(el.id);
+            // Recursively repeat until done
+            if (progress < 2)
+                requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+    });
+}
+window.diceSetup = diceSetup;
+window.diceRotation = diceRotation;
