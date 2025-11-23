@@ -16,6 +16,14 @@ GameGui = (function () { // this hack required so we fake extend GameGui
 
 // Note: it does not really extend it in es6 way, you cannot call super you have to use dojo way 
 class DeepRegrets extends GameGui<DeepRegretsGamedatas> { 
+	private COLOUR_POSITION = {
+		"488fc7": 0,
+		"69ba35": -100,
+		"ad3545": -200,
+		"439ba0": -300,
+		"cb5c21": -400
+	}
+
 	constructor() {
 		// @ts-ignore
 		super();
@@ -55,6 +63,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					</div>
 				</div>			
 			</div>
+			<div id="playerBoards"></div>
 		`)
 
 		document.querySelectorAll(".utility_button").forEach(button => {
@@ -89,10 +98,44 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				(board.style as any).zoom = newZoom.toString();
 			});
 		});
+
+		Object.entries(gamedatas.players).forEach(player => {
+			let id: string = `playerBoard-${player[0]}`;
+			let colour: string = (player[1] as any).color;
+			let space: InsertPosition;
+			if (player[0].toString() == this.player_id.toString()) {
+				space = "afterbegin";
+			} else {
+				space = "beforeend";
+			}
+			document.getElementById("playerBoards").insertAdjacentHTML(space, `
+				<div id="${id}" class="playerBoard"></div>
+			`);
+			console.warn(player);
+			let playerBoard: HTMLElement = document.getElementById(id);
+			playerBoard.style.backgroundPositionY = `${this.COLOUR_POSITION[colour]}%`;
+			let position: string;
+			(player[1] as any).playerBoard == "monster" ? position = "0" : position = "-100%";
+			playerBoard.style.backgroundPositionX = position;
+			
+			if (player[0].toString() == this.player_id.toString()) {
+				playerBoard.addEventListener("click", () => {
+					this.bgaPerformAction(`actChooseSide`, {curPlayer: player[0]}, {checkAction: false});
+				});
+			}
+		})
 	} 
 	public onEnteringState(stateName: string, args: any) {}
 	public onLeavingState(stateName: string) {}
 	public onUpdateActionButtons(stateName: string, args: any) {} 
 	public clientStateTest(args: string): void {}
-	public setupNotifications() {}
+	public setupNotifications() {
+		this.bgaSetupPromiseNotifications();
+	}
+
+	public notif_playerBoardSide(args) {
+		let position: string;
+		args.newSide == "monster" ? position = "-100%" : position = "0";
+		document.getElementById(`playerBoard-${args.player_id}`).style.backgroundPositionX = position;
+	}
 }

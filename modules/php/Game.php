@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace Bga\Games\DeepRegrets;
 
+use Bga\GameFramework\Actions\CheckAction;
 use Bga\GameFramework\Components\Deck;
 use Bga\Games\DeepRegrets\States\Start;
 use Lists;
@@ -138,7 +139,7 @@ class Game extends \Bga\GameFramework\Table
         // Get information about players.
         // NOTE: you can retrieve some extra field you added for "player" table in `dbmodel.sql` if you need it.
         $result["players"] = $this->getCollectionFromDb(
-            "SELECT `player_id` `id`, `player_score` `score` FROM `player`"
+            "SELECT `player_id` `id`, `player_score` `score`, `playerBoard` `playerBoard` FROM `player`"
         );
 
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
@@ -262,6 +263,15 @@ class Game extends \Bga\GameFramework\Table
         $this->activeNextPlayer();
         $this->globals->set("firstPlayer", $this->getActivePlayerId());
         return Start::class;
+    }
+
+    #[CheckAction(false)]
+    public function actChooseSide(string $curPlayer) {
+        $curSide = $this->getUniqueValueFromDB("SELECT `playerBoard` FROM `player` WHERE `player_id` = $curPlayer");
+        $curSide == "monster" ? $newSide = "human" : $newSide = "monster";
+        $this->DbQuery("UPDATE `player` SET `playerBoard` = '$newSide' WHERE `player_id` = $curPlayer");
+
+        $this->notify->all("playerBoardSide", "", ["player_id" => $curPlayer,"newSide" => $curSide]);
     }
 
     /**

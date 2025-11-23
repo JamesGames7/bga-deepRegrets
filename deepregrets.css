@@ -353,28 +353,37 @@ Setup in js:
   cursor: pointer;
 }
 
+.playerBoard {
+  background-image: url("img/boards/playerBoards.jpg");
+  width: calc(100% - 20px);
+  aspect-ratio: 1020/450;
+  background-size: 200% 500%;
+  margin: 10px;
+  max-width: 800px;
+}
+
 /* the other files */
 #ebd-body {
   background-image: url(img/woodbg.jpg);
   background-repeat: repeat;
 }
 
-.playercolourorange {
-  color: #cb5c21;
-}
-
-.playercolourteal {
-  color: #439ba0;
-}
-
-.playercolourred {
-  color: #ad3545;
+.playercolourblue {
+  color: #488fc7;
 }
 
 .playercolourgreen {
   color: #69ba35;
 }
 
-.playercolourblue {
-  color: #488fc7;
+.playercolourred {
+  color: #ad3545;
+}
+
+.playercolourteal {
+  color: #439ba0;
+}
+
+.playercolourorange {
+  color: #cb5c21;
 }

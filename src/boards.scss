@@ -94,3 +94,12 @@
         }
     }
 }
+
+.playerBoard {
+    background-image: url("img/boards/playerBoards.jpg");
+    width: calc(100% - 20px);
+    aspect-ratio: 1020 / 450;
+    background-size: 200% 500%;
+    margin: 10px;
+    max-width: 800px;
+}

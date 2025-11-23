@@ -44,6 +44,7 @@ ALTER TABLE `player` ADD `depth` varchar(10) DEFAULT '1';
 ALTER TABLE `player` ADD `fishbucks` INT UNSIGNED NOT NULL DEFAULT '0';
 ALTER TABLE `player` ADD `provisions` JSON;
 ALTER TABLE `player` ADD `passed` varchar(10) DEFAULT 'false';
+ALTER TABLE `player` ADD `playerBoard` varchar(10) DEFAULT 'monster';
 
 /*
 Decks:

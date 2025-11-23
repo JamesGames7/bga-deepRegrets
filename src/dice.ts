@@ -1,5 +1,23 @@
 // Three equations for brightness of dice based on rotation
 // Depends on angle: main side, top side, bottom side (45deg off each other)
+/*
+<div id="scene">
+    <div class="redP" id="dice">
+        <div class="face" id="f1"></div>
+        <div class="face" id="f2"></div>
+        <div class="face" id="f3"></div>
+        <div class="face" id="f4"></div>
+        <div class="triangle top" id="t1"></div>
+        <div class="triangle top" id="t2"></div>
+        <div class="triangle top" id="t3"></div>
+        <div class="triangle top" id="t4"></div>
+        <div class="triangle bottom" id="t5"></div>
+        <div class="triangle bottom" id="t6"></div>
+        <div class="triangle bottom" id="t7"></div>
+        <div class="triangle bottom" id="t8"></div>
+    </div>
+</div>
+ */
 const faceEq = (x: number): number => (1/4 * Math.cos(-19 * Math.PI / 180 * Math.cos(x + Math.PI / 4) + Math.PI / 2) + 9/10);
 const topEq = (x: number): number => (1/4 * Math.cos(-19 * Math.PI / 180 * Math.cos(x + Math.PI / 4) + Math.PI / 4) + 9/10);
 const bottomEq = (x: number): number => (1/4 * Math.cos(-19 * Math.PI / 180 * Math.cos(x + Math.PI / 4) + 3 * Math.PI / 4) + 9/10);

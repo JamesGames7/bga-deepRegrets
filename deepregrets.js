@@ -31,14 +31,22 @@ GameGui = (function () {
 var DeepRegrets = /** @class */ (function (_super) {
     __extends(DeepRegrets, _super);
     function DeepRegrets() {
+        var _this = 
         // @ts-ignore
-        return _super.call(this) || this;
+        _super.call(this) || this;
+        _this.COLOUR_POSITION = {
+            "488fc7": 0,
+            "69ba35": -100,
+            "ad3545": -200,
+            "439ba0": -300,
+            "cb5c21": -400
+        };
+        return _this;
     }
     DeepRegrets.prototype.setup = function (gamedatas) {
+        var _this = this;
         this.setupNotifications();
-        document.getElementById("game_play_area").insertAdjacentHTML("beforeend", "\n\t\t\t<div id=\"scene\">\n\t\t\t\t<div class=\"redP\" id=\"dice\">\n\t\t\t\t\t<div class=\"face\" id=\"f1\"></div>\n\t\t\t\t\t<div class=\"face\" id=\"f2\"></div>\n\t\t\t\t\t<div class=\"face\" id=\"f3\"></div>\n\t\t\t\t\t<div class=\"face\" id=\"f4\"></div>\n\t\t\t\t\t<div class=\"triangle top\" id=\"t1\"></div>\n\t\t\t\t\t<div class=\"triangle top\" id=\"t2\"></div>\n\t\t\t\t\t<div class=\"triangle top\" id=\"t3\"></div>\n\t\t\t\t\t<div class=\"triangle top\" id=\"t4\"></div>\n\t\t\t\t\t<div class=\"triangle bottom\" id=\"t5\"></div>\n\t\t\t\t\t<div class=\"triangle bottom\" id=\"t6\"></div>\n\t\t\t\t\t<div class=\"triangle bottom\" id=\"t7\"></div>\n\t\t\t\t\t<div class=\"triangle bottom\" id=\"t8\"></div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t<div id=\"boards\">\n\t\t\t\t<div id=\"sea_board\" style=\"zoom: ".concat(localStorage.getItem("sea_board") || ((document.getElementById("board").clientWidth / 726) > 1 ? document.getElementById("board").clientWidth / 726 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"sea_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"shoal_grid\">\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_graveyard_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_graveyard_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_graveyard_3\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div id=\"port_board\" style=\"zoom: ").concat(localStorage.getItem("port_board") || ((document.getElementById("board").clientWidth / 1500) > 1 ? document.getElementById("board").clientWidth / 1500 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"port_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\t\t\t\n\t\t\t</div>\n\t\t"));
-        diceSetup("dice");
-        diceRotation("dice");
+        document.getElementById("game_play_area").insertAdjacentHTML("beforeend", "\n\t\t\t<div id=\"boards\">\n\t\t\t\t<div id=\"sea_board\" style=\"zoom: ".concat(localStorage.getItem("sea_board") || ((document.getElementById("board").clientWidth / 726) > 1 ? document.getElementById("board").clientWidth / 726 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"sea_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"shoal_grid\">\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_graveyard_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_graveyard_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_graveyard_3\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div id=\"port_board\" style=\"zoom: ").concat(localStorage.getItem("port_board") || ((document.getElementById("board").clientWidth / 1500) > 1 ? document.getElementById("board").clientWidth / 1500 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"port_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\t\t\t\n\t\t\t</div>\n\t\t\t<div id=\"playerBoards\"></div>\n\t\t"));
         document.querySelectorAll(".utility_button").forEach(function (button) {
             var boards = document.getElementById("boards");
             var id = button.id;
@@ -71,12 +79,42 @@ var DeepRegrets = /** @class */ (function (_super) {
                 board.style.zoom = newZoom.toString();
             });
         });
+        Object.entries(gamedatas.players).forEach(function (player) {
+            var id = "playerBoard-".concat(player[0]);
+            var colour = player[1].color;
+            var space;
+            if (player[0].toString() == _this.player_id.toString()) {
+                space = "afterbegin";
+            }
+            else {
+                space = "beforeend";
+            }
+            document.getElementById("playerBoards").insertAdjacentHTML(space, "\n\t\t\t\t<div id=\"".concat(id, "\" class=\"playerBoard\"></div>\n\t\t\t"));
+            console.warn(player);
+            var playerBoard = document.getElementById(id);
+            playerBoard.style.backgroundPositionY = "".concat(_this.COLOUR_POSITION[colour], "%");
+            var position;
+            player[1].playerBoard == "monster" ? position = "0" : position = "-100%";
+            playerBoard.style.backgroundPositionX = position;
+            if (player[0].toString() == _this.player_id.toString()) {
+                playerBoard.addEventListener("click", function () {
+                    _this.bgaPerformAction("actChooseSide", { curPlayer: player[0] }, { checkAction: false });
+                });
+            }
+        });
     };
     DeepRegrets.prototype.onEnteringState = function (stateName, args) { };
     DeepRegrets.prototype.onLeavingState = function (stateName) { };
     DeepRegrets.prototype.onUpdateActionButtons = function (stateName, args) { };
     DeepRegrets.prototype.clientStateTest = function (args) { };
-    DeepRegrets.prototype.setupNotifications = function () { };
+    DeepRegrets.prototype.setupNotifications = function () {
+        this.bgaSetupPromiseNotifications();
+    };
+    DeepRegrets.prototype.notif_playerBoardSide = function (args) {
+        var position;
+        args.newSide == "monster" ? position = "-100%" : position = "0";
+        document.getElementById("playerBoard-".concat(args.player_id)).style.backgroundPositionX = position;
+    };
     return DeepRegrets;
 }(GameGui));
 define([
@@ -89,6 +127,24 @@ define([
 });
 // Three equations for brightness of dice based on rotation
 // Depends on angle: main side, top side, bottom side (45deg off each other)
+/*
+<div id="scene">
+    <div class="redP" id="dice">
+        <div class="face" id="f1"></div>
+        <div class="face" id="f2"></div>
+        <div class="face" id="f3"></div>
+        <div class="face" id="f4"></div>
+        <div class="triangle top" id="t1"></div>
+        <div class="triangle top" id="t2"></div>
+        <div class="triangle top" id="t3"></div>
+        <div class="triangle top" id="t4"></div>
+        <div class="triangle bottom" id="t5"></div>
+        <div class="triangle bottom" id="t6"></div>
+        <div class="triangle bottom" id="t7"></div>
+        <div class="triangle bottom" id="t8"></div>
+    </div>
+</div>
+ */
 var faceEq = function (x) { return (1 / 4 * Math.cos(-19 * Math.PI / 180 * Math.cos(x + Math.PI / 4) + Math.PI / 2) + 9 / 10); };
 var topEq = function (x) { return (1 / 4 * Math.cos(-19 * Math.PI / 180 * Math.cos(x + Math.PI / 4) + Math.PI / 4) + 9 / 10); };
 var bottomEq = function (x) { return (1 / 4 * Math.cos(-19 * Math.PI / 180 * Math.cos(x + Math.PI / 4) + 3 * Math.PI / 4) + 9 / 10); };
