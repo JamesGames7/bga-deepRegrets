@@ -147,6 +147,31 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				}
 			}
 		})
+
+		document.getElementById("game_play_area").insertAdjacentHTML("afterend", `
+			<div id="icon_reference" class="tiny reference"></div>
+			<div id="sea_reference" class="tiny reference"></div>
+		`)
+		document.getElementById("icon_reference").addEventListener("click", () => {
+			if (document.getElementById("icon_reference").classList.contains("tiny")) {
+				document.getElementById("icon_reference").classList.remove("tiny");
+				document.getElementById("icon_reference").classList.add("large");
+				document.getElementById("sea_reference").style.left = `310px`;
+			} else {
+				document.getElementById("icon_reference").classList.remove("large");
+				document.getElementById("icon_reference").classList.add("tiny");
+				document.getElementById("sea_reference").style.left = `60px`;
+			}
+		});
+		document.getElementById("sea_reference").addEventListener("click", () => {
+			if (document.getElementById("sea_reference").classList.contains("tiny")) {
+				document.getElementById("sea_reference").classList.remove("tiny");
+				document.getElementById("sea_reference").classList.add("large");
+			} else {
+				document.getElementById("sea_reference").classList.remove("large");
+				document.getElementById("sea_reference").classList.add("tiny");
+			}
+		});
 	} 
 	public onEnteringState(stateName: string, args: any) {}
 	public onLeavingState(stateName: string) {}

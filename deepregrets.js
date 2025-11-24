@@ -112,6 +112,29 @@ var DeepRegrets = /** @class */ (function (_super) {
                 }
             }
         });
+        document.getElementById("game_play_area").insertAdjacentHTML("afterend", "\n\t\t\t<div id=\"icon_reference\" class=\"tiny reference\"></div>\n\t\t\t<div id=\"sea_reference\" class=\"tiny reference\"></div>\n\t\t");
+        document.getElementById("icon_reference").addEventListener("click", function () {
+            if (document.getElementById("icon_reference").classList.contains("tiny")) {
+                document.getElementById("icon_reference").classList.remove("tiny");
+                document.getElementById("icon_reference").classList.add("large");
+                document.getElementById("sea_reference").style.left = "310px";
+            }
+            else {
+                document.getElementById("icon_reference").classList.remove("large");
+                document.getElementById("icon_reference").classList.add("tiny");
+                document.getElementById("sea_reference").style.left = "60px";
+            }
+        });
+        document.getElementById("sea_reference").addEventListener("click", function () {
+            if (document.getElementById("sea_reference").classList.contains("tiny")) {
+                document.getElementById("sea_reference").classList.remove("tiny");
+                document.getElementById("sea_reference").classList.add("large");
+            }
+            else {
+                document.getElementById("sea_reference").classList.remove("large");
+                document.getElementById("sea_reference").classList.add("tiny");
+            }
+        });
     };
     DeepRegrets.prototype.onEnteringState = function (stateName, args) { };
     DeepRegrets.prototype.onLeavingState = function (stateName) { };

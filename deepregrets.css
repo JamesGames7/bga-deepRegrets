@@ -379,6 +379,36 @@ Setup in js:
     width: 7cqw;
   }
 }
+.reference {
+  background-image: url("img/reference.png");
+  position: fixed;
+  bottom: 5px;
+  transition: all 1s ease;
+  z-index: 5;
+}
+.reference.tiny {
+  border-radius: 50%;
+  width: 50px;
+  aspect-ratio: 1;
+  background-position: -15px -7px;
+}
+.reference.large {
+  width: 300px;
+  aspect-ratio: 420/600;
+  background-size: 200% 100%;
+}
+
+#icon_reference {
+  left: 5px;
+}
+
+#sea_reference {
+  left: 60px;
+  background-position-x: -100%;
+  background-position-y: -20%;
+  background-size: 200% auto;
+}
+
 /* the other files */
 #ebd-body {
   background-image: url(img/woodbg.jpg);
