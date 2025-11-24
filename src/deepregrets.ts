@@ -148,6 +148,16 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			}
 		})
 
+		for (let i = 1; i <= 6; i++) {
+			document.getElementById("port_board").insertAdjacentHTML("beforeend", `
+				<div id="day-${i}" class="dayTracker-slot"></div>
+			`)
+
+			if (i != gamedatas.day) {
+				document.getElementById(`day-${i}`).style.opacity = "0";
+			}
+		}
+
 		document.getElementById("game_play_area").insertAdjacentHTML("afterend", `
 			<div id="icon_reference" class="tiny reference"></div>
 			<div id="sea_reference" class="tiny reference"></div>

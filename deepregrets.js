@@ -112,6 +112,12 @@ var DeepRegrets = /** @class */ (function (_super) {
                 }
             }
         });
+        for (var i = 1; i <= 6; i++) {
+            document.getElementById("port_board").insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"day-".concat(i, "\" class=\"dayTracker-slot\"></div>\n\t\t\t"));
+            if (i != gamedatas.day) {
+                document.getElementById("day-".concat(i)).style.opacity = "0";
+            }
+        }
         document.getElementById("game_play_area").insertAdjacentHTML("afterend", "\n\t\t\t<div id=\"icon_reference\" class=\"tiny reference\"></div>\n\t\t\t<div id=\"sea_reference\" class=\"tiny reference\"></div>\n\t\t");
         document.getElementById("icon_reference").addEventListener("click", function () {
             if (document.getElementById("icon_reference").classList.contains("tiny")) {

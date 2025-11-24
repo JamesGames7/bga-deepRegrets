@@ -314,6 +314,45 @@ Setup in js:
   border-radius: 2px;
   box-shadow: 1px 1px 1px black;
   zoom: 1;
+  container: port/inline-size;
+}
+#boards #port_board .dayTracker-slot {
+  aspect-ratio: 1;
+  background-image: url("img/other/day.png");
+  background-size: 100% 100%;
+  width: 100px;
+  position: absolute;
+  top: -43px;
+}
+@container port (width > 0px) {
+  #boards #port_board #day-1 {
+    left: 54.8cqw;
+  }
+}
+@container port (width > 0px) {
+  #boards #port_board #day-2 {
+    left: 62.04cqw;
+  }
+}
+@container port (width > 0px) {
+  #boards #port_board #day-3 {
+    left: 69.28cqw;
+  }
+}
+@container port (width > 0px) {
+  #boards #port_board #day-4 {
+    left: 76.52cqw;
+  }
+}
+@container port (width > 0px) {
+  #boards #port_board #day-5 {
+    left: 83.76cqw;
+  }
+}
+@container port (width > 0px) {
+  #boards #port_board #day-6 {
+    left: 91cqw;
+  }
 }
 #boards .size_buttons {
   display: flex;

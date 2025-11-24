@@ -65,6 +65,24 @@
         border-radius: 2px;
         box-shadow: 1px 1px 1px black;
         zoom: 1;
+        container: port / inline-size;
+
+        .dayTracker-slot {
+            aspect-ratio: 1;
+            background-image: url('img/other/day.png');
+            background-size: 100% 100%;
+            width: 100px;
+            position: absolute;
+            top: -43px;
+        }
+
+        @for $i from 1 through 6 {
+            @container port (width > 0px) {
+                #day-#{$i} {
+                    left: calc(54.8cqw + ($i - 1) * 7.24cqw);
+                }
+            }
+        }
     }
 
     .size_buttons {

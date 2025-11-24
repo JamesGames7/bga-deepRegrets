@@ -2,8 +2,9 @@ define([
     "dojo","dojo/_base/declare",
     "ebg/core/gamegui",
     "ebg/counter",
-    "ebg/stock"
+    getLibUrl('bga-animations', '1.x'),
+    getLibUrl('bga-cards', '1.x')
 ],
-function (dojo, declare) {
+function (dojo, declare, gamegui, counter, BgaAnimations, BgaCards) {
     return declare("bgagame.deepregrets", ebg.core.gamegui, new DeepRegrets());             
 });

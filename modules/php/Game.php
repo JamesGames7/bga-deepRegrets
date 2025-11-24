@@ -142,6 +142,8 @@ class Game extends \Bga\GameFramework\Table
             "SELECT `player_id` `id`, `player_score` `score`, `playerBoard` `playerBoard`, `fishbucks` `fishbucks` FROM `player`"
         );
 
+        $result["day"] = $this->globals->get("day");
+
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
 
         return $result;
