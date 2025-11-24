@@ -360,8 +360,25 @@ Setup in js:
   background-size: 200% 500%;
   margin: 10px;
   max-width: 800px;
+  position: relative;
+  container: playerBoard/size;
 }
 
+.fishbuck-slot {
+  background-image: url("img/other/moneyTrackers.png");
+  background-size: 100% 500%;
+  aspect-ratio: 1;
+  position: absolute;
+  border-radius: 50%;
+  box-shadow: 1px 1px 1px black;
+}
+
+@container playerBoard (width > 0px) {
+  .fishbuck-slot {
+    top: 14.5cqh;
+    width: 7cqw;
+  }
+}
 /* the other files */
 #ebd-body {
   background-image: url(img/woodbg.jpg);

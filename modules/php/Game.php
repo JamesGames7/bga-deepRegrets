@@ -139,7 +139,7 @@ class Game extends \Bga\GameFramework\Table
         // Get information about players.
         // NOTE: you can retrieve some extra field you added for "player" table in `dbmodel.sql` if you need it.
         $result["players"] = $this->getCollectionFromDb(
-            "SELECT `player_id` `id`, `player_score` `score`, `playerBoard` `playerBoard` FROM `player`"
+            "SELECT `player_id` `id`, `player_score` `score`, `playerBoard` `playerBoard`, `fishbucks` `fishbucks` FROM `player`"
         );
 
         // TODO: Gather all information about current game situation (visible by player $current_player_id).

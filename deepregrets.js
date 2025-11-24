@@ -90,7 +90,6 @@ var DeepRegrets = /** @class */ (function (_super) {
                 space = "beforeend";
             }
             document.getElementById("playerBoards").insertAdjacentHTML(space, "\n\t\t\t\t<div id=\"".concat(id, "\" class=\"playerBoard\"></div>\n\t\t\t"));
-            console.warn(player);
             var playerBoard = document.getElementById(id);
             playerBoard.style.backgroundPositionY = "".concat(_this.COLOUR_POSITION[colour], "%");
             var position;
@@ -100,6 +99,17 @@ var DeepRegrets = /** @class */ (function (_super) {
                 playerBoard.addEventListener("click", function () {
                     _this.bgaPerformAction("actChooseSide", { curPlayer: player[0] }, { checkAction: false });
                 });
+            }
+            for (var i = 0; i <= 10; i++) {
+                playerBoard.insertAdjacentHTML("beforeend", "\n\t\t\t\t\t<div id=\"fishbuck-slot-".concat(player[0], "-").concat(i, "\" class=\"fishbuck-slot\"></div>\n\t\t\t\t"));
+                var style = document.createElement('style');
+                var css = "\n\t\t\t\t\t@container playerBoard (width > 0px) {\n\t\t\t\t\t\t#fishbuck-slot-".concat(player[0], "-").concat(i, " {\n\t\t\t\t\t\t\tleft: ").concat(i == 10 ? 90.6 : 41.1 + i * 4.9, "cqw;\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t");
+                style.appendChild(document.createTextNode(css));
+                document.head.appendChild(style);
+                document.getElementById("fishbuck-slot-".concat(player[0], "-").concat(i)).style.backgroundPositionY = "".concat(_this.COLOUR_POSITION[colour], "%");
+                if (player[1].fishbucks != i) {
+                    document.getElementById("fishbuck-slot-".concat(player[0], "-").concat(i)).style.opacity = "0";
+                }
             }
         });
     };

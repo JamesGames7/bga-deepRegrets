@@ -57,7 +57,6 @@ class LifePreserver extends GameState
 
     function onEnteringState(int $activePlayerId) {
         // the code to run when entering the state
-        $this->notify->all("test", strval($activePlayerId));
     }   
 
     function zombie(int $playerId): string {

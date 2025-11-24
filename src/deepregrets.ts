@@ -111,7 +111,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			document.getElementById("playerBoards").insertAdjacentHTML(space, `
 				<div id="${id}" class="playerBoard"></div>
 			`);
-			console.warn(player);
 			let playerBoard: HTMLElement = document.getElementById(id);
 			playerBoard.style.backgroundPositionY = `${this.COLOUR_POSITION[colour]}%`;
 			let position: string;
@@ -122,6 +121,30 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				playerBoard.addEventListener("click", () => {
 					this.bgaPerformAction(`actChooseSide`, {curPlayer: player[0]}, {checkAction: false});
 				});
+			}
+
+			for (let i = 0; i <= 10; i++) {
+				playerBoard.insertAdjacentHTML("beforeend", `
+					<div id="fishbuck-slot-${player[0]}-${i}" class="fishbuck-slot"></div>
+				`);
+
+				const style = document.createElement('style');
+				
+				const css = `
+					@container playerBoard (width > 0px) {
+						#fishbuck-slot-${player[0]}-${i} {
+							left: ${i == 10 ? 90.6 : 41.1 + i * 4.9}cqw;
+						}
+					}
+				`;
+				style.appendChild(document.createTextNode(css));
+				document.head.appendChild(style);
+
+				document.getElementById(`fishbuck-slot-${player[0]}-${i}`).style.backgroundPositionY = `${this.COLOUR_POSITION[colour]}%`;
+
+				if ((player[1] as any).fishbucks != i) {
+					document.getElementById(`fishbuck-slot-${player[0]}-${i}`).style.opacity = "0";
+				}
 			}
 		})
 	} 
