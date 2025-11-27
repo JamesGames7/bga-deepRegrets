@@ -142,6 +142,10 @@ class Game extends \Bga\GameFramework\Table
             "SELECT `player_id` `id`, `player_score` `score`, `playerBoard` `playerBoard`, `fishbucks` `fishbucks` FROM `player`"
         );
 
+        foreach(array_keys($this->loadPlayersBasicInfos()) as $id) {
+            $result["players"][$id]["dice"] = $this->dice->getCardsInLocation(["spent", "fresh", "roll"], $id);
+        }
+
         $result["day"] = $this->globals->get("day");
 
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
@@ -193,22 +197,40 @@ class Game extends \Bga\GameFramework\Table
 
         // Everything to do with dice deck setup
         $dice = [];
-        $dice[] = ['type' => "player", "type_arg" => 0, "nbr" => 15];
-        $dice[] = ['type' => "blue", "type_arg" => 0, "nbr" => 9];
-        $dice[] = ['type' => "green", "type_arg" => 0, "nbr" => 8];
-        $dice[] = ['type' => "orange", "type_arg" => 0, "nbr" => 7];
+        $dice[] = ['type' => "blueP", "type_arg" => 0, "nbr" => 3];
+        $dice[] = ['type' => "greenP", "type_arg" => 0, "nbr" => 3];
+        $dice[] = ['type' => "redP", "type_arg" => 0, "nbr" => 3];
+        $dice[] = ['type' => "orangeP", "type_arg" => 0, "nbr" => 3];
+        $dice[] = ['type' => "tealP", "type_arg" => 0, "nbr" => 3];
+        $dice[] = ['type' => "blueT", "type_arg" => 0, "nbr" => 9];
+        $dice[] = ['type' => "greenT", "type_arg" => 0, "nbr" => 8];
+        $dice[] = ['type' => "orangeT", "type_arg" => 0, "nbr" => 7];
         $this->dice->createCards($dice);
 
-        $counter = 0;
-        $ids = array_keys($players);
-        foreach ($this->dice->getCardsOfType("player") as $curDice) {
-            $index = floor($counter / 3);
-            if ($index < count($ids)) {
-                $this->dice->moveCard($curDice["id"], "spent", $ids[$index]);
-            } else {
-                $this->dice->moveCard($curDice["id"], "OOP");
+        $colourNames = [
+            "blue" => "488fc7",
+            "green" => "69ba35",
+            "red" => "ad3545",
+            "teal" => "439ba0",
+            "orange" => "cb5c21", 
+        ];
+        foreach (["blueP", "greenP", "redP", "orangeP", "tealP"] as $type) {
+            foreach ($this->dice->getCardsOfType($type) as $curDice) {
+                $colour = substr($type, 0, strpos($type, "P"));
+                $playerId = -1;
+                foreach($this->loadPlayersBasicInfos() as $id => $info) {
+                    $curColour = $info['player_color'];
+                    if ($colourNames[$colour] == $curColour) {
+                        $playerId = $id;
+                    }
+                }
+
+                if ($playerId != -1) {
+                    $this->dice->moveCard($curDice["id"], "spent", $playerId);
+                } else {
+                    $this->dice->moveCard($curDice["id"], "OOP");
+                }
             }
-            $counter++;
         }
         $this->dice->shuffle("deck");
 

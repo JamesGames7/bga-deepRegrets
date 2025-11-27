@@ -15,10 +15,14 @@ use Bga\Games\DeepRegrets\Game;
 class LifePreserverNP extends GameState
 {
     private $COLOUR = [
-        "blue" => [0, 0, 1, 2],
-        "green" => [1, 1, 2, 3],
-        "orange" => [2, 3, 2, 3],
-        "player" => [1, 1, 2, 3],
+        "blueT" => [0, 0, 1, 2],
+        "greenT" => [1, 1, 2, 3],
+        "orangeT" => [2, 3, 2, 3],
+        "blueP" => [1, 1, 2, 3],
+        "greenP" => [1, 1, 2, 3],
+        "tealP" => [1, 1, 2, 3],
+        "orangeP" => [1, 1, 2, 3],
+        "redP" => [1, 1, 2, 3],
         "omen" => [1, 2, 3, 4]
     ];
     function __construct(

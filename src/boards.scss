@@ -71,7 +71,6 @@
             aspect-ratio: 1;
             background-image: url('img/other/day.png');
             background-size: 100% 100%;
-            width: 100px;
             position: absolute;
             top: -43px;
         }
@@ -80,6 +79,7 @@
             @container port (width > 0px) {
                 #day-#{$i} {
                     left: calc(54.8cqw + ($i - 1) * 7.24cqw);
+                    width: 6.7cqw;
                 }
             }
         }
@@ -119,9 +119,22 @@
     aspect-ratio: 1020 / 450;
     background-size: 200% 500%;
     margin: 10px;
-    max-width: 800px;
+    max-width: 720px;
     position: relative;
-    container: playerBoard / size;
+    .freshGrid {
+        width: 245px;
+        height: 130px;
+        position: absolute;
+        left: 308px;
+        top: 127px;
+    }
+    .spentGrid {
+        width: 137px;
+        height: 133px;
+        position: absolute;
+        left: 564px;
+        top: 127px;
+    }
 }
 
 .fishbuck-slot {
@@ -132,10 +145,11 @@
     border-radius: 50%;
     box-shadow: 1px 1px 1px black;
 }
+.fishbuck-slot {
+    top: 46px;
+    width: 50px;
+}
 
-@container playerBoard (width > 0px) {
-    .fishbuck-slot {
-        top: 14.5cqh;
-        width: 7cqw;
-    }
+.dice-front {
+    background-image: url('img/dice/sides.jpg');
 }

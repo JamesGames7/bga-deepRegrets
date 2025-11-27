@@ -16,12 +16,27 @@ GameGui = (function () { // this hack required so we fake extend GameGui
 
 // Note: it does not really extend it in es6 way, you cannot call super you have to use dojo way 
 class DeepRegrets extends GameGui<DeepRegretsGamedatas> { 
+	public animationManager;
+	public diceManager;
+	public freshStock = {};
+	public spentStock = {};
 	private COLOUR_POSITION = {
 		"488fc7": 0,
 		"69ba35": -100,
 		"ad3545": -200,
 		"439ba0": -300,
 		"cb5c21": -400
+	}
+	private DICE_POSITION = {
+		"blueP": 0, 
+		"blueT": -100, 
+		"greenP": -200, 
+		"greenT": -300, 
+		"omen": -400, 
+		"redP": -500, 
+		"tealP": -600, 
+		"orangeP": -700, 
+		"orangeT": -800
 	}
 
 	constructor() {
@@ -64,6 +79,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				</div>			
 			</div>
 			<div id="playerBoards"></div>
+			<div id="lineGrid"></div>
 		`)
 
 		document.querySelectorAll(".utility_button").forEach(button => {
@@ -99,6 +115,30 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			});
 		});
 
+		// create the animation manager, and bind it to the `game.bgaAnimationsActive()` function
+        this.animationManager = new BgaAnimations.Manager({
+            animationsActive: () => this.bgaAnimationsActive(),
+        });
+
+        // create the card manager
+        this.diceManager = new BgaCards.Manager({
+            animationManager: this.animationManager,
+            type: 'dice',
+            getId: (dice) => (dice as any).id,
+			cardWidth: 95 / 2,
+			cardHeight: 132 / 2,
+			setupDiv: (dice, div) => {
+				div.dataset.type = (dice as any).type;
+				div.dataset.typeArg = (dice as any).type_arg;
+			},
+            setupFrontDiv: (dice, div) => {
+				div.style.backgroundPositionX = `${this.DICE_POSITION[(dice as any).type]}%`; 
+				div.style.backgroundPositionY = `-${(dice as any).type_arg}00%`;
+				div.style.backgroundSize = "900% 400%";
+                this.addTooltipHtml(div.id, `Dice in ${(dice as any).location} pool`);
+            },
+        });
+
 		Object.entries(gamedatas.players).forEach(player => {
 			let id: string = `playerBoard-${player[0]}`;
 			let colour: string = (player[1] as any).color;
@@ -128,17 +168,11 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					<div id="fishbuck-slot-${player[0]}-${i}" class="fishbuck-slot"></div>
 				`);
 
-				const style = document.createElement('style');
-				
-				const css = `
-					@container playerBoard (width > 0px) {
-						#fishbuck-slot-${player[0]}-${i} {
-							left: ${i == 10 ? 90.6 : 41.1 + i * 4.9}cqw;
-						}
-					}
-				`;
-				style.appendChild(document.createTextNode(css));
-				document.head.appendChild(style);
+				if (i < 10) {
+					document.getElementById(`fishbuck-slot-${player[0]}-${i}`).style.left = `calc(296px + ${i} * 35.2px)`;
+				} else {
+					document.getElementById(`fishbuck-slot-${player[0]}-${i}`).style.left = `653px`
+				}
 
 				document.getElementById(`fishbuck-slot-${player[0]}-${i}`).style.backgroundPositionY = `${this.COLOUR_POSITION[colour]}%`;
 
@@ -146,7 +180,32 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					document.getElementById(`fishbuck-slot-${player[0]}-${i}`).style.opacity = "0";
 				}
 			}
+
+			playerBoard.insertAdjacentHTML("beforeend", `
+				<div id="freshGrid-${player[0]}" class="freshGrid"></div>
+				<div id="spentGrid-${player[0]}" class="spentGrid"></div>	
+			`)
+
+			this.freshStock[player[0]] = new BgaCards.LineStock(this.diceManager, document.getElementById(`freshGrid-${player[0]}`), {sort: BgaCards.sort('type_arg', 'type')});
+			this.spentStock[player[0]] = new BgaCards.LineStock(this.diceManager, document.getElementById(`spentGrid-${player[0]}`), {sort: BgaCards.sort('type_arg', 'type')});
+			Object.values((player[1] as any).dice).forEach(die => {
+				switch (die["location"]) {
+					case "fresh":
+						this.freshStock[player[0]].addCard(die);
+						break;
+					case "spent":
+						this.spentStock[player[0]].addCard(die);
+						break;
+					default:
+						this.showMessage(die["location"] + "has not yet been defined", "error");
+						break;
+				}
+			})
 		})
+		// this.freshStock = new BgaCards.LineStock(this.diceManager, document.getElementById("lineGrid"));
+		// (this.freshStock as any).addCard({id: 1, type: "redP", type_arg: 1, location: "fresh", location_arg: 0});
+		// console.log(this.freshStock);
+
 
 		for (let i = 1; i <= 6; i++) {
 			document.getElementById("port_board").insertAdjacentHTML("beforeend", `

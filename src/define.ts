@@ -6,5 +6,7 @@ define([
     getLibUrl('bga-cards', '1.x')
 ],
 function (dojo, declare, gamegui, counter, BgaAnimations, BgaCards) {
+    (window as any).BgaAnimations = BgaAnimations;
+    (window as any).BgaCards = BgaCards;
     return declare("bgagame.deepregrets", ebg.core.gamegui, new DeepRegrets());             
 });
