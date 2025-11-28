@@ -256,54 +256,6 @@ Setup in js:
   height: 100%;
   border-radius: 10px;
 }
-#boards #sea_board #shoal_1_1 {
-  left: 84px;
-  top: 149px;
-}
-#boards #sea_board #shoal_2_1 {
-  left: 267px;
-  top: 149px;
-}
-#boards #sea_board #shoal_3_1 {
-  left: 451px;
-  top: 149px;
-}
-#boards #sea_board #shoal_1_2 {
-  left: 84px;
-  top: 398px;
-}
-#boards #sea_board #shoal_2_2 {
-  left: 267px;
-  top: 398px;
-}
-#boards #sea_board #shoal_3_2 {
-  left: 451px;
-  top: 398px;
-}
-#boards #sea_board #shoal_1_3 {
-  left: 84px;
-  top: 648px;
-}
-#boards #sea_board #shoal_2_3 {
-  left: 267px;
-  top: 648px;
-}
-#boards #sea_board #shoal_3_3 {
-  left: 451px;
-  top: 648px;
-}
-#boards #sea_board #shoal_graveyard_1 {
-  left: 634px;
-  top: 149px;
-}
-#boards #sea_board #shoal_graveyard_2 {
-  left: 634px;
-  top: 398px;
-}
-#boards #sea_board #shoal_graveyard_3 {
-  left: 634px;
-  top: 648px;
-}
 #boards #port_board {
   max-width: 1500px;
   width: 100%;
@@ -435,10 +387,6 @@ Setup in js:
   width: 50px;
 }
 
-.dice-front {
-  background-image: url("img/dice/sides.jpg");
-}
-
 .reference {
   background-image: url("img/reference.png");
   position: fixed;
@@ -457,6 +405,7 @@ Setup in js:
   width: 300px;
   aspect-ratio: 420/600;
   background-size: 200% 100%;
+  border-radius: 7px;
 }
 
 #icon_reference {

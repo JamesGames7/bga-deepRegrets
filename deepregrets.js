@@ -36,6 +36,7 @@ var DeepRegrets = /** @class */ (function (_super) {
         _super.call(this) || this;
         _this.freshStock = {};
         _this.spentStock = {};
+        _this.shoalStocks = [];
         _this.COLOUR_POSITION = {
             "488fc7": 0,
             "69ba35": -100,
@@ -54,12 +55,17 @@ var DeepRegrets = /** @class */ (function (_super) {
             "orangeP": -700,
             "orangeT": -800
         };
+        _this.SHOAL_SIZE = {
+            "small": 0,
+            "middling": 1,
+            "large": 2
+        };
         return _this;
     }
     DeepRegrets.prototype.setup = function (gamedatas) {
         var _this = this;
         this.setupNotifications();
-        document.getElementById("game_play_area").insertAdjacentHTML("beforeend", "\n\t\t\t<div id=\"boards\">\n\t\t\t\t<div id=\"sea_board\" style=\"zoom: ".concat(localStorage.getItem("sea_board") || ((document.getElementById("board").clientWidth / 726) > 1 ? document.getElementById("board").clientWidth / 726 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"sea_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"shoal_grid\">\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_graveyard_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_graveyard_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_graveyard_3\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div id=\"port_board\" style=\"zoom: ").concat(localStorage.getItem("port_board") || ((document.getElementById("board").clientWidth / 1500) > 1 ? document.getElementById("board").clientWidth / 1500 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"port_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\t\t\t\n\t\t\t</div>\n\t\t\t<div id=\"playerBoards\"></div>\n\t\t\t<div id=\"lineGrid\"></div>\n\t\t"));
+        document.getElementById("game_play_area").insertAdjacentHTML("beforeend", "\n\t\t\t<div id=\"boards\">\n\t\t\t\t<div id=\"sea_board\" style=\"zoom: ".concat(localStorage.getItem("sea_board") || ((document.getElementById("board").clientWidth / 726) > 1 ? document.getElementById("board").clientWidth / 726 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"sea_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"shoal_grid\">\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_graveyard\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_graveyard\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_graveyard\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div id=\"port_board\" style=\"zoom: ").concat(localStorage.getItem("port_board") || ((document.getElementById("board").clientWidth / 1500) > 1 ? document.getElementById("board").clientWidth / 1500 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"port_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\t\t\t\n\t\t\t</div>\n\t\t\t<div id=\"playerBoards\"></div>\n\t\t\t<div id=\"lineGrid\"></div>\n\t\t"));
         document.querySelectorAll(".utility_button").forEach(function (button) {
             var boards = document.getElementById("boards");
             var id = button.id;
@@ -97,6 +103,38 @@ var DeepRegrets = /** @class */ (function (_super) {
             animationsActive: function () { return _this.bgaAnimationsActive(); },
         });
         // create the card manager
+        this.seaCardManager = new BgaCards.Manager({
+            animationManager: this.animationManager,
+            type: 'card',
+            getId: function (card) { return card.id; },
+            cardWidth: 156,
+            cardHeight: 215,
+            isCardVisible: function (card) {
+                return card.coords[0] != -1;
+            },
+            setupDiv: function (card, div) {
+                div.dataset.type = card.type;
+                div.dataset.typeArg = card.type_arg;
+            },
+            setupBackDiv: function (card, div) {
+                div.style.backgroundImage = "url(".concat(g_gamethemeurl, "img/seaBacks.png)");
+                div.style.backgroundSize = "300% 300%";
+                div.style.borderRadius = "6px";
+                div.style.backgroundPositionX = "-".concat(card.size, "00%");
+                div.style.backgroundPositionY = "-".concat(card.depth - 1, "00%");
+                _this.addTooltipHtml(div.id, "Fish in a shoal<br><strong>Depth:</strong> ".concat(card.depth, "<br><strong>Size:</strong> ").concat(Object.keys(_this.SHOAL_SIZE).find(function (key) { return _this.SHOAL_SIZE[key] === card.size; })));
+            },
+            setupFrontDiv: function (card, div) {
+                div.style.backgroundImage = "url(".concat(g_gamethemeurl, "img/seaCards.png)");
+                div.style.backgroundSize = "1300% 900%";
+                div.style.borderRadius = "6px";
+                div.style.backgroundPositionX = "-".concat(card.coords[0], "00%");
+                div.style.backgroundPositionY = "-".concat(card.coords[1], "00%");
+                // TODO - Improve tooltip
+                _this.addTooltipHtml(div.id, "Card in a shoal");
+            },
+        });
+        // create the dice manager
         this.diceManager = new BgaCards.Manager({
             animationManager: this.animationManager,
             type: 'dice',
@@ -112,6 +150,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                 div.style.backgroundPositionY = "-".concat(dice.type_arg, "00%");
                 div.style.backgroundSize = "900% 400%";
                 _this.addTooltipHtml(div.id, "Dice in ".concat(dice.location, " pool"));
+                div.style.backgroundImage = "url(".concat(g_gamethemeurl, "img/dice/sides.jpg)");
             },
         });
         Object.entries(gamedatas.players).forEach(function (player) {
@@ -165,9 +204,31 @@ var DeepRegrets = /** @class */ (function (_super) {
                 }
             });
         });
-        // this.freshStock = new BgaCards.LineStock(this.diceManager, document.getElementById("lineGrid"));
-        // (this.freshStock as any).addCard({id: 1, type: "redP", type_arg: 1, location: "fresh", location_arg: 0});
-        // console.log(this.freshStock);
+        for (var depth = 0; depth < 3; depth++) {
+            var curDepth = [];
+            for (var num = 0; num < 3; num++) {
+                curDepth.push(new BgaCards.Deck(this.seaCardManager, document.getElementById("shoal_".concat(depth + 1, "_").concat(num + 1)), { cardNumber: 0 }));
+            }
+            this.shoalStocks.push(curDepth);
+        }
+        console.log(this.shoalStocks);
+        console.log(gamedatas.shoals);
+        var index = 0;
+        this.shoalStocks.forEach(function (depth) {
+            depth.forEach(function (shoal) {
+                var curShoal = gamedatas.shoals[index];
+                if (curShoal[3]) {
+                    console.log(curShoal);
+                    shoal.addCard({ id: curShoal[3]["name"], coords: curShoal[3]["coords"] }, { initialSide: "front", finalSide: "front" });
+                }
+                else {
+                    var size = _this.SHOAL_SIZE[curShoal[1]];
+                    var curDepth = curShoal[2];
+                    shoal.addCard({ id: index - 9, size: size, depth: curDepth, coords: [-1, -1] }, { finalSide: "back" });
+                }
+                index++;
+            });
+        });
         for (var i = 1; i <= 6; i++) {
             document.getElementById("port_board").insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"day-".concat(i, "\" class=\"dayTracker-slot\"></div>\n\t\t\t"));
             if (i != gamedatas.day) {

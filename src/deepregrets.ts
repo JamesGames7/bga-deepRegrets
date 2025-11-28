@@ -18,8 +18,10 @@ GameGui = (function () { // this hack required so we fake extend GameGui
 class DeepRegrets extends GameGui<DeepRegretsGamedatas> { 
 	public animationManager;
 	public diceManager;
+	public seaCardManager;
 	public freshStock = {};
 	public spentStock = {};
+	public shoalStocks: any[][] = [];
 	private COLOUR_POSITION = {
 		"488fc7": 0,
 		"69ba35": -100,
@@ -37,6 +39,11 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		"tealP": -600, 
 		"orangeP": -700, 
 		"orangeT": -800
+	}
+	private SHOAL_SIZE = {
+		"small": 0,
+		"middling": 1,
+		"large": 2
 	}
 
 	constructor() {
@@ -57,17 +64,17 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					</div>
 					<div id="shoal_grid">
 						<div class="shoal" id="shoal_1_1"></div>
-						<div class="shoal" id="shoal_2_1"></div>
-						<div class="shoal" id="shoal_3_1"></div>
-						<div class="shoal" id="shoal_graveyard_1"></div>
 						<div class="shoal" id="shoal_1_2"></div>
-						<div class="shoal" id="shoal_2_2"></div>
-						<div class="shoal" id="shoal_3_2"></div>
-						<div class="shoal" id="shoal_graveyard_2"></div>
 						<div class="shoal" id="shoal_1_3"></div>
+						<div class="shoal" id="shoal_1_graveyard"></div>
+						<div class="shoal" id="shoal_2_1"></div>
+						<div class="shoal" id="shoal_2_2"></div>
 						<div class="shoal" id="shoal_2_3"></div>
+						<div class="shoal" id="shoal_2_graveyard"></div>
+						<div class="shoal" id="shoal_3_1"></div>
+						<div class="shoal" id="shoal_3_2"></div>
 						<div class="shoal" id="shoal_3_3"></div>
-						<div class="shoal" id="shoal_graveyard_3"></div>
+						<div class="shoal" id="shoal_3_graveyard"></div>
 					</div>
 				</div>
 				<div id="port_board" style="zoom: ${localStorage.getItem("port_board") || ((document.getElementById("board").clientWidth / 1500) > 1 ? document.getElementById("board").clientWidth / 1500 : 1)}">
@@ -121,6 +128,39 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
         });
 
         // create the card manager
+        this.seaCardManager = new BgaCards.Manager({
+            animationManager: this.animationManager,
+            type: 'card',
+            getId: (card) => (card as any).id,
+			cardWidth: 156,
+			cardHeight: 215,
+			isCardVisible(card: {coords}) {
+				return card.coords[0] != -1;
+			},
+			setupDiv: (card, div) => {
+				div.dataset.type = (card as any).type;
+				div.dataset.typeArg = (card as any).type_arg;
+			},
+			setupBackDiv: (card: {size, depth}, div) => {
+				div.style.backgroundImage = `url(${g_gamethemeurl}img/seaBacks.png)`
+				div.style.backgroundSize = "300% 300%";
+				div.style.borderRadius = `6px`;
+				div.style.backgroundPositionX = `-${card.size}00%`;
+				div.style.backgroundPositionY = `-${card.depth - 1}00%`;
+                this.addTooltipHtml(div.id, `Fish in a shoal<br><strong>Depth:</strong> ${card.depth}<br><strong>Size:</strong> ${Object.keys(this.SHOAL_SIZE).find(key => this.SHOAL_SIZE[key] === card.size)}`);
+			},
+            setupFrontDiv: (card: {coords}, div) => {
+				div.style.backgroundImage = `url(${g_gamethemeurl}img/seaCards.png)`
+				div.style.backgroundSize = "1300% 900%";
+				div.style.borderRadius = `6px`;
+				div.style.backgroundPositionX = `-${card.coords[0]}00%`;
+				div.style.backgroundPositionY = `-${card.coords[1]}00%`;
+				// TODO - Improve tooltip
+                this.addTooltipHtml(div.id, `Card in a shoal`);
+            },
+        });
+
+        // create the dice manager
         this.diceManager = new BgaCards.Manager({
             animationManager: this.animationManager,
             type: 'dice',
@@ -136,6 +176,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				div.style.backgroundPositionY = `-${(dice as any).type_arg}00%`;
 				div.style.backgroundSize = "900% 400%";
                 this.addTooltipHtml(div.id, `Dice in ${(dice as any).location} pool`);
+				div.style.backgroundImage = `url(${g_gamethemeurl}img/dice/sides.jpg)`;
             },
         });
 
@@ -202,9 +243,32 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				}
 			})
 		})
-		// this.freshStock = new BgaCards.LineStock(this.diceManager, document.getElementById("lineGrid"));
-		// (this.freshStock as any).addCard({id: 1, type: "redP", type_arg: 1, location: "fresh", location_arg: 0});
-		// console.log(this.freshStock);
+		
+		for (let depth = 0; depth < 3; depth++) {
+			let curDepth = [];
+			for (let num = 0; num < 3; num++) {
+				curDepth.push(new BgaCards.Deck(this.seaCardManager, document.getElementById(`shoal_${depth + 1}_${num + 1}`), {cardNumber: 0}));
+			}
+			this.shoalStocks.push(curDepth);
+		}
+		console.log(this.shoalStocks);
+		console.log(gamedatas.shoals);
+
+		let index = 0;
+		this.shoalStocks.forEach(depth => {
+			depth.forEach(shoal => {
+				let curShoal = gamedatas.shoals[index];
+				if (curShoal[3]) {
+					console.log(curShoal)
+					shoal.addCard({id: curShoal[3]["name"], coords: curShoal[3]["coords"]}, {initialSide: "front", finalSide: "front"});
+				} else {
+					let size = this.SHOAL_SIZE[curShoal[1]];
+					let curDepth = curShoal[2]
+					shoal.addCard({id: index - 9, size: size, depth: curDepth, coords: [-1, -1]}, {finalSide: "back"});
+				}
+				index++;
+			})
+		})
 
 
 		for (let i = 1; i <= 6; i++) {

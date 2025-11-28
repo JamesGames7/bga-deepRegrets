@@ -146,6 +146,25 @@ class Game extends \Bga\GameFramework\Table
             $result["players"][$id]["dice"] = $this->dice->getCardsInLocation(["spent", "fresh", "roll"], $id);
         }
 
+        
+        for ($i = 1; $i <= 9; $i++) {
+            if ($this->fish->countCardsInLocation("shoal_$i") > 0) {
+                $topFish = array_values($this->fish->getCardsInLocation("shoal_$i", $this->fish->getExtremePosition(true, "shoal_$i")))[0];
+                $fishData = $this->lists->getFish()[$topFish["type"]];
+                if ($this->globals->get("revealedShoals")[$i - 1]) {
+                    $curFish = $fishData->getData();
+                } else {
+                    $curFish = false;
+                }
+                $result["shoals"][] = [$this->fish->countCardsInLocation("shoal_$i"),
+                                        $fishData->getSize(),
+                                        $fishData->getDepth(),
+                                        $curFish];
+            } else {
+                $result["shoals"][] = false;
+            }
+        }
+
         $result["day"] = $this->globals->get("day");
 
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
@@ -194,6 +213,7 @@ class Game extends \Bga\GameFramework\Table
         $this->globals->set("firstPlayer", 0);
         $this->globals->set("lifePreserver", 0);
         $this->globals->set("day", 0);
+        $this->globals->set("revealedShoals", [false, false, false, false, false, false, false, false, false]);
 
         // Everything to do with dice deck setup
         $dice = [];
@@ -267,8 +287,8 @@ class Game extends \Bga\GameFramework\Table
         for ($i = 1; $i <= 3; $i++) {
             for ($j = 1; $j <= 3; $j++) {
                 $shoalNum = ($i - 1) * 3 + $j;
-                $this->fish->pickCardsForLocation(13, "depth$i", "shoal$shoalNum");
-                $this->fish->shuffle("shoal$shoalNum");
+                $this->fish->pickCardsForLocation(13, "depth$i", "shoal_$shoalNum", 0);
+                $this->fish->shuffle("shoal_$shoalNum");
             }
         }
         

@@ -35,24 +35,6 @@
             height: 100%;
             border-radius: 10px;
         }
-
-        $x_vals: (84px, 267px, 451px);
-        $y_vals: (149px, 398px, 648px);
-        @each $y in $y_vals {
-            @each $x in $x_vals {
-                #shoal_#{list.index($x_vals, $x)}_#{list.index($y_vals, $y)} {
-                    left: $x;
-                    top: $y;
-                }
-            }
-        }
-
-        @each $y in $y_vals {
-            #shoal_graveyard_#{list.index($y_vals, $y)} {
-                left: 634px;
-                top: $y;
-            }
-        }
     }
 
     #port_board {
@@ -148,8 +130,4 @@
 .fishbuck-slot {
     top: 46px;
     width: 50px;
-}
-
-.dice-front {
-    background-image: url('img/dice/sides.jpg');
 }

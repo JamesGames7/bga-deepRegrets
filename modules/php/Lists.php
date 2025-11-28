@@ -42,7 +42,8 @@ class Lists {
             new Fish("Manta Ray", 3, "large", "fair", 1, 4, null, function () {}, null, null, 5, 2),
             new Fish("Osteofish", 0, "small", "foul", 1, 0, null, null, function () {}, null, 6, 2),
             new Fish("Amulet of Agartha", 3, "small", "foul", 2, null, function () {}, null, function () {}, null, 7, 2),
-            new Fish("Humpback Whale", null, "", "fair", 2, null, function () {}, function () {}, null, null, 8, 2),
+            // FIXME - size
+            new Fish("Humpback Whale", null, "large", "fair", 2, null, function () {}, function () {}, null, null, 8, 2),
             new Fish("Iron Coffin", 0, "middling", "foul", 2, null, function () {}, null, function () {}, null, 9, 2),
             new Fish("The Mollusk", 3, "middling", "foul", 2, 4, null, function () {}, null, function () {}, 10, 2),
             new Fish("Benthic Slug", 2, "small", "foul", 3, 4, null, null, function () {}, function () {}, 11, 2),
@@ -74,13 +75,15 @@ class Lists {
             new Fish("Barreleye", 2, "small", "fair", 3, 3, null, function () {}, null, function () {}, 11, 4),
             new Fish("Mass of Eyes", 4, "large", "foul", 3, 7, null, function () {}, null, function () {}, 12, 4),
             new Fish("Cruachan Spawn", 4, "large", "foul", 2, 5, null, null, function () {}, null, 0, 5),
-            new Fish("Deep Dweller", null, "", "foul", 2, null, null, function () {}, null, null, 1, 5),
+            // FIXME - size
+            new Fish("Deep Dweller", null, "large", "foul", 2, null, null, function () {}, null, null, 1, 5),
             new Fish("Colossal Squid", null, "large", "fair", 2, 3, function () {}, function () {}, null, null, 2, 5),
             new Fish("Dunkleosteus", 5, "large", "foul", 2, 6, null, null, function () {}, null, 3, 5),
             new Fish("Fried Egg Jellyfish", 1, "small", "fair", 2, 2, null, function () {}, null, null, 4, 5),
             new Fish("Frilled Shark", 2, "middling", "fair", 2, 4, null, null, function () {}, function () {}, 5, 5),
             new Fish("Giant Octopus", 4, "large", "fair", 2, 6, function () {}, null, null, function () {}, 6, 5),
-            new Fish("Tidal Trafficker", null, "", "foul", 1, null, null, function () {}, null, null, 7, 5),
+            // FIXME - size
+            new Fish("Tidal Trafficker", null, "large", "foul", 1, null, null, function () {}, null, null, 7, 5),
             new Fish("Great White Shark", 4, "large", "fair", 2, 6, null, function () {}, null, null, 8, 5),
             new Fish("Midas Devil", 3, "small", "foul", 2, 3, null, null, function () {}, null, 9, 5),
             new Fish("Orca", 3, "large", "fair", 2, 0, function () {}, null, function () {}, null, 10, 5),
@@ -113,17 +116,20 @@ class Lists {
             new Fish("Hollow Earth Infant", 8, "large", "foul", 3, 9, null, function () {}, function () {}, null, 11, 7),
             new Fish("Oarfish", 5, "middling", "fair", 3, 6, null, function () {}, null, null, 12, 7),
             new Fish("Phantom Jellyfish", 4, "large", "fair", 3, 6, null, function () {}, null, null, 0, 8),
-            new Fish("Profound Peddler", null, "", "foul", 3, null, null, function () {}, null, null, 1, 8),
+            // FIXME - size
+            new Fish("Profound Peddler", null, "large", "foul", 3, null, null, function () {}, null, null, 1, 8),
             new Fish("Sea Bishop", 4, "middling", "foul", 3, 6, null, null, function () {}, null, 2, 8),
             new Fish("Slitmouth", 4, "small", "foul", 3, 5, null, null, function () {}, function () {}, 3, 8),
             new Fish("Skitterfin", 4, "small", "foul", 3, 5, null, function () {}, null, function () {}, 4, 8),
-            new Fish("The Plug", null, "", "foul", 3, null, function () {}, null, null, null, 5, 8),
+            // FIXME - size
+            new Fish("The Plug", null, "large", "foul", 3, null, function () {}, null, null, null, 5, 8),
             new Fish("Pustor", 3, "small", "foul", 3, 5, null, null, function () {}, null, 6, 8),
             new Fish("Trauma Leech", null, "large", "foul", 3, 4, null, function () {}, null, null, 7, 8),
             new Fish("Treasure Chest", 5, "large", "fair", 3, null, null, null, function () {}, null, 8, 8),
             new Fish("Two Face", 3, "middling", "foul", 3, 5, function () {}, null, function () {}, null, 9, 8),
             new Fish("Varicolla", 4, "small", "foul", 3, 5, null, null, function () {}, function () {}, 10, 8),
-            new Fish("Whale of Rocabarraigh", null, "", "foul", 3, null, null, function () {}, null, null, 11, 8),
+            // FIXME - size
+            new Fish("Whale of Rocabarraigh", null, "large", "foul", 3, null, null, function () {}, null, null, 11, 8),
             new Fish("Writhing Mass", 5, "middling", "foul", 3, 7, null, function () {}, null, null, 12, 8)
         ];
     }
