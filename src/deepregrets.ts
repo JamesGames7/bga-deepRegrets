@@ -190,7 +190,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				space = "beforeend";
 			}
 			document.getElementById("playerBoards").insertAdjacentHTML(space, `
-				<div id="${id}" class="playerBoard"></div>
+				<div id="playerComponents-${player[0]}" class="playerComponents"><div id="${id}" class="playerBoard"></div></div>
 			`);
 			let playerBoard: HTMLElement = document.getElementById(id);
 			playerBoard.style.backgroundPositionY = `${this.COLOUR_POSITION[colour]}%`;
@@ -242,6 +242,18 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 						break;
 				}
 			})
+
+			document.getElementById(`playerComponents-${player[0]}`).insertAdjacentHTML("beforeend", `
+				<div id="canOfWorms-${player[0]}" class="canOfWorms provisions"></div>
+				<div id="lifeboat-${player[0]}" class="lifeboat provisions"></div>
+			`)
+
+			if (!JSON.parse((player[1] as any).provisions).lifeboat) {
+				document.getElementById(`lifeboat-${player[0]}`).style.backgroundPositionY = "-100%";
+			}
+			if (!JSON.parse((player[1] as any).provisions).canOfWorms) {
+				document.getElementById(`canOfWorms-${player[0]}`).style.backgroundPositionY = "-100%";
+			}
 		})
 		
 		for (let depth = 0; depth < 3; depth++) {

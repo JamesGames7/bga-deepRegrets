@@ -163,7 +163,7 @@ var DeepRegrets = /** @class */ (function (_super) {
             else {
                 space = "beforeend";
             }
-            document.getElementById("playerBoards").insertAdjacentHTML(space, "\n\t\t\t\t<div id=\"".concat(id, "\" class=\"playerBoard\"></div>\n\t\t\t"));
+            document.getElementById("playerBoards").insertAdjacentHTML(space, "\n\t\t\t\t<div id=\"playerComponents-".concat(player[0], "\" class=\"playerComponents\"><div id=\"").concat(id, "\" class=\"playerBoard\"></div></div>\n\t\t\t"));
             var playerBoard = document.getElementById(id);
             playerBoard.style.backgroundPositionY = "".concat(_this.COLOUR_POSITION[colour], "%");
             var position;
@@ -203,6 +203,13 @@ var DeepRegrets = /** @class */ (function (_super) {
                         break;
                 }
             });
+            document.getElementById("playerComponents-".concat(player[0])).insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"canOfWorms-".concat(player[0], "\" class=\"canOfWorms provisions\"></div>\n\t\t\t\t<div id=\"lifeboat-").concat(player[0], "\" class=\"lifeboat provisions\"></div>\n\t\t\t"));
+            if (!JSON.parse(player[1].provisions).lifeboat) {
+                document.getElementById("lifeboat-".concat(player[0])).style.backgroundPositionY = "-100%";
+            }
+            if (!JSON.parse(player[1].provisions).canOfWorms) {
+                document.getElementById("canOfWorms-".concat(player[0])).style.backgroundPositionY = "-100%";
+            }
         });
         for (var depth = 0; depth < 3; depth++) {
             var curDepth = [];

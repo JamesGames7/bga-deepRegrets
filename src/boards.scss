@@ -131,3 +131,26 @@
     top: 46px;
     width: 50px;
 }
+
+.playerComponents {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    align-items: center;
+
+    .provisions {
+        height: 300px;
+        aspect-ratio: 600 / 840;
+        background-size: 200% 200%;
+        margin: 10px;
+    }
+
+    .lifeboat {
+        background-image: url(img/provisions.png);
+    }
+
+    .canOfWorms {
+        background-image: url(img/provisions.png);
+        background-position-x: -100%;
+    }
+}
