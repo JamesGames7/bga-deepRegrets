@@ -145,7 +145,6 @@ class Game extends \Bga\GameFramework\Table
         foreach(array_keys($this->loadPlayersBasicInfos()) as $id) {
             $result["players"][$id]["dice"] = $this->dice->getCardsInLocation(["spent", "fresh", "roll"], $id);
         }
-
         
         for ($i = 1; $i <= 9; $i++) {
             if ($this->fish->countCardsInLocation("shoal_$i") > 0) {
@@ -166,8 +165,7 @@ class Game extends \Bga\GameFramework\Table
         }
 
         $result["day"] = $this->globals->get("day");
-
-        // TODO: Gather all information about current game situation (visible by player $current_player_id).
+        $result["firstPlayer"] = $this->globals->get("firstPlayer");
 
         return $result;
     }

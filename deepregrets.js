@@ -210,6 +210,7 @@ var DeepRegrets = /** @class */ (function (_super) {
             if (!JSON.parse(player[1].provisions).canOfWorms) {
                 document.getElementById("canOfWorms-".concat(player[0])).style.backgroundPositionY = "-100%";
             }
+            _this.getPlayerPanelElement(parseInt(player[0])).innerHTML = tmpl_playerBoard(player[0], player[1].color, gamedatas.firstPlayer);
         });
         for (var depth = 0; depth < 3; depth++) {
             var curDepth = [];
@@ -366,3 +367,4 @@ function diceRotation(elementId) {
 }
 window.diceSetup = diceSetup;
 window.diceRotation = diceRotation;
+var tmpl_playerBoard = function (id, colour, firstPlayer) { return "\n    ".concat(firstPlayer == id ? "<div id=\"firstPlayerPanel\"></div>" : "", "\n"); };

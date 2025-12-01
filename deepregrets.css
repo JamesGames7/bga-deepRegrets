@@ -439,6 +439,13 @@ Setup in js:
   background-size: 200% auto;
 }
 
+#firstPlayerPanel {
+  background-image: url(img/other/firstPlayer.png);
+  background-size: 100% 100%;
+  aspect-ratio: 1;
+  width: 50px;
+}
+
 /* the other files */
 #ebd-body {
   background-image: url(img/woodbg.jpg);
