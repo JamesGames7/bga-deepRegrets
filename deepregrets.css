@@ -266,7 +266,8 @@ Setup in js:
   border-radius: 2px;
   box-shadow: 1px 1px 1px black;
   zoom: 1;
-  container: port/inline-size;
+  margin-right: 220px;
+  flex: 0 0 auto;
 }
 #boards #port_board .dayTracker-slot {
   aspect-ratio: 1;
@@ -274,42 +275,37 @@ Setup in js:
   background-size: 100% 100%;
   position: absolute;
   top: -43px;
+  width: 100px;
 }
-@container port (width > 0px) {
-  #boards #port_board #day-1 {
-    left: 54.8cqw;
-    width: 6.7cqw;
-  }
+#boards #port_board #day-1 {
+  left: 821px;
 }
-@container port (width > 0px) {
-  #boards #port_board #day-2 {
-    left: 62.04cqw;
-    width: 6.7cqw;
-  }
+#boards #port_board #day-2 {
+  left: 929.8px;
 }
-@container port (width > 0px) {
-  #boards #port_board #day-3 {
-    left: 69.28cqw;
-    width: 6.7cqw;
-  }
+#boards #port_board #day-3 {
+  left: 1038.6px;
 }
-@container port (width > 0px) {
-  #boards #port_board #day-4 {
-    left: 76.52cqw;
-    width: 6.7cqw;
-  }
+#boards #port_board #day-4 {
+  left: 1147.4px;
 }
-@container port (width > 0px) {
-  #boards #port_board #day-5 {
-    left: 83.76cqw;
-    width: 6.7cqw;
-  }
+#boards #port_board #day-5 {
+  left: 1256.2px;
 }
-@container port (width > 0px) {
-  #boards #port_board #day-6 {
-    left: 91cqw;
-    width: 6.7cqw;
-  }
+#boards #port_board #day-6 {
+  left: 1365px;
+}
+#boards #port_board #regret_grid {
+  position: absolute;
+  display: grid;
+  grid-template-columns: 278px;
+  grid-template-rows: repeat(2, 396px);
+  gap: 16px;
+  left: 1440px;
+  top: 183px;
+}
+#boards #port_board .regret {
+  border-radius: 12px;
 }
 #boards .size_buttons {
   display: flex;

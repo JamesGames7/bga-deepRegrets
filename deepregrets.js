@@ -34,6 +34,8 @@ var DeepRegrets = /** @class */ (function (_super) {
         var _this = 
         // @ts-ignore
         _super.call(this) || this;
+        _this.regretDeck = {};
+        _this.regretDiscard = {};
         _this.freshStock = {};
         _this.spentStock = {};
         _this.shoalStocks = [];
@@ -65,7 +67,7 @@ var DeepRegrets = /** @class */ (function (_super) {
     DeepRegrets.prototype.setup = function (gamedatas) {
         var _this = this;
         this.setupNotifications();
-        document.getElementById("game_play_area").insertAdjacentHTML("beforeend", "\n\t\t\t<div id=\"boards\">\n\t\t\t\t<div id=\"sea_board\" style=\"zoom: ".concat(localStorage.getItem("sea_board") || ((document.getElementById("board").clientWidth / 726) > 1 ? document.getElementById("board").clientWidth / 726 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"sea_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"shoal_grid\">\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_graveyard\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_graveyard\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_graveyard\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div id=\"port_board\" style=\"zoom: ").concat(localStorage.getItem("port_board") || ((document.getElementById("board").clientWidth / 1500) > 1 ? document.getElementById("board").clientWidth / 1500 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"port_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\t\t\t\n\t\t\t</div>\n\t\t\t<div id=\"playerBoards\"></div>\n\t\t\t<div id=\"lineGrid\"></div>\n\t\t"));
+        document.getElementById("game_play_area").insertAdjacentHTML("beforeend", "\n\t\t\t<div id=\"boards\">\n\t\t\t\t<div id=\"sea_board\" style=\"zoom: ".concat(localStorage.getItem("sea_board") || ((document.getElementById("board").clientWidth / 726) > 1 ? document.getElementById("board").clientWidth / 726 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"sea_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"shoal_grid\">\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_graveyard\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_graveyard\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_graveyard\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div id=\"port_board\" style=\"zoom: ").concat(localStorage.getItem("port_board") || ((document.getElementById("board").clientWidth / 1500) > 1 ? document.getElementById("board").clientWidth / 1500 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"port_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"regret_grid\">\n\t\t\t\t\t\t<div class=\"regret\" id=\"regretDeck\"></div>\n\t\t\t\t\t\t<div class=\"regret\" id=\"regretDiscard\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\t\t\t\n\t\t\t</div>\n\t\t\t<div id=\"playerBoards\"></div>\n\t\t\t<div id=\"lineGrid\"></div>\n\t\t"));
         document.querySelectorAll(".utility_button").forEach(function (button) {
             var boards = document.getElementById("boards");
             var id = button.id;
@@ -75,7 +77,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                     boardWidth = 726;
                     break;
                 case "p":
-                    boardWidth = 1500;
+                    boardWidth = 1740;
                     break;
             }
             button.addEventListener("click", function () {
@@ -88,15 +90,24 @@ var DeepRegrets = /** @class */ (function (_super) {
                         temp > 1 ? newZoom = 1 : newZoom = temp;
                         break;
                     case "large":
-                        curZoom + 0.1 <= Math.ceil((boards.clientWidth / boardWidth) * 10) / 10 ? newZoom = curZoom + 0.1 : newZoom = curZoom;
+                        curZoom = Math.floor(curZoom * 10) / 10;
+                        curZoom + 0.1 < Math.ceil((boards.clientWidth / boardWidth) * 10) / 10 ? newZoom = curZoom + 0.1 : newZoom = curZoom;
                         break;
                     case "small":
+                        curZoom = Math.floor(curZoom * 10) / 10;
                         curZoom > 0.1 ? newZoom = curZoom - 0.1 : newZoom = curZoom;
                         break;
                 }
                 localStorage.setItem(board.id, newZoom.toString());
                 board.style.zoom = newZoom.toString();
             });
+        });
+        window.addEventListener("resize", function () {
+            var port = document.getElementById("port_board");
+            var boards = document.getElementById("boards");
+            if (1720 * port.style.zoom + 20 > boards.clientWidth) {
+                port.style.zoom = boards.clientWidth / 1760;
+            }
         });
         // create the animation manager, and bind it to the `game.bgaAnimationsActive()` function
         this.animationManager = new BgaAnimations.Manager({
@@ -153,6 +164,32 @@ var DeepRegrets = /** @class */ (function (_super) {
                 div.style.backgroundImage = "url(".concat(g_gamethemeurl, "img/dice/sides.jpg)");
             },
         });
+        // create the regrets manager
+        this.regretManager = new BgaCards.Manager({
+            animationManager: this.animationManager,
+            type: 'regrets',
+            getId: function (card) { return card.id; },
+            cardWidth: 278,
+            cardHeight: 396,
+            setupDiv: function (card, div) {
+                div.dataset.type = card.type;
+                div.dataset.typeArg = card.type_arg;
+            },
+            setupBackDiv: function (card, div) {
+                div.style.backgroundImage = "url(".concat(g_gamethemeurl, "img/regrets.png)");
+                div.style.backgroundPosition = "0 0";
+                div.style.backgroundSize = "1000% 700%";
+                div.style.borderRadius = "12px";
+            },
+            setupFrontDiv: function (card, div) {
+                div.style.backgroundPositionX = "-".concat(card.type % 10, "%");
+                div.style.backgroundPositionY = "-".concat(Math.floor(card.type / 10));
+                div.style.backgroundSize = "1000% 700%";
+                div.style.borderRadius = "12px";
+                _this.addTooltipHtml(div.id, "Regret of magnitude ".concat(card.type_arg));
+                div.style.backgroundImage = "url(".concat(g_gamethemeurl, "img/regrets.png)");
+            },
+        });
         Object.entries(gamedatas.players).forEach(function (player) {
             var id = "playerBoard-".concat(player[0]);
             var colour = player[1].color;
@@ -177,7 +214,7 @@ var DeepRegrets = /** @class */ (function (_super) {
             for (var i = 0; i <= 10; i++) {
                 playerBoard.insertAdjacentHTML("beforeend", "\n\t\t\t\t\t<div id=\"fishbuck-slot-".concat(player[0], "-").concat(i, "\" class=\"fishbuck-slot\"></div>\n\t\t\t\t"));
                 if (i < 10) {
-                    document.getElementById("fishbuck-slot-".concat(player[0], "-").concat(i)).style.left = "calc(296px + ".concat(i, " * 35.2px)");
+                    document.getElementById("fishbuck-slot-".concat(player[0], "-").concat(i)).style.left = "calc(295px + ".concat(i, " * 35.1px)");
                 }
                 else {
                     document.getElementById("fishbuck-slot-".concat(player[0], "-").concat(i)).style.left = "653px";
@@ -219,8 +256,6 @@ var DeepRegrets = /** @class */ (function (_super) {
             }
             this.shoalStocks.push(curDepth);
         }
-        console.log(this.shoalStocks);
-        console.log(gamedatas.shoals);
         var index = 0;
         this.shoalStocks.forEach(function (depth) {
             depth.forEach(function (shoal) {
@@ -237,6 +272,8 @@ var DeepRegrets = /** @class */ (function (_super) {
                 index++;
             });
         });
+        this.regretDeck = new BgaCards.Deck(this.regretManager, document.getElementById("regretDeck"), { cardNumber: gamedatas.regrets[0] });
+        this.regretDiscard = new BgaCards.Deck(this.regretManager, document.getElementById("regretDiscard"), { cardNumber: gamedatas.regrets[1] });
         for (var i = 1; i <= 6; i++) {
             document.getElementById("port_board").insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"day-".concat(i, "\" class=\"dayTracker-slot\"></div>\n\t\t\t"));
             if (i != gamedatas.day) {

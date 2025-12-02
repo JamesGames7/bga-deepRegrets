@@ -49,7 +49,7 @@ ALTER TABLE `player` ADD `playerBoard` varchar(10) DEFAULT 'monster';
 /*
 Decks:
     Regrets
-    - type: value
+    - type: x * 10 + y
     - type_arg: value
     Dinks
     - type: id

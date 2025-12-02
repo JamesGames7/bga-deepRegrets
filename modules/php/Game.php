@@ -164,6 +164,8 @@ class Game extends \Bga\GameFramework\Table
             }
         }
 
+        $result["regrets"] = [$this->regrets->countCardsInLocation("deck"), $this->regrets->countCardsInLocation("discard")];
+
         $result["day"] = $this->globals->get("day");
         $result["firstPlayer"] = $this->globals->get("firstPlayer");
 
@@ -289,7 +291,23 @@ class Game extends \Bga\GameFramework\Table
                 $this->fish->shuffle("shoal_$shoalNum");
             }
         }
+
+        $allFish = $this->getObjectListFromDB("SELECT `card_id`, `card_location` FROM `fish`");
+        foreach ($allFish as $fish) {
+            $id = $fish['card_id'];
+            $newArg = substr($fish['card_location'], 6);
+            $this->DbQuery("UPDATE `fish` SET `card_type_arg` = $newArg WHERE `card_id` = $id");
+        }
         
+        // Everything for regret setup
+        $regrets = [];
+        $regretNums = [0, 0, 1, 1, 1, 1, 1, 2, 1, 0, 0, 0, 1, 1, 1, 1, 2, 2, 3, 1, 1, 1, 0, 1, 1, 1, 2, 3, 3, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 3, 3, 3, 2, 2];
+
+        for ($i = 1; $i <= 60; $i++) {
+            $regrets[] = ['type' => $i, 'type_arg' => $regretNums[$i - 1], 'nbr' => 1];
+        }
+        $this->regrets->createCards($regrets, 'deck');
+        $this->regrets->shuffle('deck');
 
         // Init game statistics.
         //

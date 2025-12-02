@@ -16,9 +16,12 @@ GameGui = (function () { // this hack required so we fake extend GameGui
 
 // Note: it does not really extend it in es6 way, you cannot call super you have to use dojo way 
 class DeepRegrets extends GameGui<DeepRegretsGamedatas> { 
-	public animationManager;
-	public diceManager;
-	public seaCardManager;
+	public animationManager: any;
+	public diceManager: any;
+	public seaCardManager: any;
+	public regretManager: any;
+	public regretDeck = {};
+	public regretDiscard = {};
 	public freshStock = {};
 	public spentStock = {};
 	public shoalStocks: any[][] = [];
@@ -83,6 +86,10 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 						<div id="port_large" class="utility_button"></div>
 						<div id="port_small" class="utility_button"></div>
 					</div>
+					<div id="regret_grid">
+						<div class="regret" id="regretDeck"></div>
+						<div class="regret" id="regretDiscard"></div>
+					</div>
 				</div>			
 			</div>
 			<div id="playerBoards"></div>
@@ -111,11 +118,11 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 						temp > 1 ? newZoom = 1 : newZoom = temp;
 						break;
 					case "large":
-						curZoom = Math.floor((boards.clientWidth / boardWidth) * 10) / 10;
+						curZoom = Math.floor(curZoom * 10) / 10;
 						curZoom + 0.1 < Math.ceil((boards.clientWidth / boardWidth) * 10) / 10 ? newZoom = curZoom + 0.1 : newZoom = curZoom;
 						break;
 					case "small":
-						curZoom = Math.floor((boards.clientWidth / boardWidth) * 10) / 10;
+						curZoom = Math.floor(curZoom * 10) / 10;
 						curZoom > 0.1 ? newZoom = curZoom - 0.1 : newZoom = curZoom;
 						break;
 				}
@@ -190,6 +197,33 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				div.style.backgroundImage = `url(${g_gamethemeurl}img/dice/sides.jpg)`;
             },
         });
+
+        // create the regrets manager
+        this.regretManager = new BgaCards.Manager({
+            animationManager: this.animationManager,
+            type: 'regrets',
+            getId: (card: any) => card.id,
+			cardWidth: 278,
+			cardHeight: 396,
+			setupDiv: (card: any, div) => {
+				div.dataset.type = card.type;
+				div.dataset.typeArg = card.type_arg;
+			},
+			setupBackDiv: (card: any, div) => {
+				div.style.backgroundImage = `url(${g_gamethemeurl}img/regrets.png)`;
+				div.style.backgroundPosition = `0 0`;
+				div.style.backgroundSize = "1000% 700%";
+				div.style.borderRadius = `12px`;
+			},
+            setupFrontDiv: (card: any, div) => {
+				div.style.backgroundPositionX = `-${card.type % 10}%`; 
+				div.style.backgroundPositionY = `-${Math.floor(card.type / 10)}`;
+				div.style.backgroundSize = "1000% 700%";
+				div.style.borderRadius = `12px`;
+                this.addTooltipHtml(div.id, `Regret of magnitude ${card.type_arg}`);
+				div.style.backgroundImage = `url(${g_gamethemeurl}img/regrets.png)`;
+            },
+        });		
 
 		Object.entries(gamedatas.players as [string, any]).forEach(player => {
 			let id: string = `playerBoard-${player[0]}`;
@@ -276,8 +310,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			}
 			this.shoalStocks.push(curDepth);
 		}
-		console.log(this.shoalStocks);
-		console.log(gamedatas.shoals);
 
 		let index = 0;
 		this.shoalStocks.forEach(depth => {
@@ -295,6 +327,8 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			})
 		})
 
+		this.regretDeck = new BgaCards.Deck(this.regretManager, document.getElementById(`regretDeck`), {cardNumber: gamedatas.regrets[0]});
+		this.regretDiscard = new BgaCards.Deck(this.regretManager, document.getElementById(`regretDiscard`), {cardNumber: gamedatas.regrets[1]});
 
 		for (let i = 1; i <= 6; i++) {
 			document.getElementById("port_board").insertAdjacentHTML("beforeend", `
