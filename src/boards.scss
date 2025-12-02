@@ -35,6 +35,15 @@
             height: 100%;
             border-radius: 10px;
         }
+
+        #ship_grid_sea {
+            top: 133px;
+            left: 0;
+            display: grid;
+            grid-template-rows: repeat(3, 222px);
+            grid-template-columns: 63px;
+            position: absolute;
+        }
     }
 
     #port_board {
@@ -98,6 +107,14 @@
 
         #suppliesDeck {
             left: 1040px;
+        }
+
+        #ship_port {
+            width: 150PX;
+            height: 394PX;
+            position: absolute;
+            left: 0;
+            top: 596px;
         }
     }
 

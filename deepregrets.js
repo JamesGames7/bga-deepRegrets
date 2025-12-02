@@ -42,6 +42,7 @@ var DeepRegrets = /** @class */ (function (_super) {
         _this.reelsDeck = {};
         _this.rodsDeck = {};
         _this.suppliesDeck = {};
+        _this.shipDecks = [];
         _this.COLOUR_POSITION = {
             "488fc7": 0,
             "69ba35": -100,
@@ -70,7 +71,7 @@ var DeepRegrets = /** @class */ (function (_super) {
     DeepRegrets.prototype.setup = function (gamedatas) {
         var _this = this;
         this.setupNotifications();
-        document.getElementById("game_play_area").insertAdjacentHTML("beforeend", "\n\t\t\t<div id=\"boards\">\n\t\t\t\t<div id=\"sea_board\" style=\"zoom: ".concat(localStorage.getItem("sea_board") || ((document.getElementById("board").clientWidth / 726) > 1 ? document.getElementById("board").clientWidth / 726 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"sea_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"shoal_grid\">\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_graveyard\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_graveyard\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_graveyard\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div id=\"port_board\" style=\"zoom: ").concat(localStorage.getItem("port_board") || ((document.getElementById("board").clientWidth / 1500) > 1 ? document.getElementById("board").clientWidth / 1500 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"port_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"regret_grid\">\n\t\t\t\t\t\t<div class=\"regret\" id=\"regretDeck\"></div>\n\t\t\t\t\t\t<div class=\"regret\" id=\"regretDiscard\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"reelsDeck\" class=\"itemDeck\"></div>\n\t\t\t\t\t<div id=\"rodsDeck\" class=\"itemDeck\"></div>\n\t\t\t\t\t<div id=\"suppliesDeck\" class=\"itemDeck\"></div>\n\t\t\t\t</div>\t\t\t\n\t\t\t</div>\n\t\t\t<div id=\"playerBoards\"></div>\n\t\t\t<div id=\"lineGrid\"></div>\n\t\t"));
+        document.getElementById("game_play_area").insertAdjacentHTML("beforeend", "\n\t\t\t<div id=\"boards\">\n\t\t\t\t<div id=\"sea_board\" style=\"zoom: ".concat(localStorage.getItem("sea_board") || ((document.getElementById("board").clientWidth / 726) > 1 ? document.getElementById("board").clientWidth / 726 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"sea_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"shoal_grid\">\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_graveyard\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_graveyard\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_graveyard\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"ship_grid_sea\">\n\t\t\t\t\t\t<div id=\"ship_grid_1\" class=\"ship_depth\"></div>\n\t\t\t\t\t\t<div id=\"ship_grid_2\" class=\"ship_depth\"></div>\n\t\t\t\t\t\t<div id=\"ship_grid_3\" class=\"ship_depth\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div id=\"port_board\" style=\"zoom: ").concat(localStorage.getItem("port_board") || ((document.getElementById("board").clientWidth / 1500) > 1 ? document.getElementById("board").clientWidth / 1500 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"port_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"regret_grid\">\n\t\t\t\t\t\t<div class=\"regret\" id=\"regretDeck\"></div>\n\t\t\t\t\t\t<div class=\"regret\" id=\"regretDiscard\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"reelsDeck\" class=\"itemDeck\"></div>\n\t\t\t\t\t<div id=\"rodsDeck\" class=\"itemDeck\"></div>\n\t\t\t\t\t<div id=\"suppliesDeck\" class=\"itemDeck\"></div>\n\t\t\t\t\t<div id=\"ship_port\"></div>\n\t\t\t\t</div>\t\t\t\n\t\t\t</div>\n\t\t\t<div id=\"playerBoards\"></div>\n\t\t\t<div id=\"lineGrid\"></div>\n\t\t"));
         document.querySelectorAll(".utility_button").forEach(function (button) {
             var boards = document.getElementById("boards");
             var id = button.id;
@@ -193,6 +194,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                 div.style.backgroundImage = "url(".concat(g_gamethemeurl, "img/regrets.png)");
             },
         });
+        // TODO: fix backPos & update in php to set type_arg equal to background pos
         // create the rods / reels / supplies managers
         this.reelsManager = new BgaCards.Manager({
             animationManager: this.animationManager,
@@ -269,6 +271,39 @@ var DeepRegrets = /** @class */ (function (_super) {
                 div.style.backgroundImage = "url(".concat(g_gamethemeurl, "img/supplies.png)");
             },
         });
+        // create the ships manager
+        this.shipsManager = new BgaCards.Manager({
+            animationManager: this.animationManager,
+            type: 'ships',
+            getId: function (ship) { return ship.id; },
+            cardWidth: 57,
+            cardHeight: 38,
+            isCardVisible: function (card) { return true; },
+            setupDiv: function (ship, div) {
+                div.dataset.type = ship.type;
+                div.dataset.typeArg = ship.type_arg;
+                div.style.boxShadow = "none";
+                div.style.zoom = "2";
+            },
+            setupFrontDiv: function (ship, div) {
+                div.style.backgroundPositionX = "0";
+                div.style.backgroundPositionY = "".concat(ship.colour, "%");
+                div.style.backgroundSize = "100% 500%";
+                div.style.boxShadow = "none";
+                _this.addTooltipHtml(div.id, "Ship");
+                div.style.backgroundImage = "url(".concat(g_gamethemeurl, "img/other/boats.png)");
+            },
+        });
+        for (var i = 0; i < 4; i++) {
+            var el = void 0;
+            if (i == 0) {
+                el = document.getElementById("ship_port");
+            }
+            else {
+                el = document.getElementById("ship_grid_".concat(i));
+            }
+            this.shipDecks.push(new BgaCards.LineStock(this.shipsManager, el, { direction: "column", wrap: "nowrap" }));
+        }
         Object.entries(gamedatas.players).forEach(function (player) {
             var id = "playerBoard-".concat(player[0]);
             var colour = player[1].color;
@@ -327,6 +362,14 @@ var DeepRegrets = /** @class */ (function (_super) {
                 document.getElementById("canOfWorms-".concat(player[0])).style.backgroundPositionY = "-100%";
             }
             _this.getPlayerPanelElement(parseInt(player[0])).innerHTML = tmpl_playerBoard(player[0], player[1].color, gamedatas.firstPlayer);
+            var tempDeck;
+            if (player[1].location == "sea") {
+                tempDeck = player[1].depth;
+            }
+            else {
+                tempDeck = 0;
+            }
+            _this.shipDecks[tempDeck].addCard({ id: player[0], colour: _this.COLOUR_POSITION[player[1].color] });
         });
         for (var depth = 0; depth < 3; depth++) {
             var curDepth = [];

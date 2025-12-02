@@ -23,6 +23,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 	public reelsManager: any;
 	public rodsManager: any;
 	public suppliesManager: any;
+	public shipsManager: any;
 	public regretDeck = {};
 	public regretDiscard = {};
 	public freshStock = {};
@@ -31,6 +32,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 	public reelsDeck = {};
 	public rodsDeck = {};
 	public suppliesDeck = {};
+	public shipDecks: any[] = [];
 	private COLOUR_POSITION = {
 		"488fc7": 0,
 		"69ba35": -100,
@@ -85,6 +87,11 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 						<div class="shoal" id="shoal_3_3"></div>
 						<div class="shoal" id="shoal_3_graveyard"></div>
 					</div>
+					<div id="ship_grid_sea">
+						<div id="ship_grid_1" class="ship_depth"></div>
+						<div id="ship_grid_2" class="ship_depth"></div>
+						<div id="ship_grid_3" class="ship_depth"></div>
+					</div>
 				</div>
 				<div id="port_board" style="zoom: ${localStorage.getItem("port_board") || ((document.getElementById("board").clientWidth / 1500) > 1 ? document.getElementById("board").clientWidth / 1500 : 1)}">
 					<div class="size_buttons">
@@ -99,6 +106,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					<div id="reelsDeck" class="itemDeck"></div>
 					<div id="rodsDeck" class="itemDeck"></div>
 					<div id="suppliesDeck" class="itemDeck"></div>
+					<div id="ship_port"></div>
 				</div>			
 			</div>
 			<div id="playerBoards"></div>
@@ -234,6 +242,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
             },
         });		
 
+		// TODO: fix backPos & update in php to set type_arg equal to background pos
 		// create the rods / reels / supplies managers
         this.reelsManager = new BgaCards.Manager({
             animationManager: this.animationManager,
@@ -313,6 +322,40 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
             },
         });			
 
+		// create the ships manager
+		this.shipsManager = new BgaCards.Manager({
+            animationManager: this.animationManager,
+            type: 'ships',
+            getId: (ship: any) => ship.id,
+			cardWidth: 57,
+			cardHeight: 38,
+			isCardVisible: (card) => true,
+			setupDiv: (ship: any, div) => {
+				div.dataset.type = ship.type;
+				div.dataset.typeArg = ship.type_arg;
+				div.style.boxShadow = "none";
+				div.style.zoom = "2";
+			},
+            setupFrontDiv: (ship: any, div) => {
+				div.style.backgroundPositionX = `0`;
+				div.style.backgroundPositionY = `${ship.colour}%`
+				div.style.backgroundSize = "100% 500%";
+				div.style.boxShadow = "none";
+                this.addTooltipHtml(div.id, `Ship`);
+				div.style.backgroundImage = `url(${g_gamethemeurl}img/other/boats.png)`;
+            },
+        });	
+
+		for (let i = 0; i < 4; i++) {
+			let el;
+			if (i == 0) {
+				el = document.getElementById("ship_port");
+			} else {
+				el = document.getElementById(`ship_grid_${i}`);
+			}
+			this.shipDecks.push(new BgaCards.LineStock(this.shipsManager, el, {direction: "column", wrap: "nowrap"}));
+		}
+
 		Object.entries(gamedatas.players as [string, any]).forEach(player => {
 			let id: string = `playerBoard-${player[0]}`;
 			let colour: string = player[1].color;
@@ -389,6 +432,14 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			}
 
 			this.getPlayerPanelElement(parseInt(player[0])).innerHTML = tmpl_playerBoard(player[0], player[1].color, gamedatas.firstPlayer);
+
+			let tempDeck: number;
+			if (player[1].location == "sea") {
+				tempDeck = player[1].depth;
+			} else {
+				tempDeck = 0;
+			}
+			this.shipDecks[tempDeck].addCard({id: player[0], colour: this.COLOUR_POSITION[player[1].color]});
 		})
 		
 		for (let depth = 0; depth < 3; depth++) {
