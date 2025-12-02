@@ -47,7 +47,8 @@
         border-radius: 2px;
         box-shadow: 1px 1px 1px black;
         zoom: 1;
-        container: port / inline-size;
+        margin-right: 220px;
+        flex: 0 0 auto;
 
         .dayTracker-slot {
             aspect-ratio: 1;
@@ -55,15 +56,23 @@
             background-size: 100% 100%;
             position: absolute;
             top: -43px;
+            width: 100px;
         }
 
         @for $i from 1 through 6 {
-            @container port (width > 0px) {
-                #day-#{$i} {
-                    left: calc(54.8cqw + ($i - 1) * 7.24cqw);
-                    width: 6.7cqw;
-                }
+            #day-#{$i} {
+                left: calc(821px + ($i - 1) * 108.8px);
             }
+        }
+
+        #regret_grid {
+            position: absolute;
+            display: grid;
+            grid-template-columns: 278px;
+            grid-template-rows: repeat(2, 396px);
+            gap: 16px;
+            left: 1440px;
+            top: 183px;
         }
     }
 

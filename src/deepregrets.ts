@@ -98,7 +98,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					boardWidth = 726;
 					break;
 				case "p":
-					boardWidth = 1500;
+					boardWidth = 1740;
 					break;
 			}
 			button.addEventListener("click", () => {
@@ -111,15 +111,26 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 						temp > 1 ? newZoom = 1 : newZoom = temp;
 						break;
 					case "large":
-						curZoom + 0.1 <= Math.ceil((boards.clientWidth / boardWidth) * 10) / 10 ? newZoom = curZoom + 0.1 : newZoom = curZoom;
+						curZoom = Math.floor((boards.clientWidth / boardWidth) * 10) / 10;
+						curZoom + 0.1 < Math.ceil((boards.clientWidth / boardWidth) * 10) / 10 ? newZoom = curZoom + 0.1 : newZoom = curZoom;
 						break;
 					case "small":
+						curZoom = Math.floor((boards.clientWidth / boardWidth) * 10) / 10;
 						curZoom > 0.1 ? newZoom = curZoom - 0.1 : newZoom = curZoom;
 						break;
 				}
 				localStorage.setItem(board.id, newZoom.toString());
 				(board.style as any).zoom = newZoom.toString();
 			});
+		});
+
+		window.addEventListener("resize", () => {
+			let port = document.getElementById("port_board");
+			let boards = document.getElementById("boards");
+
+			if (1720 * (port.style as any).zoom + 20 > boards.clientWidth) {
+				(port.style as any).zoom = boards.clientWidth / 1760;
+			}
 		});
 
 		// create the animation manager, and bind it to the `game.bgaAnimationsActive()` function
@@ -210,7 +221,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				`);
 
 				if (i < 10) {
-					document.getElementById(`fishbuck-slot-${player[0]}-${i}`).style.left = `calc(296px + ${i} * 35.2px)`;
+					document.getElementById(`fishbuck-slot-${player[0]}-${i}`).style.left = `calc(295px + ${i} * 35.1px)`;
 				} else {
 					document.getElementById(`fishbuck-slot-${player[0]}-${i}`).style.left = `653px`
 				}
