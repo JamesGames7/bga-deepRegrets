@@ -1,9 +1,12 @@
 <?php 
 
 require_once("Fish.php");
+require_once("Item.php");
 class Lists {
-    public array $fish;
-    public Item $items;
+    private array $fish;
+    private array $reels;
+    private array $rods;
+    private array $supplies;
 
     public function __construct()
     {
@@ -132,13 +135,70 @@ class Lists {
             new Fish("Whale of Rocabarraigh", null, "large", "foul", 3, null, null, function () {}, null, null, 11, 8),
             new Fish("Writhing Mass", 5, "middling", "foul", 3, 7, null, function () {}, null, null, 12, 8)
         ];
+
+        $this->reels = [
+            new Item("Wood and Brass Reel", function () {}, 1, 0),
+            new Item("Reel of Fortune", function () {}, 2, 0),
+            new Item("Manifold Reel", function () {}, 3, 0),
+            new Item("Abyssal Reel", function () {}, 4, 0),
+            new Item("Solid Brass Reel", function () {}, 0, 1),
+            new Item("Reel of the Infinite", function () {}, 1, 1),
+            new Item("Reel of the Deep", function () {}, 2, 1),
+            new Item("Bone Wheel", function () {}, 3, 1),
+            new Item("Centerpin Reel", function () {}, 4, 1),
+            new Item("Stop-Latch", function () {}, 0, 2),
+        ];
+
+        $this->rods = [
+            new Item("Narwhal Rod", function () {}, 1, 0),
+            new Item("Rod of the Dead", function () {}, 2, 0),
+            new Item("Lucky Pole", function () {}, 3, 0),
+            new Item("Rod of Manchineel", function () {}, 4, 0),
+            new Item("Trolling Rod", function () {}, 0, 1),
+            new Item("Rod of the Deep", function () {}, 1, 1),
+            new Item("Wood and Brass Rod", function () {}, 2, 1),
+            new Item("Rod of the Infinite", function () {}, 3, 1),
+            new Item("Rod of Fortune", function () {}, 4, 1),
+            new Item("Split Bamboo Pole", function () {}, 0, 2),
+        ];
+
+        $this->supplies = [
+            new Item("Absinthe", function () {}, 1, 0),
+            new Item("Bag of Maggots", function () {}, 2, 0),
+            new Item("Bucket of Chum", function () {}, 3, 0),
+            new Item("Halley's Diving Bell", function () {}, 4, 0),
+            new Item("Moonshine", function () {}, 5, 0),
+            new Item("Barbadian Dark Rum", function () {}, 0, 1),
+            new Item("Black Tea", function () {}, 1, 1),
+            new Item("Book of the Deep", function () {}, 2, 1),
+            new Item("Curious Spyglass", function () {}, 3, 1),
+            new Item("Cullen Skink", function () {}, 4, 1),
+            new Item("Restless Stone", function () {}, 5, 1),
+            new Item("Diving Lantern", function () {}, 0, 2),
+            new Item("Heart of the Fathoms", function () {}, 1, 2),
+            new Item("Jar of Leeches", function () {}, 2, 2),
+            new Item("Cask Ale", function () {}, 3, 2),
+            new Item("Scotch Egg", function () {}, 4, 2),
+            new Item("Cloche", function () {}, 5, 2),
+            new Item("Claw Hammer", function () {}, 0, 3),
+            new Item("Sea Monkey's Paw", function () {}, 1, 3),
+            new Item("Mermaid Eyes", function () {}, 2, 3),
+        ];
     }
 
     public function getFish() {
         return $this->fish;
     }
 
-    public function getItems() {
-        return $this->items;
+    public function getReels() {
+        return $this->reels;
+    }
+
+    public function getRods() {
+        return $this->rods;
+    }
+
+    public function getSupplies() {
+        return $this->supplies;
     }
 }

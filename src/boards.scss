@@ -48,6 +48,7 @@
         box-shadow: 1px 1px 1px black;
         zoom: 1;
         margin-right: 220px;
+        margin-bottom: 520px;
         flex: 0 0 auto;
 
         .dayTracker-slot {
@@ -77,6 +78,26 @@
 
         .regret {
             border-radius: 12px;
+        }
+
+        .itemDeck {
+            width: 350px;
+            height: 490px;
+            position: absolute;
+            border-radius: 12px;
+            top: 1040px;
+        }
+
+        #rodsDeck {
+            left: 210px;
+        }
+
+        #reelsDeck {
+            left: 625px;
+        }
+
+        #suppliesDeck {
+            left: 1040px;
         }
     }
 

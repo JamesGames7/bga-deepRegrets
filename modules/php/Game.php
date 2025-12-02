@@ -166,6 +166,10 @@ class Game extends \Bga\GameFramework\Table
 
         $result["regrets"] = [$this->regrets->countCardsInLocation("deck"), $this->regrets->countCardsInLocation("discard")];
 
+        $result["reels"] = $this->reels->countCardInLocation("deck");
+        $result["rods"] = $this->rods->countCardInLocation("deck");
+        $result["supplies"] = $this->supplies->countCardInLocation("deck");
+
         $result["day"] = $this->globals->get("day");
         $result["firstPlayer"] = $this->globals->get("firstPlayer");
 
@@ -308,6 +312,36 @@ class Game extends \Bga\GameFramework\Table
         }
         $this->regrets->createCards($regrets, 'deck');
         $this->regrets->shuffle('deck');
+
+        // Everything for reels setup
+        $reels = [];
+        $i = 0;
+        foreach ($this->lists->getReels() as $reel) {
+            $reels[] = ["type" => $i, "type_arg" => $i, "nbr" => 1];
+            $i++;
+        }
+        $this->reels->createCards($reels, 'deck');
+        $this->reels->shuffle("deck");
+        
+        // Everything for rods setup
+        $rods = [];
+        $i = 0;
+        foreach ($this->lists->getRods() as $rod) {
+            $rods[] = ["type" => $i, "type_arg" => $i, "nbr" => 1];
+            $i++;
+        }
+        $this->rods->createCards($rods, 'deck');
+        $this->rods->shuffle("deck");
+        
+        // Everything for supplies setup
+        $supplies = [];
+        $i = 0;
+        foreach ($this->lists->getReels() as $supply) {
+            $supplies[] = ["type" => $i, "type_arg" => $i, "nbr" => 1];
+            $i++;
+        }
+        $this->supplies->createCards($supplies, 'deck');
+        $this->supplies->shuffle("deck");
 
         // Init game statistics.
         //

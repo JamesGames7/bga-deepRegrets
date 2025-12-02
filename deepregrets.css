@@ -267,6 +267,7 @@ Setup in js:
   box-shadow: 1px 1px 1px black;
   zoom: 1;
   margin-right: 220px;
+  margin-bottom: 520px;
   flex: 0 0 auto;
 }
 #boards #port_board .dayTracker-slot {
@@ -306,6 +307,22 @@ Setup in js:
 }
 #boards #port_board .regret {
   border-radius: 12px;
+}
+#boards #port_board .itemDeck {
+  width: 350px;
+  height: 490px;
+  position: absolute;
+  border-radius: 12px;
+  top: 1040px;
+}
+#boards #port_board #rodsDeck {
+  left: 210px;
+}
+#boards #port_board #reelsDeck {
+  left: 625px;
+}
+#boards #port_board #suppliesDeck {
+  left: 1040px;
 }
 #boards .size_buttons {
   display: flex;

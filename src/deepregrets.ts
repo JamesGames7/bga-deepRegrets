@@ -20,11 +20,17 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 	public diceManager: any;
 	public seaCardManager: any;
 	public regretManager: any;
+	public reelsManager: any;
+	public rodsManager: any;
+	public suppliesManager: any;
 	public regretDeck = {};
 	public regretDiscard = {};
 	public freshStock = {};
 	public spentStock = {};
 	public shoalStocks: any[][] = [];
+	public reelsDeck = {};
+	public rodsDeck = {};
+	public suppliesDeck = {};
 	private COLOUR_POSITION = {
 		"488fc7": 0,
 		"69ba35": -100,
@@ -90,6 +96,9 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 						<div class="regret" id="regretDeck"></div>
 						<div class="regret" id="regretDiscard"></div>
 					</div>
+					<div id="reelsDeck" class="itemDeck"></div>
+					<div id="rodsDeck" class="itemDeck"></div>
+					<div id="suppliesDeck" class="itemDeck"></div>
 				</div>			
 			</div>
 			<div id="playerBoards"></div>
@@ -225,6 +234,85 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
             },
         });		
 
+		// create the rods / reels / supplies managers
+        this.reelsManager = new BgaCards.Manager({
+            animationManager: this.animationManager,
+            type: 'reels',
+            getId: (card: any) => card.id,
+			cardWidth: 350,
+			cardHeight: 490,
+			setupDiv: (card: any, div) => {
+				div.dataset.type = card.type;
+				div.dataset.typeArg = card.type_arg;
+			},
+			setupBackDiv: (card: any, div) => {
+				div.style.backgroundImage = `url(${g_gamethemeurl}img/reels.png)`;
+				div.style.backgroundPosition = `0 0`;
+				div.style.backgroundSize = "500% 300%";
+				div.style.borderRadius = `12px`;
+			},
+            setupFrontDiv: (card: any, div) => {
+				div.style.backgroundPositionX = `-${card.type % 10}%`; 
+				div.style.backgroundPositionY = `-${Math.floor(card.type / 10)}`;
+				div.style.backgroundSize = "500% 300%";
+				div.style.borderRadius = `12px`;
+                this.addTooltipHtml(div.id, `Reel`);
+				div.style.backgroundImage = `url(${g_gamethemeurl}img/reels.png)`;
+            },
+        });		
+
+        this.rodsManager = new BgaCards.Manager({
+            animationManager: this.animationManager,
+            type: 'rods',
+            getId: (card: any) => card.id,
+			cardWidth: 350,
+			cardHeight: 490,
+			setupDiv: (card: any, div) => {
+				div.dataset.type = card.type;
+				div.dataset.typeArg = card.type_arg;
+			},
+			setupBackDiv: (card: any, div) => {
+				div.style.backgroundImage = `url(${g_gamethemeurl}img/rods.png)`;
+				div.style.backgroundPosition = `0 0`;
+				div.style.backgroundSize = "500% 300%";
+				div.style.borderRadius = `12px`;
+			},
+            setupFrontDiv: (card: any, div) => {
+				div.style.backgroundPositionX = `-${card.type % 10}%`; 
+				div.style.backgroundPositionY = `-${Math.floor(card.type / 10)}`;
+				div.style.backgroundSize = "500% 300%";
+				div.style.borderRadius = `12px`;
+                this.addTooltipHtml(div.id, `Rod`);
+				div.style.backgroundImage = `url(${g_gamethemeurl}img/rods.png)`;
+            },
+        });	
+		
+        this.suppliesManager = new BgaCards.Manager({
+            animationManager: this.animationManager,
+            type: 'rods',
+            getId: (card: any) => card.id,
+			cardWidth: 350,
+			cardHeight: 490,
+			setupDiv: (card: any, div) => {
+				div.dataset.type = card.type;
+				div.dataset.typeArg = card.type_arg;
+			},
+			setupBackDiv: (card: any, div) => {
+				div.style.backgroundImage = `url(${g_gamethemeurl}img/supplies.png)`;
+				div.style.backgroundPosition = `0 0`;
+				div.style.backgroundSize = "600% 400%";
+				div.style.borderRadius = `12px`;
+			},
+            setupFrontDiv: (card: any, div) => {
+				div.style.backgroundPositionX = `-${card.type % 10}%`; 
+				div.style.backgroundPositionY = `-${Math.floor(card.type / 10)}`;
+				div.style.backgroundSize = "600% 400%";
+				div.style.borderRadius = `12px`;
+                this.addTooltipHtml(div.id, `Rod`);
+				div.style.backgroundImage = `url(${g_gamethemeurl}img/supplies.png)`;
+            },
+        });			
+
 		Object.entries(gamedatas.players as [string, any]).forEach(player => {
 			let id: string = `playerBoard-${player[0]}`;
 			let colour: string = player[1].color;
@@ -329,6 +417,10 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 
 		this.regretDeck = new BgaCards.Deck(this.regretManager, document.getElementById(`regretDeck`), {cardNumber: gamedatas.regrets[0]});
 		this.regretDiscard = new BgaCards.Deck(this.regretManager, document.getElementById(`regretDiscard`), {cardNumber: gamedatas.regrets[1]});
+
+		this.reelsDeck = new BgaCards.Deck(this.reelsManager, document.getElementById(`reelsDeck`), {cardNumber: gamedatas.reels});
+		this.rodsDeck = new BgaCards.Deck(this.rodsManager, document.getElementById(`rodsDeck`), {cardNumber: gamedatas.rods});
+		this.suppliesDeck = new BgaCards.Deck(this.suppliesManager, document.getElementById(`suppliesDeck`), {cardNumber: gamedatas.supplies});
 
 		for (let i = 1; i <= 6; i++) {
 			document.getElementById("port_board").insertAdjacentHTML("beforeend", `
