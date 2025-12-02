@@ -283,7 +283,9 @@ var DeepRegrets = /** @class */ (function (_super) {
                 div.dataset.type = ship.type;
                 div.dataset.typeArg = ship.type_arg;
                 div.style.boxShadow = "none";
-                div.style.zoom = "2";
+                if (ship.location == "port") {
+                    div.style.zoom = "2";
+                }
             },
             setupFrontDiv: function (ship, div) {
                 div.style.backgroundPositionX = "0";
@@ -369,7 +371,7 @@ var DeepRegrets = /** @class */ (function (_super) {
             else {
                 tempDeck = 0;
             }
-            _this.shipDecks[tempDeck].addCard({ id: player[0], colour: _this.COLOUR_POSITION[player[1].color] });
+            _this.shipDecks[tempDeck].addCard({ id: player[0], colour: _this.COLOUR_POSITION[player[1].color], location: player[1].location });
         });
         for (var depth = 0; depth < 3; depth++) {
             var curDepth = [];

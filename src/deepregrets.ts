@@ -334,7 +334,9 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				div.dataset.type = ship.type;
 				div.dataset.typeArg = ship.type_arg;
 				div.style.boxShadow = "none";
-				div.style.zoom = "2";
+				if (ship.location == "port") {
+					(div.style as any).zoom = "2";
+				}
 			},
             setupFrontDiv: (ship: any, div) => {
 				div.style.backgroundPositionX = `0`;
@@ -439,7 +441,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			} else {
 				tempDeck = 0;
 			}
-			this.shipDecks[tempDeck].addCard({id: player[0], colour: this.COLOUR_POSITION[player[1].color]});
+			this.shipDecks[tempDeck].addCard({id: player[0], colour: this.COLOUR_POSITION[player[1].color], location: player[1].location});
 		})
 		
 		for (let depth = 0; depth < 3; depth++) {
