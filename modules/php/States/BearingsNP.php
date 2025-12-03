@@ -27,7 +27,7 @@ class BearingsNP extends GameState
 
             // optional
             description: clienttranslate(''),
-            transitions: ["nextPlayer" => 31, "donePlayers" => 32, "skipPhase" => 40], // LINK - modules\php\States\Bearings.php
+            transitions: ["nextPlayer" => 31, "donePlayers" => 32, "skipPhase" => 49], // LINK - modules\php\States\Bearings.php
                                                                                        // LINK - modules\php\States\RodReelNP.php
             updateGameProgression: false,
             initialPrivate: null,

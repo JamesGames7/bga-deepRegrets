@@ -173,6 +173,7 @@ class Game extends \Bga\GameFramework\Table
 
         $result["day"] = $this->globals->get("day");
         $result["firstPlayer"] = $this->globals->get("firstPlayer");
+        $result["lifePreserver"] = $this->globals->get("lifePreserver");
 
         $result["dinks"] = $this->dinks->countCardsInLocation("deck");
 

@@ -47,5 +47,12 @@ class NextPlayer extends GameState
 
     function onEnteringState() {
         // the code to run when entering the state
+        // TODO -  change to go to next round / end
+        if (!$this->globals->get("firstPlayerReached")) {
+            $this->gamestate->changeActivePlayer($this->globals->get("firstPlayer"));
+        } else {
+            $this->game->activeNextPlayer();
+        }
+        return "nextPlayer";
     }
 }

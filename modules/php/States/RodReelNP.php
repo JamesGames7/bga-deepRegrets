@@ -27,7 +27,7 @@ class RodReelNP extends GameState
 
             // optional
             description: clienttranslate(''),
-            transitions: ["nextPlayer" => 33, "donePlayers" => 40], // LINK - modules\php\States\RodReel.php
+            transitions: ["nextPlayer" => 33, "donePlayers" => 49], // LINK - modules\php\States\RodReel.php
                                                                     // LINK - modules\php\States\NextPlayer.php
             updateGameProgression: false,
             initialPrivate: null,

@@ -42,7 +42,8 @@ class ActionPlace extends GameState
         return [];
     } 
 
-    function onEnteringState() {
+    function onEnteringState(int $activePlayerId) {
         // the code to run when entering the state
+        return $this->game->getUniqueValueFromDB("SELECT `location` FROM `player` WHERE `player_id` = $activePlayerId");
     }   
 }

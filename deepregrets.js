@@ -423,7 +423,7 @@ var DeepRegrets = /** @class */ (function (_super) {
             if (!JSON.parse(player[1].provisions).canOfWorms) {
                 document.getElementById("canOfWorms-".concat(player[0])).style.backgroundPositionY = "-100%";
             }
-            _this.getPlayerPanelElement(parseInt(player[0])).innerHTML = tmpl_playerBoard(player[0], player[1].color, gamedatas.firstPlayer);
+            _this.getPlayerPanelElement(parseInt(player[0])).innerHTML = tmpl_playerBoard(player[0], player[1].color, gamedatas.firstPlayer, gamedatas.lifePreserver);
             var tempDeck;
             if (player[1].location == "sea") {
                 tempDeck = player[1].depth;
@@ -447,7 +447,6 @@ var DeepRegrets = /** @class */ (function (_super) {
             depth.forEach(function (shoal) {
                 var curShoal = gamedatas.shoals[index];
                 if (curShoal[3]) {
-                    console.log(curShoal);
                     shoal.addCard({ id: curShoal[3]["name"], coords: curShoal[3]["coords"] }, { initialSide: "front", finalSide: "front" });
                 }
                 else {
@@ -496,12 +495,22 @@ var DeepRegrets = /** @class */ (function (_super) {
                 document.getElementById("madness_board").style.left = "calc(".concat(document.getElementById("madness_board").style.left, " - 250px)");
             }
         });
-        console.log(gamedatas.dinks);
         this.dinkDeck = new BgaCards.Deck(this.dinksManager, document.getElementById("dink_deck"), { cardNumber: gamedatas.dinks, thicknesses: [0, 10, 20], shadowDirection: "top-right" });
     };
     DeepRegrets.prototype.onEnteringState = function (stateName, args) { };
     DeepRegrets.prototype.onLeavingState = function (stateName) { };
-    DeepRegrets.prototype.onUpdateActionButtons = function (stateName, args) { };
+    DeepRegrets.prototype.onUpdateActionButtons = function (stateName, args) {
+        var _this = this;
+        switch (stateName) {
+            case "LifePreserver":
+                if (this.isCurrentPlayerActive()) {
+                    args.possibleChoices.forEach(function (id) {
+                        _this.statusBar.addActionButton(_this.getFormattedPlayerName(id), function () { return _this.bgaPerformAction("actChooseLPPlayer", { "playerId": id }); }, { "color": "secondary" });
+                    });
+                }
+                break;
+        }
+    };
     DeepRegrets.prototype.clientStateTest = function (args) { };
     DeepRegrets.prototype.setupNotifications = function () {
         this.bgaSetupPromiseNotifications();
@@ -510,6 +519,12 @@ var DeepRegrets = /** @class */ (function (_super) {
         var position;
         args.newSide == "monster" ? position = "-100%" : position = "0";
         document.getElementById("playerBoard-".concat(args.player_id)).style.backgroundPositionX = position;
+    };
+    DeepRegrets.prototype.notif_lifePreserver = function (args) {
+        console.log(args);
+        var lPPlayer = args.player_id2;
+        this.getPlayerPanelElement(lPPlayer).insertAdjacentHTML("beforeend", "<div id=\"lifePreserverPanel\"></div>");
+        this.animationManager.fadeIn(document.getElementById("lifePreserverPanel"), document.getElementById("playerBoard-".concat(args.player_id1)), { duration: 1000 });
     };
     return DeepRegrets;
 }(GameGui));
@@ -599,4 +614,4 @@ function diceRotation(elementId) {
 }
 window.diceSetup = diceSetup;
 window.diceRotation = diceRotation;
-var tmpl_playerBoard = function (id, colour, firstPlayer) { return "\n    ".concat(firstPlayer == id ? "<div id=\"firstPlayerPanel\"></div>" : "", "\n"); };
+var tmpl_playerBoard = function (id, colour, firstPlayer, lifePreserver) { return "\n    ".concat(firstPlayer == id ? "<div id=\"firstPlayerPanel\"></div>" : "", "\n    ").concat(lifePreserver == id ? "<div id=\"lifePreserverPanel\"></div>" : "", "\n"); };

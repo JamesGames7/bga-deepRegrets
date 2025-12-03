@@ -504,7 +504,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				document.getElementById(`canOfWorms-${player[0]}`).style.backgroundPositionY = "-100%";
 			}
 
-			this.getPlayerPanelElement(parseInt(player[0])).innerHTML = tmpl_playerBoard(player[0], player[1].color, gamedatas.firstPlayer);
+			this.getPlayerPanelElement(parseInt(player[0])).innerHTML = tmpl_playerBoard(player[0], player[1].color, gamedatas.firstPlayer, gamedatas.lifePreserver);
 
 			let tempDeck: number;
 			if (player[1].location == "sea") {
@@ -530,7 +530,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			depth.forEach(shoal => {
 				let curShoal = gamedatas.shoals[index];
 				if (curShoal[3]) {
-					console.log(curShoal)
 					shoal.addCard({id: curShoal[3]["name"], coords: curShoal[3]["coords"]}, {initialSide: "front", finalSide: "front"});
 				} else {
 					let size = this.SHOAL_SIZE[curShoal[1]];
@@ -587,12 +586,21 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			}
 		});
 
-		console.log(gamedatas.dinks);
 		this.dinkDeck = new BgaCards.Deck(this.dinksManager, document.getElementById("dink_deck"), {cardNumber: gamedatas.dinks, thicknesses: [0, 10, 20], shadowDirection: "top-right"});
 	} 
 	public onEnteringState(stateName: string, args: any) {}
 	public onLeavingState(stateName: string) {}
-	public onUpdateActionButtons(stateName: string, args: any) {} 
+	public onUpdateActionButtons(stateName: string, args: any) {
+		switch (stateName) {
+			case "LifePreserver":
+				if (this.isCurrentPlayerActive()) {
+					args.possibleChoices.forEach(id => {
+						this.statusBar.addActionButton(this.getFormattedPlayerName(id), () => this.bgaPerformAction("actChooseLPPlayer", {"playerId": id}), {"color": "secondary"});
+					});
+				}
+				break;
+		}
+	} 
 	public clientStateTest(args: string): void {}
 	public setupNotifications() {
 		this.bgaSetupPromiseNotifications();
@@ -602,5 +610,12 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		let position: string;
 		args.newSide == "monster" ? position = "-100%" : position = "0";
 		document.getElementById(`playerBoard-${args.player_id}`).style.backgroundPositionX = position;
+	}
+
+	public notif_lifePreserver(args) {
+		console.log(args);
+		let lPPlayer = args.player_id2;
+		this.getPlayerPanelElement(lPPlayer).insertAdjacentHTML("beforeend", `<div id="lifePreserverPanel"></div>`);
+		this.animationManager.fadeIn(document.getElementById("lifePreserverPanel"), document.getElementById(`playerBoard-${args.player_id1}`), {duration: 1000})
 	}
 }

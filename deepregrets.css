@@ -559,6 +559,15 @@ Setup in js:
   background-size: 100% 100%;
   aspect-ratio: 1;
   width: 50px;
+  display: inline-block;
+}
+
+#lifePreserverPanel {
+  background-image: url(img/other/lifePreserver.png);
+  background-size: 100% 100%;
+  aspect-ratio: 1;
+  width: 50px;
+  display: inline-block;
 }
 
 /* the other files */
