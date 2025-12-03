@@ -174,6 +174,8 @@ class Game extends \Bga\GameFramework\Table
         $result["day"] = $this->globals->get("day");
         $result["firstPlayer"] = $this->globals->get("firstPlayer");
 
+        $result["dinks"] = $this->dinks->countCardsInLocation("deck");
+
         return $result;
     }
 
@@ -343,6 +345,16 @@ class Game extends \Bga\GameFramework\Table
         }
         $this->supplies->createCards($supplies, 'deck');
         $this->supplies->shuffle("deck");
+
+        // Everything for dinks setup
+        $dinks = [];
+        $i = 0;
+        foreach ($this->lists->getDinks() as $dink) {
+            $dinks[] = ["type" => $i, "type_arg" => $i, "nbr" => 1];
+            $i++;
+        }
+        $this->dinks->createCards($dinks, "deck");
+        $this->dinks->shuffle("deck");
 
         // Init game statistics.
         //

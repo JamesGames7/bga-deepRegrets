@@ -587,7 +587,8 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			}
 		});
 
-		this.dinkDeck = new BgaCards.Deck(this.dinksManager, document.getElementById("dink_deck"), {fakeCardGenerator: (deckId) => {r: 1}, cardNumber: 1});
+		console.log(gamedatas.dinks);
+		this.dinkDeck = new BgaCards.Deck(this.dinksManager, document.getElementById("dink_deck"), {cardNumber: gamedatas.dinks, thicknesses: [0, 10, 20], shadowDirection: "top-right"});
 	} 
 	public onEnteringState(stateName: string, args: any) {}
 	public onLeavingState(stateName: string) {}

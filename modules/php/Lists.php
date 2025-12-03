@@ -7,6 +7,7 @@ class Lists {
     private array $reels;
     private array $rods;
     private array $supplies;
+    private array $dinks;
 
     public function __construct()
     {
@@ -184,6 +185,34 @@ class Lists {
             new Item("Sea Monkey's Paw", function () {}, 1, 3),
             new Item("Mermaid Eyes", function () {}, 2, 3),
         ];
+
+        $this->dinks = [
+            new Item("Crab", function () {}, 1, 0),
+            new Item("Eel", function () {}, 2, 0),
+            new Item("Message in a Bottle", function () {}, 3, 0),
+            new Item("Odd Ring", function () {}, 4, 0),
+            new Item("Moon Jellyfish", function () {}, 5, 0),
+            new Item("Old Boot", function () {}, 6, 0),
+            new Item("Fish Head", function () {}, 0, 1),
+            new Item("Toe", function () {}, 1, 1),
+            new Item("Pinfish", function () {}, 2, 1),
+            new Item("Clump of Seaweed", function () {}, 3, 1),
+            new Item("Sea Glass", function () {}, 4, 1),
+            new Item("Finger", function () {}, 5, 1),
+            new Item("Locket", function () {}, 6, 1),
+            new Item("Whitebait", function () {}, 0, 2),
+            new Item("Syringe", function () {}, 1, 2),
+            new Item("Ballyhoo", function () {}, 2, 2),
+            new Item("Scad", function () {}, 3, 2),
+            new Item("Shrimp", function () {}, 4, 2),
+            new Item("Ear", function () {}, 5, 2),
+            new Item("Bearer Bond", function () {}, 0, 3),
+            new Item("Tire", function () {}, 1, 3),
+            new Item("Doll Head", function () {}, 2, 3),
+            new Item("Pearl", function () {}, 3, 3),
+            new Item("Wallet", function () {}, 4, 3),
+            new Item("Pocket Watch", function () {}, 5, 3)
+        ];
     }
 
     public function getFish() {
@@ -200,5 +229,9 @@ class Lists {
 
     public function getSupplies() {
         return $this->supplies;
+    }
+
+    public function getDinks() {
+        return $this->dinks;
     }
 }

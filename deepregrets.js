@@ -496,7 +496,8 @@ var DeepRegrets = /** @class */ (function (_super) {
                 document.getElementById("madness_board").style.left = "calc(".concat(document.getElementById("madness_board").style.left, " - 250px)");
             }
         });
-        this.dinkDeck = new BgaCards.Deck(this.dinksManager, document.getElementById("dink_deck"), { fakeCardGenerator: function (deckId) { r: 1; }, cardNumber: 1 });
+        console.log(gamedatas.dinks);
+        this.dinkDeck = new BgaCards.Deck(this.dinksManager, document.getElementById("dink_deck"), { cardNumber: gamedatas.dinks, thicknesses: [0, 10, 20], shadowDirection: "top-right" });
     };
     DeepRegrets.prototype.onEnteringState = function (stateName, args) { };
     DeepRegrets.prototype.onLeavingState = function (stateName) { };
