@@ -588,7 +588,20 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 
 		this.dinkDeck = new BgaCards.Deck(this.dinksManager, document.getElementById("dink_deck"), {cardNumber: gamedatas.dinks, thicknesses: [0, 10, 20], shadowDirection: "top-right"});
 	} 
-	public onEnteringState(stateName: string, args: any) {}
+	public onEnteringState(stateName: string, args: any) {
+		switch (stateName) {
+			case "LifePreserver":
+				if (this.isCurrentPlayerActive()) {
+					args.args.possibleChoices.forEach(id => {
+						document.getElementById(`playerBoard-${id}`).classList.add("selectable");
+						document.getElementById(`playerBoard-${id}`).addEventListener("click", () => {
+							this.bgaPerformAction("actChooseLPPlayer", {"playerId": id});
+						})
+					});
+				}
+				break;
+		}		
+	}
 	public onLeavingState(stateName: string) {}
 	public onUpdateActionButtons(stateName: string, args: any) {
 		switch (stateName) {

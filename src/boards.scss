@@ -165,6 +165,8 @@
     margin: 10px;
     max-width: 720px;
     position: relative;
+    border-radius: 5px;
+
     .freshGrid {
         width: 245px;
         height: 130px;
@@ -178,6 +180,16 @@
         position: absolute;
         left: 564px;
         top: 127px;
+    }
+
+    &.selectable {
+        border: 5px black solid;
+        cursor: pointer;
+    }
+
+    &.selectable:hover {
+        border: 5px red solid;
+        cursor: pointer;
     }
 }
 

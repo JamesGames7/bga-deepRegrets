@@ -497,7 +497,21 @@ var DeepRegrets = /** @class */ (function (_super) {
         });
         this.dinkDeck = new BgaCards.Deck(this.dinksManager, document.getElementById("dink_deck"), { cardNumber: gamedatas.dinks, thicknesses: [0, 10, 20], shadowDirection: "top-right" });
     };
-    DeepRegrets.prototype.onEnteringState = function (stateName, args) { };
+    DeepRegrets.prototype.onEnteringState = function (stateName, args) {
+        var _this = this;
+        switch (stateName) {
+            case "LifePreserver":
+                if (this.isCurrentPlayerActive()) {
+                    args.args.possibleChoices.forEach(function (id) {
+                        document.getElementById("playerBoard-".concat(id)).classList.add("selectable");
+                        document.getElementById("playerBoard-".concat(id)).addEventListener("click", function () {
+                            _this.bgaPerformAction("actChooseLPPlayer", { "playerId": id });
+                        });
+                    });
+                }
+                break;
+        }
+    };
     DeepRegrets.prototype.onLeavingState = function (stateName) { };
     DeepRegrets.prototype.onUpdateActionButtons = function (stateName, args) {
         var _this = this;

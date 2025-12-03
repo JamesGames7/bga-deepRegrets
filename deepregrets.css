@@ -395,6 +395,7 @@ Setup in js:
   margin: 10px;
   max-width: 720px;
   position: relative;
+  border-radius: 5px;
 }
 .playerBoard .freshGrid {
   width: 245px;
@@ -409,6 +410,14 @@ Setup in js:
   position: absolute;
   left: 564px;
   top: 127px;
+}
+.playerBoard.selectable {
+  border: 5px black solid;
+  cursor: pointer;
+}
+.playerBoard.selectable:hover {
+  border: 5px red solid;
+  cursor: pointer;
 }
 
 .fishbuck-slot {
