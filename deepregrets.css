@@ -265,6 +265,15 @@ Setup in js:
   grid-template-columns: 63px;
   position: absolute;
 }
+#boards #sea_board #dink_deck {
+  height: 147px;
+  aspect-ratio: 212/302;
+  position: absolute;
+  left: 433px;
+  top: -7px;
+  transform: rotate(90deg);
+  border-radius: 5px;
+}
 #boards #port_board {
   max-width: 1500px;
   width: 100%;

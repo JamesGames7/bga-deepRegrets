@@ -18,6 +18,7 @@ GameGui = (function () { // this hack required so we fake extend GameGui
 class DeepRegrets extends GameGui<DeepRegretsGamedatas> { 
 	public animationManager: any;
 	public diceManager: any;
+	public dinksManager: any;
 	public seaCardManager: any;
 	public regretManager: any;
 	public reelsManager: any;
@@ -34,6 +35,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 	public rodsDeck = {};
 	public suppliesDeck = {};
 	public shipDecks: any[] = [];
+	public dinkDeck = {};
 	private COLOUR_POSITION = {
 		"488fc7": 0,
 		"69ba35": -100,
@@ -101,6 +103,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 						<div id="ship_grid_2" class="ship_depth"></div>
 						<div id="ship_grid_3" class="ship_depth"></div>
 					</div>
+					<div id="dink_deck"></div>
 				</div>
 				<div id="port_board" style="zoom: ${localStorage.getItem("port_board") || ((document.getElementById("board").clientWidth / 1500) > 1 ? document.getElementById("board").clientWidth / 1500 : 1)}">
 					<div class="size_buttons">
@@ -357,6 +360,33 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
             },
         });	
 
+		// create the dinks manager
+		this.dinksManager = new BgaCards.Manager({
+            animationManager: this.animationManager,
+            type: 'dinks',
+            getId: (dink: any) => -1,
+			cardWidth: 103,
+			cardHeight: 147,
+			isCardVisible: (card) => false,
+			setupDiv: (dink: any, div) => {
+				// div.dataset.type = dink.type;
+				// div.dataset.typeArg = dink.type_arg;
+			},
+			setupBackDiv: (dink: any, div) => {
+				div.style.backgroundPosition = `0 0`;
+				div.style.backgroundSize = "700% 400%";
+				div.style.backgroundImage = `url(${g_gamethemeurl}img/dinks.png)`;
+				div.style.borderRadius = "5px";
+			},
+            setupFrontDiv: (dink: any, div) => {
+				div.style.backgroundSize = "700% 400%";
+				div.style.boxShadow = "none";
+                this.addTooltipHtml(div.id, `Dink`);
+				div.style.backgroundImage = `url(${g_gamethemeurl}img/dinks.png)`;
+				div.style.borderRadius = "5px";
+            },
+        });	
+
 		// Ship stock setup
 		for (let i = 0; i < 4; i++) {
 			let el;
@@ -556,6 +586,8 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				document.getElementById("madness_board").style.left = `calc(${document.getElementById("madness_board").style.left} - 250px)`;
 			}
 		});
+
+		this.dinkDeck = new BgaCards.Deck(this.dinksManager, document.getElementById("dink_deck"), {fakeCardGenerator: (deckId) => {r: 1}, cardNumber: 1});
 	} 
 	public onEnteringState(stateName: string, args: any) {}
 	public onLeavingState(stateName: string) {}
