@@ -66,6 +66,14 @@ var DeepRegrets = /** @class */ (function (_super) {
             "middling": 1,
             "large": 2
         };
+        _this.MADNESS_LEVEL = [
+            0,
+            1, 1, 1,
+            2, 2, 2,
+            3, 3, 3,
+            4, 4, 4,
+            5
+        ];
         return _this;
     }
     DeepRegrets.prototype.setup = function (gamedatas) {
@@ -296,16 +304,39 @@ var DeepRegrets = /** @class */ (function (_super) {
                 div.style.backgroundImage = "url(".concat(g_gamethemeurl, "img/other/boats.png)");
             },
         });
+        // Ship stock setup
         for (var i = 0; i < 4; i++) {
-            var el = void 0;
+            var el_1 = void 0;
             if (i == 0) {
-                el = document.getElementById("ship_port");
+                el_1 = document.getElementById("ship_port");
             }
             else {
-                el = document.getElementById("ship_grid_".concat(i));
+                el_1 = document.getElementById("ship_grid_".concat(i));
             }
-            this.shipDecks.push(new BgaCards.LineStock(this.shipsManager, el, { direction: "column", wrap: "nowrap" }));
+            this.shipDecks.push(new BgaCards.LineStock(this.shipsManager, el_1, { direction: "column", wrap: "nowrap" }));
         }
+        // Madness board setup
+        document.getElementById("game_play_area").insertAdjacentHTML("afterend", "\n\t\t\t<div id=\"madness_board\">\n\t\t\t\t<div id=\"tinyMadness\" class=\"large\"></div>\n\t\t\t\t<div id=\"largeMadness\" class=\"large\">\n\t\t\t\t\t<div id=\"madnessGrid\"></div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t");
+        var mGrid = document.getElementById("madnessGrid");
+        for (var i = 0; i < 6; i++) {
+            for (var j = 0; j < 5; j++) {
+                mGrid.insertAdjacentHTML("beforeend", "<div id=\"madness_".concat(i, "_").concat(j, "\" class=\"madnessSlot madness_").concat(j, "\"></div>"));
+            }
+        }
+        var el = document.getElementById("madness_board");
+        el.style.left = "115px";
+        el.addEventListener("click", function () {
+            Array.from(el.children).forEach(function (child) {
+                if (child.classList.contains("tiny")) {
+                    child.classList.remove("tiny");
+                    child.classList.add("large");
+                }
+                else {
+                    child.classList.remove("large");
+                    child.classList.add("tiny");
+                }
+            });
+        });
         Object.entries(gamedatas.players).forEach(function (player) {
             var id = "playerBoard-".concat(player[0]);
             var colour = player[1].color;
@@ -326,6 +357,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                 playerBoard.addEventListener("click", function () {
                     _this.bgaPerformAction("actChooseSide", { curPlayer: player[0] }, { checkAction: false });
                 });
+                document.getElementById("tinyMadness").style.backgroundPositionY = "".concat(_this.COLOUR_POSITION[colour], "%");
             }
             for (var i = 0; i <= 10; i++) {
                 playerBoard.insertAdjacentHTML("beforeend", "\n\t\t\t\t\t<div id=\"fishbuck-slot-".concat(player[0], "-").concat(i, "\" class=\"fishbuck-slot\"></div>\n\t\t\t\t"));
@@ -372,6 +404,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                 tempDeck = 0;
             }
             _this.shipDecks[tempDeck].addCard({ id: player[0], colour: _this.COLOUR_POSITION[player[1].color], location: player[1].location });
+            document.getElementById("madness_".concat(_this.MADNESS_LEVEL[player[1].regretCount], "_").concat(_this.COLOUR_POSITION[colour] / -100)).style.opacity = "1";
         });
         for (var depth = 0; depth < 3; depth++) {
             var curDepth = [];
@@ -413,21 +446,25 @@ var DeepRegrets = /** @class */ (function (_super) {
                 document.getElementById("icon_reference").classList.remove("tiny");
                 document.getElementById("icon_reference").classList.add("large");
                 document.getElementById("sea_reference").style.left = "310px";
+                document.getElementById("madness_board").style.left = "calc(".concat(document.getElementById("madness_board").style.left, " + 250px)");
             }
             else {
                 document.getElementById("icon_reference").classList.remove("large");
                 document.getElementById("icon_reference").classList.add("tiny");
                 document.getElementById("sea_reference").style.left = "60px";
+                document.getElementById("madness_board").style.left = "calc(".concat(document.getElementById("madness_board").style.left, " - 250px)");
             }
         });
         document.getElementById("sea_reference").addEventListener("click", function () {
             if (document.getElementById("sea_reference").classList.contains("tiny")) {
                 document.getElementById("sea_reference").classList.remove("tiny");
                 document.getElementById("sea_reference").classList.add("large");
+                document.getElementById("madness_board").style.left = "calc(".concat(document.getElementById("madness_board").style.left, " + 250px)");
             }
             else {
                 document.getElementById("sea_reference").classList.remove("large");
                 document.getElementById("sea_reference").classList.add("tiny");
+                document.getElementById("madness_board").style.left = "calc(".concat(document.getElementById("madness_board").style.left, " - 250px)");
             }
         });
     };

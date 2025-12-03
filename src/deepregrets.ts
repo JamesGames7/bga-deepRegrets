@@ -56,6 +56,14 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		"middling": 1,
 		"large": 2
 	}
+	private MADNESS_LEVEL = [
+		0, 
+		1, 1, 1,
+		2, 2, 2,
+		3, 3, 3,
+		4, 4, 4,
+		5
+	]
 
 	constructor() {
 		// @ts-ignore
@@ -348,6 +356,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
             },
         });	
 
+		// Ship stock setup
 		for (let i = 0; i < 4; i++) {
 			let el;
 			if (i == 0) {
@@ -357,6 +366,36 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			}
 			this.shipDecks.push(new BgaCards.LineStock(this.shipsManager, el, {direction: "column", wrap: "nowrap"}));
 		}
+
+		// Madness board setup
+		document.getElementById("game_play_area").insertAdjacentHTML("afterend", `
+			<div id="madness_board">
+				<div id="tinyMadness" class="large"></div>
+				<div id="largeMadness" class="large">
+					<div id="madnessGrid"></div>
+				</div>
+			</div>
+		`);
+		let mGrid = document.getElementById("madnessGrid");
+		for (let i = 0; i < 6; i++) {
+			for (let j = 0; j < 5; j++) {
+				mGrid.insertAdjacentHTML("beforeend", `<div id="madness_${i}_${j}" class="madnessSlot madness_${j}"></div>`)
+			}
+		}
+		let el = document.getElementById("madness_board");
+		el.style.left = "115px";
+		el.addEventListener("click", () => {
+			Array.from(el.children).forEach(child => {
+				if (child.classList.contains("tiny")) {
+					child.classList.remove("tiny");
+					child.classList.add("large");
+				} else {
+					child.classList.remove("large");
+					child.classList.add("tiny");
+				}
+				
+			});
+		});
 
 		Object.entries(gamedatas.players as [string, any]).forEach(player => {
 			let id: string = `playerBoard-${player[0]}`;
@@ -380,6 +419,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				playerBoard.addEventListener("click", () => {
 					this.bgaPerformAction(`actChooseSide`, {curPlayer: player[0]}, {checkAction: false});
 				});
+				document.getElementById("tinyMadness").style.backgroundPositionY = `${this.COLOUR_POSITION[colour]}%`;
 			}
 
 			for (let i = 0; i <= 10; i++) {
@@ -442,6 +482,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				tempDeck = 0;
 			}
 			this.shipDecks[tempDeck].addCard({id: player[0], colour: this.COLOUR_POSITION[player[1].color], location: player[1].location});
+			document.getElementById(`madness_${this.MADNESS_LEVEL[player[1].regretCount]}_${this.COLOUR_POSITION[colour] / -100}`).style.opacity = "1";
 		})
 		
 		for (let depth = 0; depth < 3; depth++) {
@@ -494,19 +535,23 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				document.getElementById("icon_reference").classList.remove("tiny");
 				document.getElementById("icon_reference").classList.add("large");
 				document.getElementById("sea_reference").style.left = `310px`;
+				document.getElementById("madness_board").style.left = `calc(${document.getElementById("madness_board").style.left} + 250px)`;
 			} else {
 				document.getElementById("icon_reference").classList.remove("large");
 				document.getElementById("icon_reference").classList.add("tiny");
 				document.getElementById("sea_reference").style.left = `60px`;
+				document.getElementById("madness_board").style.left = `calc(${document.getElementById("madness_board").style.left} - 250px)`;
 			}
 		});
 		document.getElementById("sea_reference").addEventListener("click", () => {
 			if (document.getElementById("sea_reference").classList.contains("tiny")) {
 				document.getElementById("sea_reference").classList.remove("tiny");
 				document.getElementById("sea_reference").classList.add("large");
+				document.getElementById("madness_board").style.left = `calc(${document.getElementById("madness_board").style.left} + 250px)`;
 			} else {
 				document.getElementById("sea_reference").classList.remove("large");
 				document.getElementById("sea_reference").classList.add("tiny");
+				document.getElementById("madness_board").style.left = `calc(${document.getElementById("madness_board").style.left} - 250px)`;
 			}
 		});
 	} 

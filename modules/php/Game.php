@@ -144,6 +144,7 @@ class Game extends \Bga\GameFramework\Table
 
         foreach(array_keys($this->loadPlayersBasicInfos()) as $id) {
             $result["players"][$id]["dice"] = $this->dice->getCardsInLocation(["spent", "fresh", "roll"], $id);
+            $result["players"][$id]["regretCount"] = intval($this->dice->countCardsInLocation("hand", $id));
         }
         
         for ($i = 1; $i <= 9; $i++) {
