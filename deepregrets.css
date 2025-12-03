@@ -255,6 +255,7 @@ Setup in js:
   width: 100%;
   height: 100%;
   border-radius: 10px;
+  margin: 0;
 }
 #boards #sea_board #ship_grid_sea {
   top: 133px;

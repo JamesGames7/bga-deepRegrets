@@ -39,6 +39,7 @@ var DeepRegrets = /** @class */ (function (_super) {
         _this.freshStock = {};
         _this.spentStock = {};
         _this.shoalStocks = [];
+        _this.graveyardStocks = [];
         _this.reelsDeck = {};
         _this.rodsDeck = {};
         _this.suppliesDeck = {};
@@ -316,7 +317,7 @@ var DeepRegrets = /** @class */ (function (_super) {
             this.shipDecks.push(new BgaCards.LineStock(this.shipsManager, el_1, { direction: "column", wrap: "nowrap" }));
         }
         // Madness board setup
-        document.getElementById("game_play_area").insertAdjacentHTML("afterend", "\n\t\t\t<div id=\"madness_board\">\n\t\t\t\t<div id=\"tinyMadness\" class=\"large\"></div>\n\t\t\t\t<div id=\"largeMadness\" class=\"large\">\n\t\t\t\t\t<div id=\"madnessGrid\"></div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t");
+        document.getElementById("game_play_area").insertAdjacentHTML("afterend", "\n\t\t\t<div id=\"madness_board\">\n\t\t\t\t<div id=\"tinyMadness\" class=\"tiny\"></div>\n\t\t\t\t<div id=\"largeMadness\" class=\"tiny\">\n\t\t\t\t\t<div id=\"madnessGrid\"></div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t");
         var mGrid = document.getElementById("madnessGrid");
         for (var i = 0; i < 6; i++) {
             for (var j = 0; j < 5; j++) {
@@ -412,6 +413,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                 curDepth.push(new BgaCards.Deck(this.seaCardManager, document.getElementById("shoal_".concat(depth + 1, "_").concat(num + 1)), { cardNumber: 0 }));
             }
             this.shoalStocks.push(curDepth);
+            this.graveyardStocks.push(new BgaCards.DiscardDeck(this.seaCardManager, document.getElementById("shoal_".concat(depth + 1, "_graveyard")), { maxHorizontalShift: 0, maxVerticalShift: 0 }));
         }
         var index = 0;
         this.shoalStocks.forEach(function (depth) {

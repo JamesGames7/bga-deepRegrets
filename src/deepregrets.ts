@@ -29,6 +29,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 	public freshStock = {};
 	public spentStock = {};
 	public shoalStocks: any[][] = [];
+	public graveyardStocks: any[] = [];
 	public reelsDeck = {};
 	public rodsDeck = {};
 	public suppliesDeck = {};
@@ -370,8 +371,8 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		// Madness board setup
 		document.getElementById("game_play_area").insertAdjacentHTML("afterend", `
 			<div id="madness_board">
-				<div id="tinyMadness" class="large"></div>
-				<div id="largeMadness" class="large">
+				<div id="tinyMadness" class="tiny"></div>
+				<div id="largeMadness" class="tiny">
 					<div id="madnessGrid"></div>
 				</div>
 			</div>
@@ -491,6 +492,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				curDepth.push(new BgaCards.Deck(this.seaCardManager, document.getElementById(`shoal_${depth + 1}_${num + 1}`), {cardNumber: 0}));
 			}
 			this.shoalStocks.push(curDepth);
+			this.graveyardStocks.push(new BgaCards.DiscardDeck(this.seaCardManager, document.getElementById(`shoal_${depth + 1}_graveyard`), {maxHorizontalShift: 0, maxVerticalShift: 0}));
 		}
 
 		let index = 0;
