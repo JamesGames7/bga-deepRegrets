@@ -18,7 +18,6 @@ use Bga\Games\DeepRegrets\Game;
  * 
  * 3. Move to next player state
  */
-// TODO: Correct values
 class SeaActions extends GameState
 {
     function __construct(
@@ -38,14 +37,112 @@ class SeaActions extends GameState
         );
     }
 
-    public function getArgs(): array
+    public function getArgs(int $activePlayerId): array
     {
         // the data sent to the front when entering the state
-        return [];
+        return [
+            "depth" => $this->game->getUniqueValueFromDB("SELECT `depth` FROM `player` WHERE `player_id` = $activePlayerId"), 
+            "casted" => $this->globals->get("casted"),
+            "selectedShoal" => $this->globals->get("curShoal")
+        ];
     } 
+
+    #[PossibleAction]
+    function actCast(string $shoal, int $activePlayerId) {
+        $shoal = explode("|", $shoal);
+        $shoalNum = ($shoal[0] - 1) * 3 + $shoal[1];
+        if (!$this->globals->get("casted")) {
+            $this->globals->set("casted", true);
+            $this->globals->set("curShoal", $shoalNum);
+            $this->notify->all("selectedShoal", '${player_name} has selected to fish in a shoal of depth ${depth}', [
+                "player_id" => $activePlayerId,
+                "player_name" => $this->game->getPlayerNameById($activePlayerId),
+                "depth" => $shoal[0],
+                "shoal" => $shoal
+            ]);
+			$revealed = $this->globals->get("revealedShoals");
+            if (!$revealed[$shoalNum - 1]) {
+				$fish = $this->game->fish->getCardOnTop("shoal_$shoalNum");
+				$revealed[$shoalNum - 1] = true;
+				$this->notify->all("revealCard", '${player_name} flips over the top card of a shoal of depth ${depth}', [
+					"player_id" => $activePlayerId,
+					"player_name" => $this->game->getPlayerNameById($activePlayerId),
+					"depth" => $shoal[0],
+					"shoal" => $shoal,
+					"shoalNum" => $shoalNum,
+					"fish" => $this->game->lists->getFish()[$fish["type"]]->getData(),
+					"revealed" => $revealed
+				]);
+				$this->globals->set("revealedShoals", $revealed);
+            }
+            // FIXME - make player boards / ships in player order
+        } else {
+            throw new \BgaUserException("Can only cast once per turn");
+        }
+    }
+
+    #[PossibleAction]
+    function actFinishFish() {
+        if ($this->globals->get("casted")) {
+            $shoal = $this->globals->get("curShoal");
+        } else {
+            throw new \BgaUserException("Can only fish after casting");
+        }
+    }
+
+    #[PossibleAction]
+    function actAbandonShip() {
+        if (!$this->globals->get("casted")) {
+
+        } else {
+            throw new \BgaUserException("Must abandon ship before casting");
+        }
+    }
+
+    #[PossibleAction]
+    function actPass() {
+        if (!$this->globals->get("casted")) {
+
+        } else {
+            throw new \BgaUserException("Must pass before casting");
+        }
+    }
+
+    #[PossibleAction]
+    function actDropSinker() {
+        if (!$this->globals->get("casted")) {
+
+        } else {
+            throw new \BgaUserException("Must drop sinker before casting");
+        }
+    }
+
+    #[PossibleAction]
+    function actCanOfWorms() {
+        if (!$this->globals->get("casted")) {
+
+        } else {
+            throw new \BgaUserException("Must use Can Of Worms before casting");
+        }
+    }
+
+    #[PossibleAction]
+    function actEatFish() {
+        
+    }
+
+    #[PossibleAction]
+    function actUseItems() {
+        
+    }
 
     function onEnteringState(int $activePlayerId) {
         // the code to run when entering the state
+        if ($this->game->dice->countCardsInLocation("fresh", $activePlayerId) == 0) {
+            return "pass";
+        }
+
+        $this->globals->set("casted", false);
     }   
 
     function zombie(int $playerId): string {

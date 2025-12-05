@@ -33,8 +33,17 @@
         .shoal {
             width: 100%;
             height: 100%;
-            border-radius: 10px;
+            border-radius: 5px;
             margin: 0;
+
+            &.selectable {
+                outline: 3px solid black;
+                cursor: pointer;
+            }
+
+            &.selectable:hover, &.selected {
+                outline: 3px solid red;
+            }
         }
 
         #ship_grid_sea {

@@ -254,8 +254,15 @@ Setup in js:
 #boards #sea_board .shoal {
   width: 100%;
   height: 100%;
-  border-radius: 10px;
+  border-radius: 5px;
   margin: 0;
+}
+#boards #sea_board .shoal.selectable {
+  outline: 3px solid black;
+  cursor: pointer;
+}
+#boards #sea_board .shoal.selectable:hover, #boards #sea_board .shoal.selected {
+  outline: 3px solid red;
 }
 #boards #sea_board #ship_grid_sea {
   top: 133px;

@@ -510,9 +510,37 @@ var DeepRegrets = /** @class */ (function (_super) {
                     });
                 }
                 break;
+            case "SeaActions":
+                if (this.isCurrentPlayerActive()) {
+                    if (!args.args.casted) {
+                        var depth = parseInt(args.args.depth);
+                        var _loop_1 = function (i) {
+                            var _loop_2 = function (j) {
+                                var curShoal = document.getElementById("shoal_".concat(i, "_").concat(j));
+                                curShoal.classList.add("selectable");
+                                curShoal.addEventListener("click", function () { return _this.bgaPerformAction("actCast", { shoal: "".concat(i, "|").concat(j) }); });
+                            };
+                            for (var j = 1; j <= 3; j++) {
+                                _loop_2(j);
+                            }
+                        };
+                        for (var i = 1; i <= depth; i++) {
+                            _loop_1(i);
+                        }
+                    }
+                }
+                if (args.args.casted) {
+                    console.log(args.args.selectedShoal);
+                    var shoal = [Math.floor(args.args.selectedShoal / 3) + 1, (args.args.selectedShoal - 1) % 3 + 1];
+                    document.getElementById("shoal_".concat(shoal[0], "_").concat(shoal[1])).classList.add("selected");
+                }
         }
     };
-    DeepRegrets.prototype.onLeavingState = function (stateName) { };
+    DeepRegrets.prototype.onLeavingState = function (stateName) {
+        document.querySelectorAll(".selectable").forEach(function (el) {
+            el.classList.remove("selectable");
+        });
+    };
     DeepRegrets.prototype.onUpdateActionButtons = function (stateName, args) {
         var _this = this;
         switch (stateName) {
@@ -535,10 +563,20 @@ var DeepRegrets = /** @class */ (function (_super) {
         document.getElementById("playerBoard-".concat(args.player_id)).style.backgroundPositionX = position;
     };
     DeepRegrets.prototype.notif_lifePreserver = function (args) {
-        console.log(args);
         var lPPlayer = args.player_id2;
         this.getPlayerPanelElement(lPPlayer).insertAdjacentHTML("beforeend", "<div id=\"lifePreserverPanel\"></div>");
         this.animationManager.fadeIn(document.getElementById("lifePreserverPanel"), document.getElementById("playerBoard-".concat(args.player_id1)), { duration: 1000 });
+    };
+    DeepRegrets.prototype.notif_selectedShoal = function (args) {
+        document.querySelectorAll(".shoal.selectable").forEach(function (shoal) {
+            shoal.classList.remove("selectable");
+        });
+        document.getElementById("shoal_".concat(args.shoal[0], "_").concat(args.shoal[1])).classList.add("selected");
+    };
+    DeepRegrets.prototype.notif_revealCard = function (args) {
+        console.log(args);
+        var fish = args.fish;
+        this.shoalStocks[args.shoal[0] - 1][args.shoal[1] - 1].flipCard({ id: args.shoalNum - 10, size: this.SHOAL_SIZE[fish.size], depth: args.depth, coords: fish.coords }, { updateData: true });
     };
     return DeepRegrets;
 }(GameGui));

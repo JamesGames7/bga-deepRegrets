@@ -149,7 +149,7 @@ class Game extends \Bga\GameFramework\Table
         
         for ($i = 1; $i <= 9; $i++) {
             if ($this->fish->countCardsInLocation("shoal_$i") > 0) {
-                $topFish = array_values($this->fish->getCardsInLocation("shoal_$i", $this->fish->getExtremePosition(true, "shoal_$i")))[0];
+                $topFish = $this->fish->getCardOnTop("shoal_$i");
                 $fishData = $this->lists->getFish()[$topFish["type"]];
                 if ($this->globals->get("revealedShoals")[$i - 1]) {
                     $curFish = $fishData->getData();
@@ -222,6 +222,7 @@ class Game extends \Bga\GameFramework\Table
         $this->globals->set("lifePreserver", 0);
         $this->globals->set("day", 0);
         $this->globals->set("revealedShoals", [false, false, false, false, false, false, false, false, false]);
+        $this->globals->set("selectedShoal", 0);
 
         // Everything to do with dice deck setup
         $dice = [];

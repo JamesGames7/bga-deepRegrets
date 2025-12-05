@@ -600,9 +600,31 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					});
 				}
 				break;
+			case "SeaActions":
+				if (this.isCurrentPlayerActive()) {
+					if (!args.args.casted) {
+						let depth = parseInt(args.args.depth);
+						for (let i = 1; i <= depth; i++) {
+							for (let j = 1; j <= 3; j++) {
+								let curShoal = document.getElementById(`shoal_${i}_${j}`);
+								curShoal.classList.add("selectable");
+								curShoal.addEventListener("click", () => this.bgaPerformAction("actCast", {shoal: `${i}|${j}`}));
+							}
+						}
+					}
+				}
+				if (args.args.casted) {
+					console.log(args.args.selectedShoal);
+					let shoal = [Math.floor(args.args.selectedShoal / 3) + 1, (args.args.selectedShoal - 1) % 3 + 1];
+					document.getElementById(`shoal_${shoal[0]}_${shoal[1]}`).classList.add("selected");
+				}
 		}		
 	}
-	public onLeavingState(stateName: string) {}
+	public onLeavingState(stateName: string) {
+		document.querySelectorAll(".selectable").forEach(el => {
+			el.classList.remove("selectable");
+		})
+	}
 	public onUpdateActionButtons(stateName: string, args: any) {
 		switch (stateName) {
 			case "LifePreserver":
@@ -626,9 +648,23 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 	}
 
 	public notif_lifePreserver(args) {
-		console.log(args);
 		let lPPlayer = args.player_id2;
 		this.getPlayerPanelElement(lPPlayer).insertAdjacentHTML("beforeend", `<div id="lifePreserverPanel"></div>`);
 		this.animationManager.fadeIn(document.getElementById("lifePreserverPanel"), document.getElementById(`playerBoard-${args.player_id1}`), {duration: 1000})
+	}
+
+	public notif_selectedShoal(args) {
+		document.querySelectorAll(".shoal.selectable").forEach(shoal => {
+			shoal.classList.remove("selectable");
+		})
+		document.getElementById(`shoal_${args.shoal[0]}_${args.shoal[1]}`).classList.add("selected");
+	}
+
+	public notif_revealCard(args: any) {
+		console.log(args);
+		let fish = args.fish;
+		this.shoalStocks[args.shoal[0] - 1][args.shoal[1] - 1].flipCard({id: args.shoalNum - 10, size: this.SHOAL_SIZE[fish.size], depth: args.depth, coords: fish.coords},
+																		{updateData: true}
+		)
 	}
 }
