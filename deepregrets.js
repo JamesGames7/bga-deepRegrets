@@ -365,74 +365,80 @@ var DeepRegrets = /** @class */ (function (_super) {
                 }
             });
         });
-        Object.entries(gamedatas.players).forEach(function (player) {
-            var id = "playerBoard-".concat(player[0]);
-            var colour = player[1].color;
+        var playerOrder = [gamedatas.players[this.player_id]];
+        var id = gamedatas.playerOrder[this.player_id];
+        while (id != this.player_id) {
+            playerOrder.push(gamedatas.players[id]);
+            id = gamedatas.playerOrder[id];
+        }
+        playerOrder.forEach(function (player) {
+            var id = "playerBoard-".concat(player["id"]);
+            var colour = player.color;
             var space;
-            if (player[0].toString() == _this.player_id.toString()) {
+            if (player["id"].toString() == _this.player_id.toString()) {
                 space = "afterbegin";
             }
             else {
                 space = "beforeend";
             }
-            document.getElementById("playerBoards").insertAdjacentHTML(space, "\n\t\t\t\t<div id=\"playerComponents-".concat(player[0], "\" class=\"playerComponents\"><div id=\"").concat(id, "\" class=\"playerBoard\"></div></div>\n\t\t\t"));
+            document.getElementById("playerBoards").insertAdjacentHTML(space, "\n\t\t\t\t<div id=\"playerComponents-".concat(player["id"], "\" class=\"playerComponents\"><div id=\"").concat(id, "\" class=\"playerBoard\"></div></div>\n\t\t\t"));
             var playerBoard = document.getElementById(id);
             playerBoard.style.backgroundPositionY = "".concat(_this.COLOUR_POSITION[colour], "%");
             var position;
-            player[1].playerBoard == "monster" ? position = "0" : position = "-100%";
+            player.playerBoard == "monster" ? position = "0" : position = "-100%";
             playerBoard.style.backgroundPositionX = position;
-            if (player[0].toString() == _this.player_id.toString()) {
+            if (player["id"].toString() == _this.player_id.toString()) {
                 playerBoard.addEventListener("click", function () {
-                    _this.bgaPerformAction("actChooseSide", { curPlayer: player[0] }, { checkAction: false });
+                    _this.bgaPerformAction("actChooseSide", { curPlayer: player["id"] }, { checkAction: false });
                 });
                 document.getElementById("tinyMadness").style.backgroundPositionY = "".concat(_this.COLOUR_POSITION[colour], "%");
             }
             for (var i = 0; i <= 10; i++) {
-                playerBoard.insertAdjacentHTML("beforeend", "\n\t\t\t\t\t<div id=\"fishbuck-slot-".concat(player[0], "-").concat(i, "\" class=\"fishbuck-slot\"></div>\n\t\t\t\t"));
+                playerBoard.insertAdjacentHTML("beforeend", "\n\t\t\t\t\t<div id=\"fishbuck-slot-".concat(player["id"], "-").concat(i, "\" class=\"fishbuck-slot\"></div>\n\t\t\t\t"));
                 if (i < 10) {
-                    document.getElementById("fishbuck-slot-".concat(player[0], "-").concat(i)).style.left = "calc(295px + ".concat(i, " * 35.1px)");
+                    document.getElementById("fishbuck-slot-".concat(player["id"], "-").concat(i)).style.left = "calc(295px + ".concat(i, " * 35.1px)");
                 }
                 else {
-                    document.getElementById("fishbuck-slot-".concat(player[0], "-").concat(i)).style.left = "653px";
+                    document.getElementById("fishbuck-slot-".concat(player["id"], "-").concat(i)).style.left = "653px";
                 }
-                document.getElementById("fishbuck-slot-".concat(player[0], "-").concat(i)).style.backgroundPositionY = "".concat(_this.COLOUR_POSITION[colour], "%");
-                if (player[1].fishbucks != i) {
-                    document.getElementById("fishbuck-slot-".concat(player[0], "-").concat(i)).style.opacity = "0";
+                document.getElementById("fishbuck-slot-".concat(player["id"], "-").concat(i)).style.backgroundPositionY = "".concat(_this.COLOUR_POSITION[colour], "%");
+                if (player.fishbucks != i) {
+                    document.getElementById("fishbuck-slot-".concat(player["id"], "-").concat(i)).style.opacity = "0";
                 }
             }
-            playerBoard.insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"freshGrid-".concat(player[0], "\" class=\"freshGrid\"></div>\n\t\t\t\t<div id=\"spentGrid-").concat(player[0], "\" class=\"spentGrid\"></div>\t\n\t\t\t"));
-            _this.freshStock[player[0]] = new BgaCards.LineStock(_this.diceManager, document.getElementById("freshGrid-".concat(player[0])), { sort: BgaCards.sort('type_arg', 'type') });
-            _this.spentStock[player[0]] = new BgaCards.LineStock(_this.diceManager, document.getElementById("spentGrid-".concat(player[0])), { sort: BgaCards.sort('type_arg', 'type') });
-            Object.values(player[1].dice).forEach(function (die) {
+            playerBoard.insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"freshGrid-".concat(player["id"], "\" class=\"freshGrid\"></div>\n\t\t\t\t<div id=\"spentGrid-").concat(player["id"], "\" class=\"spentGrid\"></div>\t\n\t\t\t"));
+            _this.freshStock[player["id"]] = new BgaCards.LineStock(_this.diceManager, document.getElementById("freshGrid-".concat(player["id"])), { sort: BgaCards.sort('type_arg', 'type') });
+            _this.spentStock[player["id"]] = new BgaCards.LineStock(_this.diceManager, document.getElementById("spentGrid-".concat(player["id"])), { sort: BgaCards.sort('type_arg', 'type') });
+            Object.values(player.dice).forEach(function (die) {
                 switch (die["location"]) {
                     case "fresh":
-                        _this.freshStock[player[0]].addCard(die);
+                        _this.freshStock[player["id"]].addCard(die);
                         break;
                     case "spent":
-                        _this.spentStock[player[0]].addCard(die);
+                        _this.spentStock[player["id"]].addCard(die);
                         break;
                     default:
                         _this.showMessage(die["location"] + "has not yet been defined", "error");
                         break;
                 }
             });
-            document.getElementById("playerComponents-".concat(player[0])).insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"canOfWorms-".concat(player[0], "\" class=\"canOfWorms provisions\"></div>\n\t\t\t\t<div id=\"lifeboat-").concat(player[0], "\" class=\"lifeboat provisions\"></div>\n\t\t\t"));
-            if (!JSON.parse(player[1].provisions).lifeboat) {
-                document.getElementById("lifeboat-".concat(player[0])).style.backgroundPositionY = "-100%";
+            document.getElementById("playerComponents-".concat(player["id"])).insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"canOfWorms-".concat(player["id"], "\" class=\"canOfWorms provisions\"></div>\n\t\t\t\t<div id=\"lifeboat-").concat(player["id"], "\" class=\"lifeboat provisions\"></div>\n\t\t\t"));
+            if (!JSON.parse(player.provisions).lifeboat) {
+                document.getElementById("lifeboat-".concat(player["id"])).style.backgroundPositionY = "-100%";
             }
-            if (!JSON.parse(player[1].provisions).canOfWorms) {
-                document.getElementById("canOfWorms-".concat(player[0])).style.backgroundPositionY = "-100%";
+            if (!JSON.parse(player.provisions).canOfWorms) {
+                document.getElementById("canOfWorms-".concat(player["id"])).style.backgroundPositionY = "-100%";
             }
-            _this.getPlayerPanelElement(parseInt(player[0])).innerHTML = tmpl_playerBoard(player[0], player[1].color, gamedatas.firstPlayer, gamedatas.lifePreserver);
+            _this.getPlayerPanelElement(parseInt(player["id"])).innerHTML = tmpl_playerBoard(player["id"], player.color, gamedatas.firstPlayer, gamedatas.lifePreserver);
             var tempDeck;
-            if (player[1].location == "sea") {
-                tempDeck = player[1].depth;
+            if (player.location == "sea") {
+                tempDeck = player.depth;
             }
             else {
                 tempDeck = 0;
             }
-            _this.shipDecks[tempDeck].addCard({ id: player[0], colour: _this.COLOUR_POSITION[player[1].color], location: player[1].location });
-            document.getElementById("madness_".concat(_this.MADNESS_LEVEL[player[1].regretCount], "_").concat(_this.COLOUR_POSITION[colour] / -100)).style.opacity = "1";
+            _this.shipDecks[tempDeck].addCard({ id: player["id"], colour: _this.COLOUR_POSITION[player.color], location: player.location });
+            document.getElementById("madness_".concat(_this.MADNESS_LEVEL[player.regretCount], "_").concat(_this.COLOUR_POSITION[colour] / -100)).style.opacity = "1";
         });
         for (var depth = 0; depth < 3; depth++) {
             var curDepth = [];

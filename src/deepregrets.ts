@@ -428,63 +428,71 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			});
 		});
 
-		Object.entries(gamedatas.players as [string, any]).forEach(player => {
-			let id: string = `playerBoard-${player[0]}`;
-			let colour: string = player[1].color;
+		let playerOrder = [gamedatas.players[this.player_id]];
+		let id = gamedatas.playerOrder[this.player_id];
+		while (id != this.player_id) {
+			playerOrder.push(gamedatas.players[id]);
+			id = gamedatas.playerOrder[id];
+		}
+
+
+		playerOrder.forEach(player => {
+			let id: string = `playerBoard-${player["id"]}`;
+			let colour: string = player.color;
 			let space: InsertPosition;
-			if (player[0].toString() == this.player_id.toString()) {
+			if (player["id"].toString() == this.player_id.toString()) {
 				space = "afterbegin";
 			} else {
 				space = "beforeend";
 			}
 			document.getElementById("playerBoards").insertAdjacentHTML(space, `
-				<div id="playerComponents-${player[0]}" class="playerComponents"><div id="${id}" class="playerBoard"></div></div>
+				<div id="playerComponents-${player["id"]}" class="playerComponents"><div id="${id}" class="playerBoard"></div></div>
 			`);
 			let playerBoard: HTMLElement = document.getElementById(id);
 			playerBoard.style.backgroundPositionY = `${this.COLOUR_POSITION[colour]}%`;
 			let position: string;
-			player[1].playerBoard == "monster" ? position = "0" : position = "-100%";
+			player.playerBoard == "monster" ? position = "0" : position = "-100%";
 			playerBoard.style.backgroundPositionX = position;
 			
-			if (player[0].toString() == this.player_id.toString()) {
+			if (player["id"].toString() == this.player_id.toString()) {
 				playerBoard.addEventListener("click", () => {
-					this.bgaPerformAction(`actChooseSide`, {curPlayer: player[0]}, {checkAction: false});
+					this.bgaPerformAction(`actChooseSide`, {curPlayer: player["id"]}, {checkAction: false});
 				});
 				document.getElementById("tinyMadness").style.backgroundPositionY = `${this.COLOUR_POSITION[colour]}%`;
 			}
 
 			for (let i = 0; i <= 10; i++) {
 				playerBoard.insertAdjacentHTML("beforeend", `
-					<div id="fishbuck-slot-${player[0]}-${i}" class="fishbuck-slot"></div>
+					<div id="fishbuck-slot-${player["id"]}-${i}" class="fishbuck-slot"></div>
 				`);
 
 				if (i < 10) {
-					document.getElementById(`fishbuck-slot-${player[0]}-${i}`).style.left = `calc(295px + ${i} * 35.1px)`;
+					document.getElementById(`fishbuck-slot-${player["id"]}-${i}`).style.left = `calc(295px + ${i} * 35.1px)`;
 				} else {
-					document.getElementById(`fishbuck-slot-${player[0]}-${i}`).style.left = `653px`
+					document.getElementById(`fishbuck-slot-${player["id"]}-${i}`).style.left = `653px`
 				}
 
-				document.getElementById(`fishbuck-slot-${player[0]}-${i}`).style.backgroundPositionY = `${this.COLOUR_POSITION[colour]}%`;
+				document.getElementById(`fishbuck-slot-${player["id"]}-${i}`).style.backgroundPositionY = `${this.COLOUR_POSITION[colour]}%`;
 
-				if (player[1].fishbucks != i) {
-					document.getElementById(`fishbuck-slot-${player[0]}-${i}`).style.opacity = "0";
+				if (player.fishbucks != i) {
+					document.getElementById(`fishbuck-slot-${player["id"]}-${i}`).style.opacity = "0";
 				}
 			}
 
 			playerBoard.insertAdjacentHTML("beforeend", `
-				<div id="freshGrid-${player[0]}" class="freshGrid"></div>
-				<div id="spentGrid-${player[0]}" class="spentGrid"></div>	
+				<div id="freshGrid-${player["id"]}" class="freshGrid"></div>
+				<div id="spentGrid-${player["id"]}" class="spentGrid"></div>	
 			`)
 
-			this.freshStock[player[0]] = new BgaCards.LineStock(this.diceManager, document.getElementById(`freshGrid-${player[0]}`), {sort: BgaCards.sort('type_arg', 'type')});
-			this.spentStock[player[0]] = new BgaCards.LineStock(this.diceManager, document.getElementById(`spentGrid-${player[0]}`), {sort: BgaCards.sort('type_arg', 'type')});
-			Object.values(player[1].dice).forEach(die => {
+			this.freshStock[player["id"]] = new BgaCards.LineStock(this.diceManager, document.getElementById(`freshGrid-${player["id"]}`), {sort: BgaCards.sort('type_arg', 'type')});
+			this.spentStock[player["id"]] = new BgaCards.LineStock(this.diceManager, document.getElementById(`spentGrid-${player["id"]}`), {sort: BgaCards.sort('type_arg', 'type')});
+			Object.values(player.dice).forEach(die => {
 				switch (die["location"]) {
 					case "fresh":
-						this.freshStock[player[0]].addCard(die);
+						this.freshStock[player["id"]].addCard(die);
 						break;
 					case "spent":
-						this.spentStock[player[0]].addCard(die);
+						this.spentStock[player["id"]].addCard(die);
 						break;
 					default:
 						this.showMessage(die["location"] + "has not yet been defined", "error");
@@ -492,28 +500,28 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				}
 			})
 
-			document.getElementById(`playerComponents-${player[0]}`).insertAdjacentHTML("beforeend", `
-				<div id="canOfWorms-${player[0]}" class="canOfWorms provisions"></div>
-				<div id="lifeboat-${player[0]}" class="lifeboat provisions"></div>
+			document.getElementById(`playerComponents-${player["id"]}`).insertAdjacentHTML("beforeend", `
+				<div id="canOfWorms-${player["id"]}" class="canOfWorms provisions"></div>
+				<div id="lifeboat-${player["id"]}" class="lifeboat provisions"></div>
 			`)
 
-			if (!JSON.parse(player[1].provisions).lifeboat) {
-				document.getElementById(`lifeboat-${player[0]}`).style.backgroundPositionY = "-100%";
+			if (!JSON.parse(player.provisions).lifeboat) {
+				document.getElementById(`lifeboat-${player["id"]}`).style.backgroundPositionY = "-100%";
 			}
-			if (!JSON.parse(player[1].provisions).canOfWorms) {
-				document.getElementById(`canOfWorms-${player[0]}`).style.backgroundPositionY = "-100%";
+			if (!JSON.parse(player.provisions).canOfWorms) {
+				document.getElementById(`canOfWorms-${player["id"]}`).style.backgroundPositionY = "-100%";
 			}
 
-			this.getPlayerPanelElement(parseInt(player[0])).innerHTML = tmpl_playerBoard(player[0], player[1].color, gamedatas.firstPlayer, gamedatas.lifePreserver);
+			this.getPlayerPanelElement(parseInt(player["id"])).innerHTML = tmpl_playerBoard(player["id"], player.color, gamedatas.firstPlayer, gamedatas.lifePreserver);
 
 			let tempDeck: number;
-			if (player[1].location == "sea") {
-				tempDeck = player[1].depth;
+			if (player.location == "sea") {
+				tempDeck = player.depth;
 			} else {
 				tempDeck = 0;
 			}
-			this.shipDecks[tempDeck].addCard({id: player[0], colour: this.COLOUR_POSITION[player[1].color], location: player[1].location});
-			document.getElementById(`madness_${this.MADNESS_LEVEL[player[1].regretCount]}_${this.COLOUR_POSITION[colour] / -100}`).style.opacity = "1";
+			this.shipDecks[tempDeck].addCard({id: player["id"], colour: this.COLOUR_POSITION[player.color], location: player.location});
+			document.getElementById(`madness_${this.MADNESS_LEVEL[player.regretCount]}_${this.COLOUR_POSITION[colour] / -100}`).style.opacity = "1";
 		})
 		
 		for (let depth = 0; depth < 3; depth++) {

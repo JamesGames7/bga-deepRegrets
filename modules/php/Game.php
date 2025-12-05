@@ -146,6 +146,8 @@ class Game extends \Bga\GameFramework\Table
             $result["players"][$id]["dice"] = $this->dice->getCardsInLocation(["spent", "fresh", "roll"], $id);
             $result["players"][$id]["regretCount"] = intval($this->dice->countCardsInLocation("hand", $id));
         }
+
+        $result["playerOrder"] = $this->getNextPlayerTable();
         
         for ($i = 1; $i <= 9; $i++) {
             if ($this->fish->countCardsInLocation("shoal_$i") > 0) {

@@ -419,11 +419,11 @@ Setup in js:
   top: 127px;
 }
 .playerBoard.selectable {
-  border: 5px black solid;
+  outline: 5px black solid;
   cursor: pointer;
 }
 .playerBoard.selectable:hover {
-  border: 5px red solid;
+  outline: 5px red solid;
   cursor: pointer;
 }
 

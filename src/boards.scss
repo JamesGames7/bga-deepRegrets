@@ -192,12 +192,12 @@
     }
 
     &.selectable {
-        border: 5px black solid;
+        outline: 5px black solid;
         cursor: pointer;
     }
 
     &.selectable:hover {
-        border: 5px red solid;
+        outline: 5px red solid;
         cursor: pointer;
     }
 }
