@@ -523,7 +523,10 @@ var DeepRegrets = /** @class */ (function (_super) {
                             var _loop_2 = function (j) {
                                 var curShoal = document.getElementById("shoal_".concat(i, "_").concat(j));
                                 curShoal.classList.add("selectable");
-                                curShoal.addEventListener("click", function () { return _this.bgaPerformAction("actCast", { shoal: "".concat(i, "|").concat(j) }); });
+                                curShoal.addEventListener("click", function () { return _this.setClientState("client_ConfirmCast", {
+                                    descriptionmyturn: "",
+                                    args: { i: i, j: j }
+                                }); });
                             };
                             for (var j = 1; j <= 3; j++) {
                                 _loop_2(j);
@@ -561,9 +564,12 @@ var DeepRegrets = /** @class */ (function (_super) {
                     });
                 }
                 break;
+            case "client_ConfirmCast":
+                this.statusBar.addActionButton(_("Confirm"), function () { _this.bgaPerformAction("actCast", { shoal: "".concat(args.i, "|").concat(args.j) }); _this.restoreServerGameState(); });
+                this.statusBar.addActionButton(_("Cancel"), function () { return _this.restoreServerGameState(); }, { color: "secondary" });
+                break;
         }
     };
-    DeepRegrets.prototype.clientStateTest = function (args) { };
     DeepRegrets.prototype.setupNotifications = function () {
         this.bgaSetupPromiseNotifications();
     };

@@ -620,7 +620,10 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 							for (let j = 1; j <= 3; j++) {
 								let curShoal = document.getElementById(`shoal_${i}_${j}`);
 								curShoal.classList.add("selectable");
-								curShoal.addEventListener("click", () => this.bgaPerformAction("actCast", {shoal: `${i}|${j}`}));
+								curShoal.addEventListener("click", () => this.setClientState("client_ConfirmCast", {
+									descriptionmyturn: "",
+									args: {i: i, j: j}
+								}));
 							}
 						}
 						
@@ -653,9 +656,12 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					});
 				}
 				break;
+			case "client_ConfirmCast":
+				this.statusBar.addActionButton(_("Confirm"), () => {this.bgaPerformAction("actCast", {shoal: `${args.i}|${args.j}`}); this.restoreServerGameState()});
+				this.statusBar.addActionButton(_("Cancel"), () => this.restoreServerGameState(), {color: "secondary"});
+				break;
 		}
-	} 
-	public clientStateTest(args: string): void {}
+	}
 	public setupNotifications() {
 		this.bgaSetupPromiseNotifications();
 	}
