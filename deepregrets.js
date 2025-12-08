@@ -293,9 +293,6 @@ var DeepRegrets = /** @class */ (function (_super) {
                 div.dataset.type = ship.type;
                 div.dataset.typeArg = ship.type_arg;
                 div.style.boxShadow = "none";
-                if (ship.location == "port") {
-                    div.style.zoom = "2";
-                }
             },
             setupFrontDiv: function (ship, div) {
                 div.style.backgroundPositionX = "0";
@@ -342,6 +339,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                 el_1 = document.getElementById("ship_grid_".concat(i));
             }
             this.shipDecks.push(new BgaCards.LineStock(this.shipsManager, el_1, { direction: "column", wrap: "nowrap" }));
+            this.shipDecks[0].onCardAdded = function (card) { return console.log(card); };
         }
         // Madness board setup
         document.getElementById("game_play_area").insertAdjacentHTML("afterend", "\n\t\t\t<div id=\"madness_board\">\n\t\t\t\t<div id=\"tinyMadness\" class=\"tiny\"></div>\n\t\t\t\t<div id=\"largeMadness\" class=\"tiny\">\n\t\t\t\t\t<div id=\"madnessGrid\"></div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t");
@@ -422,9 +420,10 @@ var DeepRegrets = /** @class */ (function (_super) {
                         break;
                 }
             });
-            document.getElementById("playerComponents-".concat(player["id"])).insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"canOfWorms-".concat(player["id"], "\" class=\"canOfWorms provisions\"></div>\n\t\t\t\t<div id=\"lifeboat-").concat(player["id"], "\" class=\"lifeboat provisions\"></div>\n\t\t\t"));
+            document.getElementById("playerComponents-".concat(player["id"])).insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"canOfWorms-".concat(player["id"], "\" class=\"canOfWorms provisions\"></div>\n\t\t\t\t<div id=\"lifeboat-").concat(player["id"], "\" class=\"lifeboat provisions\">\n\t\t\t\t\t<div id=\"lifeboat-inner-").concat(player["id"], "\" class=\"lifeboat-inner\">\n\t\t\t\t\t\t<div id=\"lifeboat-front-").concat(player["id"], "\" class=\"lifeboat-front\"></div>\n\t\t\t\t\t\t<div id=\"lifeboat-back-").concat(player["id"], "\" class=\"lifeboat-back\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t"));
+            console.log(player.provisions);
             if (!JSON.parse(player.provisions).lifeboat) {
-                document.getElementById("lifeboat-".concat(player["id"])).style.backgroundPositionY = "-100%";
+                document.getElementById("lifeboat-".concat(player["id"])).classList.add("flipped");
             }
             if (!JSON.parse(player.provisions).canOfWorms) {
                 document.getElementById("canOfWorms-".concat(player["id"])).style.backgroundPositionY = "-100%";
@@ -533,6 +532,11 @@ var DeepRegrets = /** @class */ (function (_super) {
                         for (var i = 1; i <= depth; i++) {
                             _loop_1(i);
                         }
+                        var lifeboat = document.getElementById("lifeboat-".concat(this.player_id));
+                        if (args.args.lifeboat) {
+                            lifeboat.classList.add("selectable");
+                            lifeboat.addEventListener("click", function () { return _this.bgaPerformAction("actAbandonShip"); });
+                        }
                     }
                 }
                 if (args.args.casted) {
@@ -583,6 +587,11 @@ var DeepRegrets = /** @class */ (function (_super) {
         console.log(args);
         var fish = args.fish;
         this.shoalStocks[args.shoal[0] - 1][args.shoal[1] - 1].flipCard({ id: args.shoalNum - 10, size: this.SHOAL_SIZE[fish.size], depth: args.depth, coords: fish.coords }, { updateData: true });
+    };
+    DeepRegrets.prototype.notif_abandonedShip = function (args) {
+        document.getElementById("lifeboat-".concat(args.player_id)).classList.add("flipped");
+        document.getElementById("lifeboat-".concat(args.player_id)).classList.remove("selectable");
+        this.shipDecks[0].addCard({ id: args.player_id, location: "port" });
     };
     return DeepRegrets;
 }(GameGui));

@@ -30,8 +30,8 @@ class SeaActions extends GameState
             // optional
             description: clienttranslate('${actplayer} must perform Sea actions or pass'),
             descriptionMyTurn: clienttranslate('${you} must perform Sea actions or pass'),
-            transitions: ["pass" => 45, "nextPlayer" => 49], // LINK - modules\php\States\PassAction.php
-                                                             // LINK - modules\php\States\NextPlayer.php
+            transitions: ["port" => 41, "pass" => 45, "nextPlayer" => 49], // LINK - modules\php\States\PassAction.php
+                                                                           // LINK - modules\php\States\NextPlayer.php
             updateGameProgression: false,
             initialPrivate: null,
         );
@@ -43,7 +43,8 @@ class SeaActions extends GameState
         return [
             "depth" => $this->game->getUniqueValueFromDB("SELECT `depth` FROM `player` WHERE `player_id` = $activePlayerId"), 
             "casted" => $this->globals->get("casted"),
-            "selectedShoal" => $this->globals->get("curShoal")
+            "selectedShoal" => $this->globals->get("curShoal"),
+            "lifeboat" => json_decode($this->game->getUniqueValueFromDB("SELECT `provisions` FROM `player` WHERE `player_id` = $activePlayerId"))->lifeboat
         ];
     } 
 
@@ -75,7 +76,7 @@ class SeaActions extends GameState
 				]);
 				$this->globals->set("revealedShoals", $revealed);
             }
-            // FIXME - make player boards / ships in player order
+            // TODO add fish power on reveal
         } else {
             throw new \BgaUserException("Can only cast once per turn");
         }
@@ -91,9 +92,19 @@ class SeaActions extends GameState
     }
 
     #[PossibleAction]
-    function actAbandonShip() {
-        if (!$this->globals->get("casted")) {
+    function actAbandonShip(int $activePlayerId) {
+        $provisions = json_decode($this->game->getUniqueValueFromDB("SELECT `provisions` FROM `player` WHERE `player_id` = $activePlayerId"));
+        if (!$this->globals->get("casted") && $provisions->lifeboat == "true") {
+            $provisions->lifeboat = false;
+            $provisions = json_encode($provisions);
 
+            $this->game->DbQuery("UPDATE `player` SET `location` = 'port', `depth` = 1, `provisions` = '$provisions' WHERE `player_id` = $activePlayerId");
+            $this->notify->all("abandonedShip", '${player_name} abandoned ship', [
+                "player_name" => $this->game->getActivePlayerName(),
+                "player_id" => $activePlayerId
+            ]);
+            
+            return "port";
         } else {
             throw new \BgaUserException("Must abandon ship before casting");
         }

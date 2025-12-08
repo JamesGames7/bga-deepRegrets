@@ -257,12 +257,8 @@ Setup in js:
   border-radius: 5px;
   margin: 0;
 }
-#boards #sea_board .shoal.selectable {
-  outline: 3px solid black;
-  cursor: pointer;
-}
-#boards #sea_board .shoal.selectable:hover, #boards #sea_board .shoal.selected {
-  outline: 3px solid red;
+#boards #sea_board .shoal.selectable, #boards #sea_board .shoal.selectable:hover, #boards #sea_board .shoal.selected {
+  outline-width: 3px;
 }
 #boards #sea_board #ship_grid_sea {
   top: 133px;
@@ -356,6 +352,9 @@ Setup in js:
   left: 0;
   top: 596px;
 }
+#boards #port_board #ship_port div {
+  zoom: 1.6;
+}
 #boards .size_buttons {
   display: flex;
   flex-direction: row;
@@ -418,13 +417,8 @@ Setup in js:
   left: 564px;
   top: 127px;
 }
-.playerBoard.selectable {
-  outline: 5px black solid;
-  cursor: pointer;
-}
-.playerBoard.selectable:hover {
-  outline: 5px red solid;
-  cursor: pointer;
+.playerBoard.selectable, .playerBoard.selectable:hover {
+  outline-width: 5px;
 }
 
 .fishbuck-slot {
@@ -454,7 +448,33 @@ Setup in js:
   margin: 10px;
 }
 .playerComponents .lifeboat {
+  perspective: 1000px;
+  border-radius: 7px;
+}
+.playerComponents .lifeboat.selectable, .playerComponents .lifeboat.selectable:hover {
+  outline-width: 3px;
+}
+.playerComponents .lifeboat.flipped .lifeboat-inner {
+  transform: rotateY(180deg);
+}
+.playerComponents .lifeboat-inner {
+  width: 100%;
+  height: 100%;
+  transition: all 1s;
+  transform-style: preserve-3d;
+}
+.playerComponents .lifeboat-front, .playerComponents .lifeboat-back {
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  position: absolute;
   background-image: url(img/provisions.png);
+  background-size: 200% 200%;
+}
+.playerComponents .lifeboat-back {
+  transform: rotateY(180deg);
+  background-position-y: -100%;
 }
 .playerComponents .canOfWorms {
   background-image: url(img/provisions.png);
@@ -536,6 +556,15 @@ Setup in js:
   width: 1800px;
   scale: 0.3;
   border-radius: 7px;
+}
+
+.selectable {
+  outline: black solid;
+  cursor: pointer;
+}
+
+.selectable:hover {
+  outline: red solid;
 }
 
 .reference {

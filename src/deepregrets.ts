@@ -346,9 +346,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				div.dataset.type = ship.type;
 				div.dataset.typeArg = ship.type_arg;
 				div.style.boxShadow = "none";
-				if (ship.location == "port") {
-					(div.style as any).zoom = "2";
-				}
 			},
             setupFrontDiv: (ship: any, div) => {
 				div.style.backgroundPositionX = `0`;
@@ -396,8 +393,8 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				el = document.getElementById(`ship_grid_${i}`);
 			}
 			this.shipDecks.push(new BgaCards.LineStock(this.shipsManager, el, {direction: "column", wrap: "nowrap"}));
+			this.shipDecks[0].onCardAdded = (card: any) => console.log(card);
 		}
-
 		// Madness board setup
 		document.getElementById("game_play_area").insertAdjacentHTML("afterend", `
 			<div id="madness_board">
@@ -502,12 +499,19 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 
 			document.getElementById(`playerComponents-${player["id"]}`).insertAdjacentHTML("beforeend", `
 				<div id="canOfWorms-${player["id"]}" class="canOfWorms provisions"></div>
-				<div id="lifeboat-${player["id"]}" class="lifeboat provisions"></div>
+				<div id="lifeboat-${player["id"]}" class="lifeboat provisions">
+					<div id="lifeboat-inner-${player["id"]}" class="lifeboat-inner">
+						<div id="lifeboat-front-${player["id"]}" class="lifeboat-front"></div>
+						<div id="lifeboat-back-${player["id"]}" class="lifeboat-back"></div>
+					</div>
+				</div>
 			`)
 
+			console.log(player.provisions);
 			if (!JSON.parse(player.provisions).lifeboat) {
-				document.getElementById(`lifeboat-${player["id"]}`).style.backgroundPositionY = "-100%";
+				document.getElementById(`lifeboat-${player["id"]}`).classList.add("flipped");
 			}
+			
 			if (!JSON.parse(player.provisions).canOfWorms) {
 				document.getElementById(`canOfWorms-${player["id"]}`).style.backgroundPositionY = "-100%";
 			}
@@ -619,8 +623,15 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 								curShoal.addEventListener("click", () => this.bgaPerformAction("actCast", {shoal: `${i}|${j}`}));
 							}
 						}
+						
+						var lifeboat = document.getElementById(`lifeboat-${this.player_id}`);
+						if (args.args.lifeboat) {
+							lifeboat.classList.add("selectable");
+							lifeboat.addEventListener("click", () => this.bgaPerformAction("actAbandonShip"));
+						}
 					}
 				}
+
 				if (args.args.casted) {
 					console.log(args.args.selectedShoal);
 					let shoal = [Math.floor(args.args.selectedShoal / 3) + 1, (args.args.selectedShoal - 1) % 3 + 1];
@@ -674,5 +685,12 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		this.shoalStocks[args.shoal[0] - 1][args.shoal[1] - 1].flipCard({id: args.shoalNum - 10, size: this.SHOAL_SIZE[fish.size], depth: args.depth, coords: fish.coords},
 																		{updateData: true}
 		)
+	}
+
+	public notif_abandonedShip(args: any) {
+		document.getElementById(`lifeboat-${args.player_id}`).classList.add("flipped");
+		document.getElementById(`lifeboat-${args.player_id}`).classList.remove("selectable");
+
+		this.shipDecks[0].addCard({id: args.player_id, location: "port"})
 	}
 }
