@@ -615,6 +615,22 @@ Setup in js:
   display: inline-block;
 }
 
+.fishTooltipGrid {
+  display: grid;
+  grid-template-columns: 200px 200px;
+  gap: 5px;
+}
+.fishTooltipGrid .fishTooltipImg {
+  background-image: url(img/seaCards.png);
+  background-size: 1300% 900%;
+  width: 100%;
+  aspect-ratio: 225/315;
+}
+.fishTooltipGrid .fishTooltipText {
+  display: flex;
+  flex-direction: column;
+}
+
 /* the other files */
 #ebd-body {
   background-image: url(img/woodbg.jpg);

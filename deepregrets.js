@@ -147,7 +147,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                 div.style.borderRadius = "6px";
                 div.style.backgroundPositionX = "-".concat(card.size, "00%");
                 div.style.backgroundPositionY = "-".concat(card.depth - 1, "00%");
-                _this.addTooltipHtml(div.id, "Fish in a shoal<br><strong>Depth:</strong> ".concat(card.depth, "<br><strong>Size:</strong> ").concat(Object.keys(_this.SHOAL_SIZE).find(function (key) { return _this.SHOAL_SIZE[key] === card.size; })));
+                _this.addTooltipHtml(div.id, "Fish in a shoal<br><strong>Depth:</strong> ".concat(card.depth, "<br><strong>Size:</strong> ").concat(toTitleCase(Object.keys(_this.SHOAL_SIZE).find(function (key) { return _this.SHOAL_SIZE[key] === card.size; }))));
             },
             setupFrontDiv: function (card, div) {
                 div.style.backgroundImage = "url(".concat(g_gamethemeurl, "img/seaCards.png)");
@@ -155,8 +155,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                 div.style.borderRadius = "6px";
                 div.style.backgroundPositionX = "-".concat(card.coords[0], "00%");
                 div.style.backgroundPositionY = "-".concat(card.coords[1], "00%");
-                // TODO - Improve tooltip
-                _this.addTooltipHtml(div.id, "Card in a shoal");
+                _this.addTooltipHtml(div.id, frontTooltipFish(card.coords, card.name, card.size, card.depth, card.type, card.sell, card.difficulty));
             },
         });
         // create the dice manager
@@ -204,7 +203,6 @@ var DeepRegrets = /** @class */ (function (_super) {
                 div.style.backgroundImage = "url(".concat(g_gamethemeurl, "img/regrets.png)");
             },
         });
-        // TODO: fix backPos & update in php to set type_arg equal to background pos
         // create the rods / reels / supplies managers
         this.reelsManager = new BgaCards.Manager({
             animationManager: this.animationManager,
@@ -452,7 +450,7 @@ var DeepRegrets = /** @class */ (function (_super) {
             depth.forEach(function (shoal) {
                 var curShoal = gamedatas.shoals[index];
                 if (curShoal[3]) {
-                    shoal.addCard({ id: curShoal[3]["name"], coords: curShoal[3]["coords"] }, { initialSide: "front", finalSide: "front" });
+                    shoal.addCard({ id: curShoal[3]["name"], name: curShoal[3]["name"], depth: curShoal[2], size: curShoal[1], coords: curShoal[3]["coords"], difficulty: curShoal[3]["difficulty"], sell: curShoal[3]["sell"], type: curShoal[3]["type"] }, { initialSide: "front", finalSide: "front" });
                 }
                 else {
                     var size = _this.SHOAL_SIZE[curShoal[1]];
@@ -688,3 +686,7 @@ function diceRotation(elementId) {
 window.diceSetup = diceSetup;
 window.diceRotation = diceRotation;
 var tmpl_playerBoard = function (id, colour, firstPlayer, lifePreserver) { return "\n    ".concat(firstPlayer == id ? "<div id=\"firstPlayerPanel\"></div>" : "", "\n    ").concat(lifePreserver == id ? "<div id=\"lifePreserverPanel\"></div>" : "", "\n"); };
+var frontTooltipFish = function (coords, name, size, depth, type, sell, difficulty) { return "\n    <div class=\"fishTooltipGrid\">\n        <div class=\"fishTooltipImg\" style=\"background-position: -".concat(coords[0], "00% -").concat(coords[1], "00%\"></div>\n        <div class=\"fishTooltipText\">\n            <div><strong>Name: </strong>").concat(name, "</div>\n            <div><strong>Size: </strong>").concat(toTitleCase(size), "</div>\n            <div><strong>Depth: </strong>").concat(depth, "</div>\n            <div><strong>Type: </strong>").concat(toTitleCase(type), "</div>\n            <div><strong>Sell Value: </strong>").concat(sell, "</div>\n            <div><strong>Difficulty: </strong>").concat(difficulty, "</div>\n        </div>\n    </div>\n"); };
+function toTitleCase(str) {
+    return typeof str == "string" ? str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase() : str;
+}

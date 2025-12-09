@@ -194,16 +194,15 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				div.style.borderRadius = `6px`;
 				div.style.backgroundPositionX = `-${card.size}00%`;
 				div.style.backgroundPositionY = `-${card.depth - 1}00%`;
-                this.addTooltipHtml(div.id, `Fish in a shoal<br><strong>Depth:</strong> ${card.depth}<br><strong>Size:</strong> ${Object.keys(this.SHOAL_SIZE).find(key => this.SHOAL_SIZE[key] === card.size)}`);
+                this.addTooltipHtml(div.id, `Fish in a shoal<br><strong>Depth:</strong> ${card.depth}<br><strong>Size:</strong> ${toTitleCase(Object.keys(this.SHOAL_SIZE).find(key => this.SHOAL_SIZE[key] === card.size))}`);
 			},
-            setupFrontDiv: (card: {coords}, div) => {
+            setupFrontDiv: (card: {coords: [number, number], name, size, depth, type, sell, difficulty}, div) => {
 				div.style.backgroundImage = `url(${g_gamethemeurl}img/seaCards.png)`
 				div.style.backgroundSize = "1300% 900%";
 				div.style.borderRadius = `6px`;
 				div.style.backgroundPositionX = `-${card.coords[0]}00%`;
 				div.style.backgroundPositionY = `-${card.coords[1]}00%`;
-				// TODO - Improve tooltip
-                this.addTooltipHtml(div.id, `Card in a shoal`);
+                this.addTooltipHtml(div.id, frontTooltipFish(card.coords, card.name, card.size, card.depth, card.type, card.sell, card.difficulty));
             },
         });
 
@@ -254,7 +253,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
             },
         });		
 
-		// TODO: fix backPos & update in php to set type_arg equal to background pos
 		// create the rods / reels / supplies managers
         this.reelsManager = new BgaCards.Manager({
             animationManager: this.animationManager,
@@ -542,7 +540,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			depth.forEach(shoal => {
 				let curShoal = gamedatas.shoals[index];
 				if (curShoal[3]) {
-					shoal.addCard({id: curShoal[3]["name"], coords: curShoal[3]["coords"]}, {initialSide: "front", finalSide: "front"});
+					shoal.addCard({id: curShoal[3]["name"], name: curShoal[3]["name"], depth: curShoal[2], size: curShoal[1], coords: curShoal[3]["coords"], difficulty: curShoal[3]["difficulty"], sell: curShoal[3]["sell"], type: curShoal[3]["type"]}, {initialSide: "front", finalSide: "front"});
 				} else {
 					let size = this.SHOAL_SIZE[curShoal[1]];
 					let curDepth = curShoal[2]
