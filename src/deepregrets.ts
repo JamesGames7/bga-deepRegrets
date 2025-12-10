@@ -495,6 +495,12 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				}
 			})
 
+			document.querySelectorAll(".dice").forEach(el => {
+				el.addEventListener("click", e => {
+					e.stopPropagation();
+				})
+			})
+
 			document.getElementById(`playerComponents-${player["id"]}`).insertAdjacentHTML("beforeend", `
 				<div id="canOfWorms-${player["id"]}" class="canOfWorms provisions"></div>
 				<div id="lifeboat-${player["id"]}" class="lifeboat provisions">
