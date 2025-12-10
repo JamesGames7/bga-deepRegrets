@@ -450,7 +450,8 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			playerBoard.style.backgroundPositionX = position;
 			
 			if (player["id"].toString() == this.player_id.toString()) {
-				playerBoard.addEventListener("click", () => {
+				playerBoard.addEventListener("click", e => {
+					if (e.target != playerBoard) return;
 					this.bgaPerformAction(`actChooseSide`, {curPlayer: player["id"]}, {checkAction: false});
 				});
 				document.getElementById("tinyMadness").style.backgroundPositionY = `${this.COLOUR_POSITION[colour]}%`;
@@ -493,12 +494,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 						this.showMessage(die["location"] + "has not yet been defined", "error");
 						break;
 				}
-			})
-
-			document.querySelectorAll(".dice").forEach(el => {
-				el.addEventListener("click", e => {
-					e.stopPropagation();
-				})
 			})
 
 			document.getElementById(`playerComponents-${player["id"]}`).insertAdjacentHTML("beforeend", `

@@ -193,6 +193,14 @@
     &.selectable, &.selectable:hover {
         outline-width: 5px;
     }
+
+    .freshGrid, .spentGrid, .fishbuck-slot {
+        pointer-events: none;
+    }
+
+    .dice {
+        pointer-events: auto;
+    }
 }
 
 .fishbuck-slot {
