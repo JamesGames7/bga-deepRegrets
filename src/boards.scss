@@ -181,6 +181,10 @@
         position: absolute;
         left: 308px;
         top: 127px;
+
+        .selectable, .selectable:hover, .selected {
+            outline-width: 3px;
+        }
     }
     .spentGrid {
         width: 137px;
@@ -359,6 +363,6 @@
     cursor: pointer;
 }
 
-.selectable:hover {
+.selectable:hover, .selected {
     outline: red solid;
 }

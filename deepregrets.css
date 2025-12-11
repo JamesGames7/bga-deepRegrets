@@ -410,6 +410,9 @@ Setup in js:
   left: 308px;
   top: 127px;
 }
+.playerBoard .freshGrid .selectable, .playerBoard .freshGrid .selectable:hover, .playerBoard .freshGrid .selected {
+  outline-width: 3px;
+}
 .playerBoard .spentGrid {
   width: 137px;
   height: 133px;
@@ -419,6 +422,12 @@ Setup in js:
 }
 .playerBoard.selectable, .playerBoard.selectable:hover {
   outline-width: 5px;
+}
+.playerBoard .freshGrid, .playerBoard .spentGrid, .playerBoard .fishbuck-slot {
+  pointer-events: none;
+}
+.playerBoard .dice {
+  pointer-events: auto;
 }
 
 .fishbuck-slot {
@@ -563,7 +572,7 @@ Setup in js:
   cursor: pointer;
 }
 
-.selectable:hover {
+.selectable:hover, .selected {
   outline: red solid;
 }
 

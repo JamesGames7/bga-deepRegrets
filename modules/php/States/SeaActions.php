@@ -44,7 +44,8 @@ class SeaActions extends GameState
             "depth" => $this->game->getUniqueValueFromDB("SELECT `depth` FROM `player` WHERE `player_id` = $activePlayerId"), 
             "casted" => $this->globals->get("casted"),
             "selectedShoal" => $this->globals->get("curShoal"),
-            "lifeboat" => json_decode($this->game->getUniqueValueFromDB("SELECT `provisions` FROM `player` WHERE `player_id` = $activePlayerId"))->lifeboat
+            "lifeboat" => json_decode($this->game->getUniqueValueFromDB("SELECT `provisions` FROM `player` WHERE `player_id` = $activePlayerId"))->lifeboat,
+            "dice" => $this->game->dice->getCardsInLocation("fresh", $activePlayerId)
         ];
     } 
 
@@ -120,9 +121,29 @@ class SeaActions extends GameState
     }
 
     #[PossibleAction]
-    function actDropSinker() {
+    function actDropSinker(int $dice, int $currentPlayerId) {
         if (!$this->globals->get("casted")) {
+            if (in_array($dice, array_keys($this->game->dice->getCardsInLocation("fresh", $currentPlayerId)))) {
+                $curDepth = intval($this->game->getUniqueValueFromDB("SELECT `depth` FROM `player` WHERE `player_id` = $currentPlayerId"));
+                if ($curDepth < 3) {
+                    $newDepth = $curDepth + 1;
 
+                    $this->game->dice->moveCard($dice, "spent", $currentPlayerId);
+                    $this->game->DbQuery("UPDATE `player` SET `depth` = $newDepth WHERE `player_id` = $currentPlayerId");
+
+                    $this->notify->all("dropSinker", '${player_name} dropped from depth ${depth1} to ${depth2}', [
+                        "player_name" => $this->game->getActivePlayerName(),
+                        "player_id" => $currentPlayerId,
+                        "depth1" => $curDepth,
+                        "depth2" => $newDepth,
+                        "dice" => $dice,
+                    ]);
+                } else {
+                    throw new \BgaUserException("Already at depth 3");
+                }
+            } else {
+                throw new \BgaUserException("Not a valid dice to use");
+            }
         } else {
             throw new \BgaUserException("Must drop sinker before casting");
         }

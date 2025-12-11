@@ -165,6 +165,7 @@ var DeepRegrets = /** @class */ (function (_super) {
             getId: function (dice) { return dice.id; },
             cardWidth: 95 / 2,
             cardHeight: 132 / 2,
+            isCardVisible: function (card) { return true; },
             setupDiv: function (dice, div) {
                 div.dataset.type = dice.type;
                 div.dataset.typeArg = dice.type_arg;
@@ -176,6 +177,8 @@ var DeepRegrets = /** @class */ (function (_super) {
                 _this.addTooltipHtml(div.id, "Dice in ".concat(dice.location, " pool"));
                 div.style.backgroundImage = "url(".concat(g_gamethemeurl, "img/dice/sides.jpg)");
             },
+            selectableCardStyle: { class: "selectable" },
+            selectedCardStyle: { class: "selected" }
         });
         // create the regrets manager
         this.regretManager = new BgaCards.Manager({
@@ -337,7 +340,6 @@ var DeepRegrets = /** @class */ (function (_super) {
                 el_1 = document.getElementById("ship_grid_".concat(i));
             }
             this.shipDecks.push(new BgaCards.LineStock(this.shipsManager, el_1, { direction: "column", wrap: "nowrap" }));
-            this.shipDecks[0].onCardAdded = function (card) { return console.log(card); };
         }
         // Madness board setup
         document.getElementById("game_play_area").insertAdjacentHTML("afterend", "\n\t\t\t<div id=\"madness_board\">\n\t\t\t\t<div id=\"tinyMadness\" class=\"tiny\"></div>\n\t\t\t\t<div id=\"largeMadness\" class=\"tiny\">\n\t\t\t\t\t<div id=\"madnessGrid\"></div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t");
@@ -384,7 +386,9 @@ var DeepRegrets = /** @class */ (function (_super) {
             player.playerBoard == "monster" ? position = "0" : position = "-100%";
             playerBoard.style.backgroundPositionX = position;
             if (player["id"].toString() == _this.player_id.toString()) {
-                playerBoard.addEventListener("click", function () {
+                playerBoard.addEventListener("click", function (e) {
+                    if (e.target != playerBoard)
+                        return;
                     _this.bgaPerformAction("actChooseSide", { curPlayer: player["id"] }, { checkAction: false });
                 });
                 document.getElementById("tinyMadness").style.backgroundPositionY = "".concat(_this.COLOUR_POSITION[colour], "%");
@@ -404,6 +408,7 @@ var DeepRegrets = /** @class */ (function (_super) {
             }
             playerBoard.insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"freshGrid-".concat(player["id"], "\" class=\"freshGrid\"></div>\n\t\t\t\t<div id=\"spentGrid-").concat(player["id"], "\" class=\"spentGrid\"></div>\t\n\t\t\t"));
             _this.freshStock[player["id"]] = new BgaCards.LineStock(_this.diceManager, document.getElementById("freshGrid-".concat(player["id"])), { sort: BgaCards.sort('type_arg', 'type') });
+            // TODO: change to scrollable?
             _this.spentStock[player["id"]] = new BgaCards.LineStock(_this.diceManager, document.getElementById("spentGrid-".concat(player["id"])), { sort: BgaCards.sort('type_arg', 'type') });
             Object.values(player.dice).forEach(function (die) {
                 switch (die["location"]) {
@@ -418,8 +423,13 @@ var DeepRegrets = /** @class */ (function (_super) {
                         break;
                 }
             });
+            _this.freshStock[player["id"]].onSelectionChange = function () {
+                if (document.getElementById("confirmButton")) {
+                    console.log(_this.freshStock[player["id"]].getSelection().length);
+                    document.getElementById("confirmButton").disabled = _this.freshStock[player["id"]].getSelection().length == 0;
+                }
+            };
             document.getElementById("playerComponents-".concat(player["id"])).insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"canOfWorms-".concat(player["id"], "\" class=\"canOfWorms provisions\"></div>\n\t\t\t\t<div id=\"lifeboat-").concat(player["id"], "\" class=\"lifeboat provisions\">\n\t\t\t\t\t<div id=\"lifeboat-inner-").concat(player["id"], "\" class=\"lifeboat-inner\">\n\t\t\t\t\t\t<div id=\"lifeboat-front-").concat(player["id"], "\" class=\"lifeboat-front\"></div>\n\t\t\t\t\t\t<div id=\"lifeboat-back-").concat(player["id"], "\" class=\"lifeboat-back\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t"));
-            console.log(player.provisions);
             if (!JSON.parse(player.provisions).lifeboat) {
                 document.getElementById("lifeboat-".concat(player["id"])).classList.add("flipped");
             }
@@ -521,9 +531,9 @@ var DeepRegrets = /** @class */ (function (_super) {
                             var _loop_2 = function (j) {
                                 var curShoal = document.getElementById("shoal_".concat(i, "_").concat(j));
                                 curShoal.classList.add("selectable");
-                                curShoal.addEventListener("click", function () { return _this.setClientState("client_ConfirmCast", {
+                                curShoal.addEventListener("click", function () { return _this.setClientState("client_Confirm", {
                                     descriptionmyturn: "",
-                                    args: { i: i, j: j }
+                                    args: { name: "actCast", args: { shoal: "".concat(i, "|").concat(j) }, selectedId: "shoal_".concat(i, "_").concat(j) }
                                 }); });
                             };
                             for (var j = 1; j <= 3; j++) {
@@ -533,23 +543,37 @@ var DeepRegrets = /** @class */ (function (_super) {
                         for (var i = 1; i <= depth; i++) {
                             _loop_1(i);
                         }
-                        var lifeboat = document.getElementById("lifeboat-".concat(this.player_id));
-                        if (args.args.lifeboat) {
-                            lifeboat.classList.add("selectable");
-                            lifeboat.addEventListener("click", function () { return _this.bgaPerformAction("actAbandonShip"); });
-                        }
                     }
                 }
                 if (args.args.casted) {
-                    console.log(args.args.selectedShoal);
                     var shoal = [Math.floor(args.args.selectedShoal / 3) + 1, (args.args.selectedShoal - 1) % 3 + 1];
                     document.getElementById("shoal_".concat(shoal[0], "_").concat(shoal[1])).classList.add("selected");
                 }
+                break;
+            case "client_FreeSeaActions":
+                var lifeboat = document.getElementById("lifeboat-".concat(this.player_id));
+                if (args.args.lifeboat) {
+                    lifeboat.classList.add("selectable");
+                    lifeboat.addEventListener("click", function () { return _this.bgaPerformAction("actAbandonShip"); });
+                }
+                this.freshStock[this.player_id].setSelectionMode("none");
+                break;
+            case "client_DropSinker":
+                this.freshStock[this.player_id].setSelectionMode("single");
+                break;
+            case "client_Confirm":
+                if (args.args.selectedId) {
+                    document.getElementById(args.args.selectedId).classList.add("selected");
+                }
+                break;
         }
     };
     DeepRegrets.prototype.onLeavingState = function (stateName) {
         document.querySelectorAll(".selectable").forEach(function (el) {
             el.classList.remove("selectable");
+        });
+        document.querySelectorAll(".selected").forEach(function (el) {
+            el.classList.remove("selected");
         });
     };
     DeepRegrets.prototype.onUpdateActionButtons = function (stateName, args) {
@@ -562,9 +586,26 @@ var DeepRegrets = /** @class */ (function (_super) {
                     });
                 }
                 break;
-            case "client_ConfirmCast":
-                this.statusBar.addActionButton(_("Confirm"), function () { _this.bgaPerformAction("actCast", { shoal: "".concat(args.i, "|").concat(args.j) }); _this.restoreServerGameState(); });
-                this.statusBar.addActionButton(_("Cancel"), function () { return _this.restoreServerGameState(); }, { color: "secondary" });
+            case "SeaActions":
+                if (this.isCurrentPlayerActive()) {
+                    this.statusBar.addActionButton(_("Free Actions"), function () { return _this.setClientState("client_FreeSeaActions", { "descriptionmyturn": "Perform free actions:", args: { "lifeboat": args.lifeboat, "dice": args.dice } }); }, { color: "secondary" });
+                }
+                break;
+            case "client_FreeSeaActions":
+                this.statusBar.addActionButton(_("Abandon Ship"), function () { return _this.bgaPerformAction("actAbandonShip"); }, { "color": "secondary" });
+                this.statusBar.addActionButton(_("Drop Sinker"), function () { return _this.setClientState("client_DropSinker", { "descriptionmyturn": "Choose a die to use" }); }, { "color": "secondary" });
+                this.statusBar.addActionButton(_("Exit"), function () { return _this.restoreServerGameState(); }, { color: "alert" });
+                break;
+            case "client_DropSinker":
+                this.statusBar.addActionButton(_("Confirm"), function () {
+                    _this.bgaPerformAction("actDropSinker", { dice: _this.freshStock[_this.player_id].getSelection()[0].id }), { color: "primary", disabled: true, id: "confirmButton" };
+                    _this.setClientState("client_FreeSeaActions", { "descriptionmyturn": "Perform free actions" });
+                });
+                this.statusBar.addActionButton(_("Cancel"), function () { return _this.setClientState("client_FreeSeaActions", { "descriptionmyturn": "Perform free actions" }); }, { color: "alert" });
+                break;
+            case "client_Confirm":
+                this.statusBar.addActionButton(_("Confirm"), function () { _this.bgaPerformAction(args.name, args.args); _this.restoreServerGameState(); });
+                this.statusBar.addActionButton(_("Cancel"), function () { return _this.restoreServerGameState(); }, { color: "alert" });
                 break;
         }
     };
@@ -588,7 +629,6 @@ var DeepRegrets = /** @class */ (function (_super) {
         document.getElementById("shoal_".concat(args.shoal[0], "_").concat(args.shoal[1])).classList.add("selected");
     };
     DeepRegrets.prototype.notif_revealCard = function (args) {
-        console.log(args);
         var fish = args.fish;
         this.shoalStocks[args.shoal[0] - 1][args.shoal[1] - 1].flipCard({ id: args.shoalNum - 10, size: this.SHOAL_SIZE[fish.size], depth: args.depth, coords: fish.coords }, { updateData: true });
     };
@@ -596,6 +636,16 @@ var DeepRegrets = /** @class */ (function (_super) {
         document.getElementById("lifeboat-".concat(args.player_id)).classList.add("flipped");
         document.getElementById("lifeboat-".concat(args.player_id)).classList.remove("selectable");
         this.shipDecks[0].addCard({ id: args.player_id, location: "port" });
+    };
+    DeepRegrets.prototype.notif_dropSinker = function (args) {
+        console.log(args);
+        console.log(this.shipDecks[args.depth2]);
+        this.shipDecks[args.depth2].addCard({ id: args.player_id });
+        this.spentStock[args.player_id].addCard({ id: args.dice });
+        // FIXME disable button if 0 selected
+    };
+    DeepRegrets.prototype.notif_test = function (args) {
+        console.log(args);
     };
     return DeepRegrets;
 }(GameGui));

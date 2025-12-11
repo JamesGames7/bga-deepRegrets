@@ -213,6 +213,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
             getId: (dice) => (dice as any).id,
 			cardWidth: 95 / 2,
 			cardHeight: 132 / 2,
+			isCardVisible: (card: any) => true,
 			setupDiv: (dice, div) => {
 				div.dataset.type = (dice as any).type;
 				div.dataset.typeArg = (dice as any).type_arg;
@@ -224,6 +225,8 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
                 this.addTooltipHtml(div.id, `Dice in ${(dice as any).location} pool`);
 				div.style.backgroundImage = `url(${g_gamethemeurl}img/dice/sides.jpg)`;
             },
+			selectableCardStyle: {class: "selectable"},
+			selectedCardStyle: {class: "selected"}
         });
 
         // create the regrets manager
@@ -391,7 +394,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				el = document.getElementById(`ship_grid_${i}`);
 			}
 			this.shipDecks.push(new BgaCards.LineStock(this.shipsManager, el, {direction: "column", wrap: "nowrap"}));
-			this.shipDecks[0].onCardAdded = (card: any) => console.log(card);
 		}
 		// Madness board setup
 		document.getElementById("game_play_area").insertAdjacentHTML("afterend", `
@@ -481,6 +483,8 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			`)
 
 			this.freshStock[player["id"]] = new BgaCards.LineStock(this.diceManager, document.getElementById(`freshGrid-${player["id"]}`), {sort: BgaCards.sort('type_arg', 'type')});
+
+			// TODO: change to scrollable?
 			this.spentStock[player["id"]] = new BgaCards.LineStock(this.diceManager, document.getElementById(`spentGrid-${player["id"]}`), {sort: BgaCards.sort('type_arg', 'type')});
 			Object.values(player.dice).forEach(die => {
 				switch (die["location"]) {
@@ -496,6 +500,13 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				}
 			})
 
+			this.freshStock[player["id"]].onSelectionChange = () => {
+				if (document.getElementById("confirmButton")) {
+					console.log(this.freshStock[player["id"]].getSelection().length);
+					(document.getElementById("confirmButton") as any).disabled = this.freshStock[player["id"]].getSelection().length == 0;
+				}
+			}
+
 			document.getElementById(`playerComponents-${player["id"]}`).insertAdjacentHTML("beforeend", `
 				<div id="canOfWorms-${player["id"]}" class="canOfWorms provisions"></div>
 				<div id="lifeboat-${player["id"]}" class="lifeboat provisions">
@@ -506,7 +517,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				</div>
 			`)
 
-			console.log(player.provisions);
 			if (!JSON.parse(player.provisions).lifeboat) {
 				document.getElementById(`lifeboat-${player["id"]}`).classList.add("flipped");
 			}
@@ -619,31 +629,44 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 							for (let j = 1; j <= 3; j++) {
 								let curShoal = document.getElementById(`shoal_${i}_${j}`);
 								curShoal.classList.add("selectable");
-								curShoal.addEventListener("click", () => this.setClientState("client_ConfirmCast", {
+								curShoal.addEventListener("click", () => this.setClientState("client_Confirm", {
 									descriptionmyturn: "",
-									args: {i: i, j: j}
+									args: {name: "actCast", args: {shoal: `${i}|${j}`}, selectedId: `shoal_${i}_${j}`}
 								}));
 							}
-						}
-						
-						var lifeboat = document.getElementById(`lifeboat-${this.player_id}`);
-						if (args.args.lifeboat) {
-							lifeboat.classList.add("selectable");
-							lifeboat.addEventListener("click", () => this.bgaPerformAction("actAbandonShip"));
 						}
 					}
 				}
 
 				if (args.args.casted) {
-					console.log(args.args.selectedShoal);
 					let shoal = [Math.floor(args.args.selectedShoal / 3) + 1, (args.args.selectedShoal - 1) % 3 + 1];
 					document.getElementById(`shoal_${shoal[0]}_${shoal[1]}`).classList.add("selected");
 				}
+				break;
+			case "client_FreeSeaActions":	
+				var lifeboat = document.getElementById(`lifeboat-${this.player_id}`);
+				if (args.args.lifeboat) {
+					lifeboat.classList.add("selectable");
+					lifeboat.addEventListener("click", () => this.bgaPerformAction("actAbandonShip"));
+				}
+				this.freshStock[this.player_id].setSelectionMode("none");
+				break;
+			case "client_DropSinker":
+				this.freshStock[this.player_id].setSelectionMode("single");
+				break;
+			case "client_Confirm":
+				if (args.args.selectedId) {
+					document.getElementById(args.args.selectedId).classList.add("selected");
+				}
+				break;
 		}		
 	}
 	public onLeavingState(stateName: string) {
 		document.querySelectorAll(".selectable").forEach(el => {
 			el.classList.remove("selectable");
+		})
+		document.querySelectorAll(".selected").forEach(el => {
+			el.classList.remove("selected");
 		})
 	}
 	public onUpdateActionButtons(stateName: string, args: any) {
@@ -655,9 +678,26 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					});
 				}
 				break;
-			case "client_ConfirmCast":
-				this.statusBar.addActionButton(_("Confirm"), () => {this.bgaPerformAction("actCast", {shoal: `${args.i}|${args.j}`}); this.restoreServerGameState()});
-				this.statusBar.addActionButton(_("Cancel"), () => this.restoreServerGameState(), {color: "secondary"});
+			case "SeaActions":
+				if (this.isCurrentPlayerActive()) {
+					this.statusBar.addActionButton(_("Free Actions"), () => this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions:", args: {"lifeboat": args.lifeboat, "dice": args.dice}}), {color: "secondary"})
+				}
+				break;
+			case "client_FreeSeaActions":
+				this.statusBar.addActionButton(_("Abandon Ship"), () => this.bgaPerformAction("actAbandonShip"), {"color": "secondary"});
+				this.statusBar.addActionButton(_("Drop Sinker"), () => this.setClientState("client_DropSinker", {"descriptionmyturn": "Choose a die to use"}), {"color": "secondary"});
+				this.statusBar.addActionButton(_("Exit"), () => this.restoreServerGameState(), {color: "alert"});
+				break;
+			case "client_DropSinker":
+				this.statusBar.addActionButton(_("Confirm"), () => {
+					this.bgaPerformAction("actDropSinker", {dice: this.freshStock[this.player_id].getSelection()[0].id}), {color: "primary", disabled: true, id: "confirmButton"}
+					this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions"});
+				});
+				this.statusBar.addActionButton(_("Cancel"), () => this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions"}), {color: "alert"});
+				break;
+			case "client_Confirm":
+				this.statusBar.addActionButton(_("Confirm"), () => {this.bgaPerformAction(args.name, args.args); this.restoreServerGameState()});
+				this.statusBar.addActionButton(_("Cancel"), () => this.restoreServerGameState(), {color: "alert"});
 				break;
 		}
 	}
@@ -685,7 +725,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 	}
 
 	public notif_revealCard(args: any) {
-		console.log(args);
 		let fish = args.fish;
 		this.shoalStocks[args.shoal[0] - 1][args.shoal[1] - 1].flipCard({id: args.shoalNum - 10, size: this.SHOAL_SIZE[fish.size], depth: args.depth, coords: fish.coords},
 																		{updateData: true}
@@ -697,5 +736,17 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		document.getElementById(`lifeboat-${args.player_id}`).classList.remove("selectable");
 
 		this.shipDecks[0].addCard({id: args.player_id, location: "port"})
+	}
+
+	public notif_dropSinker(args: any) {
+		console.log(args);
+		console.log(this.shipDecks[args.depth2]);
+		this.shipDecks[args.depth2].addCard({id: args.player_id});
+		this.spentStock[args.player_id].addCard({id: args.dice});
+		// FIXME disable button if 0 selected
+	}
+
+	public notif_test(args: any) {
+		console.log(args);
 	}
 }
