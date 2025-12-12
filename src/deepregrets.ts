@@ -686,9 +686,16 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			case "client_FreeSeaActions":
 				this.statusBar.addActionButton(_("Abandon Ship"), () => this.bgaPerformAction("actAbandonShip"), {"color": "secondary"});
 				this.statusBar.addActionButton(_("Drop Sinker"), () => this.setClientState("client_DropSinker", {"descriptionmyturn": "Choose a die to use"}), {"color": "secondary"});
+				this.statusBar.addActionButton(_("Use Can of Worms"), () => this.setClientState("client_CanOfWorms", {"descriptionmyturn": "Choose a shoal to peek at"}), {"color": "secondary"});
 				this.statusBar.addActionButton(_("Exit"), () => this.restoreServerGameState(), {color: "alert"});
 				break;
 			case "client_DropSinker":
+				this.statusBar.addActionButton(_("Confirm"), () => {
+					this.bgaPerformAction("actDropSinker", {dice: this.freshStock[this.player_id].getSelection()[0].id}), {color: "primary", disabled: true, id: "confirmButton"}
+				});
+				this.statusBar.addActionButton(_("Cancel"), () => this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions"}), {color: "alert"});
+				break;
+			case "client_CanOfWorms":
 				this.statusBar.addActionButton(_("Confirm"), () => {
 					this.bgaPerformAction("actDropSinker", {dice: this.freshStock[this.player_id].getSelection()[0].id}), {color: "primary", disabled: true, id: "confirmButton"}
 					this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions"});
@@ -743,7 +750,8 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		console.log(this.shipDecks[args.depth2]);
 		this.shipDecks[args.depth2].addCard({id: args.player_id});
 		this.spentStock[args.player_id].addCard({id: args.dice});
-		// FIXME disable button if 0 selected
+		
+		this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions"});
 	}
 
 	public notif_test(args: any) {

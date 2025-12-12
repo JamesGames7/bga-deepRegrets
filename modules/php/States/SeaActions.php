@@ -30,7 +30,7 @@ class SeaActions extends GameState
             // optional
             description: clienttranslate('${actplayer} must perform Sea actions or pass'),
             descriptionMyTurn: clienttranslate('${you} must perform Sea actions or pass'),
-            transitions: ["port" => 41, "pass" => 45, "nextPlayer" => 49], // LINK - modules\php\States\PassAction.php
+            transitions: ["port" => 41, "sea" => 42, "pass" => 45, "nextPlayer" => 49], // LINK - modules\php\States\PassAction.php
                                                                            // LINK - modules\php\States\NextPlayer.php
             updateGameProgression: false,
             initialPrivate: null,
@@ -131,6 +131,8 @@ class SeaActions extends GameState
                     $this->game->dice->moveCard($dice, "spent", $currentPlayerId);
                     $this->game->DbQuery("UPDATE `player` SET `depth` = $newDepth WHERE `player_id` = $currentPlayerId");
 
+                    $this->gamestate->nextState("sea");
+
                     $this->notify->all("dropSinker", '${player_name} dropped from depth ${depth1} to ${depth2}', [
                         "player_name" => $this->game->getActivePlayerName(),
                         "player_id" => $currentPlayerId,
@@ -156,16 +158,6 @@ class SeaActions extends GameState
         } else {
             throw new \BgaUserException("Must use Can Of Worms before casting");
         }
-    }
-
-    #[PossibleAction]
-    function actEatFish() {
-        
-    }
-
-    #[PossibleAction]
-    function actUseItems() {
-        
     }
 
     function onEnteringState(int $activePlayerId) {
