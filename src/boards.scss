@@ -269,8 +269,39 @@
     }
 
     .canOfWorms {
+        perspective: 1000px;
+        border-radius: 7px;
+
+        &.selectable, &.selectable:hover, &.selected {
+            outline-width: 3px;
+        }
+
+        &.flipped .canOfWorms-inner {
+            transform: rotateY(180deg);
+        }
+    }
+
+    .canOfWorms-inner {
+        width: 100%;
+        height: 100%;
+        transition: all 1s;
+        transform-style: preserve-3d;
+    }
+
+    .canOfWorms-front, .canOfWorms-back {
+        width: 100%;
+        height: 100%;
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+        position: absolute;
         background-image: url(img/provisions.png);
         background-position-x: -100%;
+        background-size: 200% 200%;
+    }
+
+    .canOfWorms-back {
+        transform: rotateY(180deg);
+        background-position-y: -100%;
     }
 }
 

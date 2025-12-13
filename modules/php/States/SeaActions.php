@@ -45,6 +45,7 @@ class SeaActions extends GameState
             "casted" => $this->globals->get("casted"),
             "selectedShoal" => $this->globals->get("curShoal"),
             "lifeboat" => json_decode($this->game->getUniqueValueFromDB("SELECT `provisions` FROM `player` WHERE `player_id` = $activePlayerId"))->lifeboat,
+            "canOfWorms" => json_decode($this->game->getUniqueValueFromDB("SELECT `provisions` FROM `player` WHERE `player_id` = $activePlayerId"))->canOfWorms,
             "dice" => $this->game->dice->getCardsInLocation("fresh", $activePlayerId)
         ];
     } 
@@ -156,7 +157,7 @@ class SeaActions extends GameState
         if (!$this->globals->get("casted")) {
 
         } else {
-            throw new \BgaUserException("Must use Can Of Worms before casting");
+            throw new \BgaUserException("Must use Can of Worms before casting");
         }
     }
 

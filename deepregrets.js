@@ -425,16 +425,15 @@ var DeepRegrets = /** @class */ (function (_super) {
             });
             _this.freshStock[player["id"]].onSelectionChange = function () {
                 if (document.getElementById("confirmButton")) {
-                    console.log(_this.freshStock[player["id"]].getSelection().length);
                     document.getElementById("confirmButton").disabled = _this.freshStock[player["id"]].getSelection().length == 0;
                 }
             };
-            document.getElementById("playerComponents-".concat(player["id"])).insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"canOfWorms-".concat(player["id"], "\" class=\"canOfWorms provisions\"></div>\n\t\t\t\t<div id=\"lifeboat-").concat(player["id"], "\" class=\"lifeboat provisions\">\n\t\t\t\t\t<div id=\"lifeboat-inner-").concat(player["id"], "\" class=\"lifeboat-inner\">\n\t\t\t\t\t\t<div id=\"lifeboat-front-").concat(player["id"], "\" class=\"lifeboat-front\"></div>\n\t\t\t\t\t\t<div id=\"lifeboat-back-").concat(player["id"], "\" class=\"lifeboat-back\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t"));
+            document.getElementById("playerComponents-".concat(player["id"])).insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"canOfWorms-".concat(player["id"], "\" class=\"canOfWorms provisions\">\n\t\t\t\t\t<div id=\"canOfWorms-inner-").concat(player["id"], "\" class=\"canOfWorms-inner\">\n\t\t\t\t\t\t<div id=\"canOfWorms-front-").concat(player["id"], "\" class=\"canOfWorms-front\"></div>\n\t\t\t\t\t\t<div id=\"canOfWorms-back-").concat(player["id"], "\" class=\"canOfWorms-back\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div id=\"lifeboat-").concat(player["id"], "\" class=\"lifeboat provisions\">\n\t\t\t\t\t<div id=\"lifeboat-inner-").concat(player["id"], "\" class=\"lifeboat-inner\">\n\t\t\t\t\t\t<div id=\"lifeboat-front-").concat(player["id"], "\" class=\"lifeboat-front\"></div>\n\t\t\t\t\t\t<div id=\"lifeboat-back-").concat(player["id"], "\" class=\"lifeboat-back\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t"));
             if (!JSON.parse(player.provisions).lifeboat) {
                 document.getElementById("lifeboat-".concat(player["id"])).classList.add("flipped");
             }
             if (!JSON.parse(player.provisions).canOfWorms) {
-                document.getElementById("canOfWorms-".concat(player["id"])).style.backgroundPositionY = "-100%";
+                document.getElementById("canOfWorms-".concat(player["id"])).classList.add("flipped");
             }
             _this.getPlayerPanelElement(parseInt(player["id"])).innerHTML = tmpl_playerBoard(player["id"], player.color, gamedatas.firstPlayer, gamedatas.lifePreserver);
             var tempDeck;
@@ -517,13 +516,16 @@ var DeepRegrets = /** @class */ (function (_super) {
                 if (this.isCurrentPlayerActive()) {
                     args.args.possibleChoices.forEach(function (id) {
                         document.getElementById("playerBoard-".concat(id)).classList.add("selectable");
-                        document.getElementById("playerBoard-".concat(id)).addEventListener("click", function () {
-                            _this.bgaPerformAction("actChooseLPPlayer", { "playerId": id });
+                        document.getElementById("playerBoard-".concat(id)).addEventListener("click", function (e) {
+                            if (_this.gamedatas.gamestate.name == stateName) {
+                                _this.bgaPerformAction("actChooseLPPlayer", { "playerId": id });
+                            }
                         });
                     });
                 }
                 break;
             case "SeaActions":
+                // TODO use "allowed" class: only trigger certain events if class is on object
                 if (this.isCurrentPlayerActive()) {
                     if (!args.args.casted) {
                         var depth = parseInt(args.args.depth);
@@ -531,10 +533,16 @@ var DeepRegrets = /** @class */ (function (_super) {
                             var _loop_2 = function (j) {
                                 var curShoal = document.getElementById("shoal_".concat(i, "_").concat(j));
                                 curShoal.classList.add("selectable");
-                                curShoal.addEventListener("click", function () { return _this.setClientState("client_Confirm", {
-                                    descriptionmyturn: "",
-                                    args: { name: "actCast", args: { shoal: "".concat(i, "|").concat(j) }, selectedId: "shoal_".concat(i, "_").concat(j) }
-                                }); });
+                                curShoal.addEventListener("click", function (e) {
+                                    if (_this.gamedatas.gamestate.name == stateName) {
+                                        console.log(_this.gamedatas.gamestate.name);
+                                        _this.setClientState("client_Confirm", {
+                                            descriptionmyturn: "Choose a shoal to cast in: ",
+                                            args: { name: "actCast", args: { shoal: "".concat(i, "|").concat(j) }, selectedId: "shoal_".concat(i, "_").concat(j) }
+                                        });
+                                        console.log(_this.gamedatas.gamestate.name);
+                                    }
+                                });
                             };
                             for (var j = 1; j <= 3; j++) {
                                 _loop_2(j);
@@ -554,12 +562,42 @@ var DeepRegrets = /** @class */ (function (_super) {
                 var lifeboat = document.getElementById("lifeboat-".concat(this.player_id));
                 if (args.args.lifeboat) {
                     lifeboat.classList.add("selectable");
-                    lifeboat.addEventListener("click", function () { return _this.bgaPerformAction("actAbandonShip"); });
+                    lifeboat.addEventListener("click", function (e) {
+                        if (_this.gamedatas.gamestate.name == stateName) {
+                            _this.bgaPerformAction("actAbandonShip");
+                        }
+                    });
+                }
+                var canOfWorms = document.getElementById("canOfWorms-".concat(this.player_id));
+                console.log(canOfWorms);
+                console.log(args.args);
+                if (args.args.canOfWorms) {
+                    canOfWorms.classList.add("selectable");
+                    canOfWorms.addEventListener("click", function (e) {
+                        if (_this.gamedatas.gamestate.name == stateName) {
+                            _this.setClientState("client_CanOfWorms", { "descriptionmyturn": "Choose a shoal to peek at" });
+                        }
+                    });
                 }
                 this.freshStock[this.player_id].setSelectionMode("none");
                 break;
             case "client_DropSinker":
                 this.freshStock[this.player_id].setSelectionMode("single");
+                break;
+            case "client_CanOfWorms":
+                this.shoalStocks.forEach(function (depth) {
+                    depth.forEach(function (shoal) {
+                        shoal.element.classList.add("selectable");
+                        shoal.element.addEventListener("click", function (e) {
+                            if (_this.gamedatas.gamestate.name == stateName) {
+                                document.querySelectorAll(".selected").forEach(function (el) {
+                                    el.classList.remove("selected");
+                                });
+                                shoal.element.classList.add("selected");
+                            }
+                        });
+                    });
+                });
                 break;
             case "client_Confirm":
                 if (args.args.selectedId) {
@@ -588,7 +626,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                 break;
             case "SeaActions":
                 if (this.isCurrentPlayerActive()) {
-                    this.statusBar.addActionButton(_("Free Actions"), function () { return _this.setClientState("client_FreeSeaActions", { "descriptionmyturn": "Perform free actions:", args: { "lifeboat": args.lifeboat, "dice": args.dice } }); }, { color: "secondary" });
+                    this.statusBar.addActionButton(_("Free Actions"), function () { return _this.setClientState("client_FreeSeaActions", { "descriptionmyturn": "Perform free actions:", args: { "lifeboat": args.lifeboat, "dice": args.dice, "canOfWorms": args.canOfWorms } }); }, { color: "secondary" });
                 }
                 break;
             case "client_FreeSeaActions":
@@ -599,14 +637,15 @@ var DeepRegrets = /** @class */ (function (_super) {
                 break;
             case "client_DropSinker":
                 this.statusBar.addActionButton(_("Confirm"), function () {
-                    _this.bgaPerformAction("actDropSinker", { dice: _this.freshStock[_this.player_id].getSelection()[0].id }), { color: "primary", disabled: true, id: "confirmButton" };
-                });
+                    _this.bgaPerformAction("actDropSinker", { dice: _this.freshStock[_this.player_id].getSelection()[0].id });
+                }, { color: "primary", disabled: true, id: "confirmButton" });
                 this.statusBar.addActionButton(_("Cancel"), function () { return _this.setClientState("client_FreeSeaActions", { "descriptionmyturn": "Perform free actions" }); }, { color: "alert" });
                 break;
             case "client_CanOfWorms":
                 this.statusBar.addActionButton(_("Confirm"), function () {
-                    _this.bgaPerformAction("actDropSinker", { dice: _this.freshStock[_this.player_id].getSelection()[0].id }), { color: "primary", disabled: true, id: "confirmButton" };
-                    _this.setClientState("client_FreeSeaActions", { "descriptionmyturn": "Perform free actions" });
+                    // FIXME update these
+                    // this.bgaPerformAction("actDropSinker", {dice: this.freshStock[this.player_id].getSelection()[0].id}), {color: "primary", disabled: true, id: "confirmButton"}
+                    // this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions"});
                 });
                 this.statusBar.addActionButton(_("Cancel"), function () { return _this.setClientState("client_FreeSeaActions", { "descriptionmyturn": "Perform free actions" }); }, { color: "alert" });
                 break;
@@ -645,8 +684,6 @@ var DeepRegrets = /** @class */ (function (_super) {
         this.shipDecks[0].addCard({ id: args.player_id, location: "port" });
     };
     DeepRegrets.prototype.notif_dropSinker = function (args) {
-        console.log(args);
-        console.log(this.shipDecks[args.depth2]);
         this.shipDecks[args.depth2].addCard({ id: args.player_id });
         this.spentStock[args.player_id].addCard({ id: args.dice });
         this.setClientState("client_FreeSeaActions", { "descriptionmyturn": "Perform free actions" });

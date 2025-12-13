@@ -502,13 +502,17 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 
 			this.freshStock[player["id"]].onSelectionChange = () => {
 				if (document.getElementById("confirmButton")) {
-					console.log(this.freshStock[player["id"]].getSelection().length);
 					(document.getElementById("confirmButton") as any).disabled = this.freshStock[player["id"]].getSelection().length == 0;
 				}
 			}
 
 			document.getElementById(`playerComponents-${player["id"]}`).insertAdjacentHTML("beforeend", `
-				<div id="canOfWorms-${player["id"]}" class="canOfWorms provisions"></div>
+				<div id="canOfWorms-${player["id"]}" class="canOfWorms provisions">
+					<div id="canOfWorms-inner-${player["id"]}" class="canOfWorms-inner">
+						<div id="canOfWorms-front-${player["id"]}" class="canOfWorms-front"></div>
+						<div id="canOfWorms-back-${player["id"]}" class="canOfWorms-back"></div>
+					</div>
+				</div>
 				<div id="lifeboat-${player["id"]}" class="lifeboat provisions">
 					<div id="lifeboat-inner-${player["id"]}" class="lifeboat-inner">
 						<div id="lifeboat-front-${player["id"]}" class="lifeboat-front"></div>
@@ -522,7 +526,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			}
 			
 			if (!JSON.parse(player.provisions).canOfWorms) {
-				document.getElementById(`canOfWorms-${player["id"]}`).style.backgroundPositionY = "-100%";
+				document.getElementById(`canOfWorms-${player["id"]}`).classList.add("flipped");
 			}
 
 			this.getPlayerPanelElement(parseInt(player["id"])).innerHTML = tmpl_playerBoard(player["id"], player.color, gamedatas.firstPlayer, gamedatas.lifePreserver);
@@ -615,13 +619,16 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				if (this.isCurrentPlayerActive()) {
 					args.args.possibleChoices.forEach(id => {
 						document.getElementById(`playerBoard-${id}`).classList.add("selectable");
-						document.getElementById(`playerBoard-${id}`).addEventListener("click", () => {
-							this.bgaPerformAction("actChooseLPPlayer", {"playerId": id});
+						document.getElementById(`playerBoard-${id}`).addEventListener("click", e => {
+							if (this.gamedatas.gamestate.name == stateName) {
+								this.bgaPerformAction("actChooseLPPlayer", {"playerId": id});
+							}
 						})
 					});
 				}
 				break;
 			case "SeaActions":
+				// TODO use "allowed" class: only trigger certain events if class is on object
 				if (this.isCurrentPlayerActive()) {
 					if (!args.args.casted) {
 						let depth = parseInt(args.args.depth);
@@ -629,10 +636,16 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 							for (let j = 1; j <= 3; j++) {
 								let curShoal = document.getElementById(`shoal_${i}_${j}`);
 								curShoal.classList.add("selectable");
-								curShoal.addEventListener("click", () => this.setClientState("client_Confirm", {
-									descriptionmyturn: "",
-									args: {name: "actCast", args: {shoal: `${i}|${j}`}, selectedId: `shoal_${i}_${j}`}
-								}));
+								curShoal.addEventListener("click", e => {
+								if (this.gamedatas.gamestate.name == stateName) {
+										console.log(this.gamedatas.gamestate.name);
+										this.setClientState("client_Confirm", {
+											descriptionmyturn: "Choose a shoal to cast in: ",
+											args: {name: "actCast", args: {shoal: `${i}|${j}`}, selectedId: `shoal_${i}_${j}`}
+										});
+										console.log(this.gamedatas.gamestate.name);
+									}
+								});
 							}
 						}
 					}
@@ -647,12 +660,43 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				var lifeboat = document.getElementById(`lifeboat-${this.player_id}`);
 				if (args.args.lifeboat) {
 					lifeboat.classList.add("selectable");
-					lifeboat.addEventListener("click", () => this.bgaPerformAction("actAbandonShip"));
+					lifeboat.addEventListener("click", e => {
+						if (this.gamedatas.gamestate.name == stateName) {
+							this.bgaPerformAction("actAbandonShip");
+						}
+					});
+				}
+
+				var canOfWorms = document.getElementById(`canOfWorms-${this.player_id}`)
+				console.log(canOfWorms);
+				console.log(args.args);
+				if (args.args.canOfWorms) {
+					canOfWorms.classList.add("selectable");
+					canOfWorms.addEventListener("click", e => {
+						if (this.gamedatas.gamestate.name == stateName) {
+							this.setClientState("client_CanOfWorms", {"descriptionmyturn": "Choose a shoal to peek at"});
+						}
+					});
 				}
 				this.freshStock[this.player_id].setSelectionMode("none");
 				break;
 			case "client_DropSinker":
 				this.freshStock[this.player_id].setSelectionMode("single");
+				break;
+			case "client_CanOfWorms":
+				this.shoalStocks.forEach(depth => {
+					depth.forEach(shoal => {
+						shoal.element.classList.add("selectable");
+						shoal.element.addEventListener("click", (e: { currentTarget: HTMLElement; }) => {
+							if (this.gamedatas.gamestate.name == stateName) {
+								document.querySelectorAll(".selected").forEach(el => {
+									el.classList.remove("selected");
+								})
+								shoal.element.classList.add("selected");
+							}
+						})
+					})
+				})
 				break;
 			case "client_Confirm":
 				if (args.args.selectedId) {
@@ -680,7 +724,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				break;
 			case "SeaActions":
 				if (this.isCurrentPlayerActive()) {
-					this.statusBar.addActionButton(_("Free Actions"), () => this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions:", args: {"lifeboat": args.lifeboat, "dice": args.dice}}), {color: "secondary"})
+					this.statusBar.addActionButton(_("Free Actions"), () => this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions:", args: {"lifeboat": args.lifeboat, "dice": args.dice, "canOfWorms": args.canOfWorms}}), {color: "secondary"})
 				}
 				break;
 			case "client_FreeSeaActions":
@@ -691,14 +735,15 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				break;
 			case "client_DropSinker":
 				this.statusBar.addActionButton(_("Confirm"), () => {
-					this.bgaPerformAction("actDropSinker", {dice: this.freshStock[this.player_id].getSelection()[0].id}), {color: "primary", disabled: true, id: "confirmButton"}
-				});
+					this.bgaPerformAction("actDropSinker", {dice: this.freshStock[this.player_id].getSelection()[0].id})
+				}, {color: "primary", disabled: true, id: "confirmButton"});
 				this.statusBar.addActionButton(_("Cancel"), () => this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions"}), {color: "alert"});
 				break;
 			case "client_CanOfWorms":
 				this.statusBar.addActionButton(_("Confirm"), () => {
-					this.bgaPerformAction("actDropSinker", {dice: this.freshStock[this.player_id].getSelection()[0].id}), {color: "primary", disabled: true, id: "confirmButton"}
-					this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions"});
+					// FIXME update these
+					// this.bgaPerformAction("actDropSinker", {dice: this.freshStock[this.player_id].getSelection()[0].id}), {color: "primary", disabled: true, id: "confirmButton"}
+					// this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions"});
 				});
 				this.statusBar.addActionButton(_("Cancel"), () => this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions"}), {color: "alert"});
 				break;
@@ -746,11 +791,9 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 	}
 
 	public notif_dropSinker(args: any) {
-		console.log(args);
-		console.log(this.shipDecks[args.depth2]);
 		this.shipDecks[args.depth2].addCard({id: args.player_id});
 		this.spentStock[args.player_id].addCard({id: args.dice});
-		
+
 		this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions"});
 	}
 
