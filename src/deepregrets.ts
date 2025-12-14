@@ -76,9 +76,9 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 	public setup(gamedatas: any) {
 		this.setupNotifications();
 
-		document.getElementById("game_play_area").insertAdjacentHTML("beforeend", `
+		$("game_play_area").insertAdjacentHTML("beforeend", `
 			<div id="boards">
-				<div id="sea_board" style="zoom: ${localStorage.getItem("sea_board") || ((document.getElementById("board").clientWidth / 726) > 1 ? document.getElementById("board").clientWidth / 726 : 1)}">
+				<div id="sea_board" style="zoom: ${localStorage.getItem("sea_board") || (($("board").clientWidth / 726) > 1 ? $("board").clientWidth / 726 : 1)}">
 					<div class="size_buttons">
 						<div id="sea_home" class="utility_button"></div>
 						<div id="sea_large" class="utility_button"></div>
@@ -105,7 +105,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					</div>
 					<div id="dink_deck"></div>
 				</div>
-				<div id="port_board" style="zoom: ${localStorage.getItem("port_board") || ((document.getElementById("board").clientWidth / 1500) > 1 ? document.getElementById("board").clientWidth / 1500 : 1)}">
+				<div id="port_board" style="zoom: ${localStorage.getItem("port_board") || (($("board").clientWidth / 1500) > 1 ? $("board").clientWidth / 1500 : 1)}">
 					<div class="size_buttons">
 						<div id="port_home" class="utility_button"></div>
 						<div id="port_large" class="utility_button"></div>
@@ -126,7 +126,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		`)
 
 		document.querySelectorAll(".utility_button").forEach(button => {
-			let boards = document.getElementById("boards");
+			let boards = $("boards");
 			let id: string = button.id;
 			let boardWidth: number;
 			switch (id.substring(0, 1)) {
@@ -138,7 +138,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					break;
 			}
 			button.addEventListener("click", () => {
-				let board: HTMLElement = document.getElementById(id.substring(0, id.indexOf("_")) + "_board");
+				let board: HTMLElement = $(id.substring(0, id.indexOf("_")) + "_board");
 				let curZoom: number = parseFloat((getComputedStyle(board) as any).zoom);
 				let newZoom: number;
 				switch (id.substring(id.indexOf("_") + 1)) {
@@ -161,8 +161,8 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		});
 
 		window.addEventListener("resize", () => {
-			let port = document.getElementById("port_board");
-			let boards = document.getElementById("boards");
+			let port = $("port_board");
+			let boards = $("boards");
 
 			if (1720 * (port.style as any).zoom + 20 > boards.clientWidth) {
 				(port.style as any).zoom = boards.clientWidth / 1760;
@@ -389,14 +389,14 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		for (let i = 0; i < 4; i++) {
 			let el;
 			if (i == 0) {
-				el = document.getElementById("ship_port");
+				el = $("ship_port");
 			} else {
-				el = document.getElementById(`ship_grid_${i}`);
+				el = $(`ship_grid_${i}`);
 			}
 			this.shipDecks.push(new BgaCards.LineStock(this.shipsManager, el, {direction: "column", wrap: "nowrap"}));
 		}
 		// Madness board setup
-		document.getElementById("game_play_area").insertAdjacentHTML("afterend", `
+		$("game_play_area").insertAdjacentHTML("afterend", `
 			<div id="madness_board">
 				<div id="tinyMadness" class="tiny"></div>
 				<div id="largeMadness" class="tiny">
@@ -404,13 +404,13 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				</div>
 			</div>
 		`);
-		let mGrid = document.getElementById("madnessGrid");
+		let mGrid = $("madnessGrid");
 		for (let i = 0; i < 6; i++) {
 			for (let j = 0; j < 5; j++) {
 				mGrid.insertAdjacentHTML("beforeend", `<div id="madness_${i}_${j}" class="madnessSlot madness_${j}"></div>`)
 			}
 		}
-		let el = document.getElementById("madness_board");
+		let el = $("madness_board");
 		el.style.left = "115px";
 		el.addEventListener("click", () => {
 			Array.from(el.children).forEach(child => {
@@ -442,10 +442,10 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			} else {
 				space = "beforeend";
 			}
-			document.getElementById("playerBoards").insertAdjacentHTML(space, `
+			$("playerBoards").insertAdjacentHTML(space, `
 				<div id="playerComponents-${player["id"]}" class="playerComponents"><div id="${id}" class="playerBoard"></div></div>
 			`);
-			let playerBoard: HTMLElement = document.getElementById(id);
+			let playerBoard: HTMLElement = $(id);
 			playerBoard.style.backgroundPositionY = `${this.COLOUR_POSITION[colour]}%`;
 			let position: string;
 			player.playerBoard == "monster" ? position = "0" : position = "-100%";
@@ -456,7 +456,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					if (e.target != playerBoard) return;
 					this.bgaPerformAction(`actChooseSide`, {curPlayer: player["id"]}, {checkAction: false});
 				});
-				document.getElementById("tinyMadness").style.backgroundPositionY = `${this.COLOUR_POSITION[colour]}%`;
+				$("tinyMadness").style.backgroundPositionY = `${this.COLOUR_POSITION[colour]}%`;
 			}
 
 			for (let i = 0; i <= 10; i++) {
@@ -465,15 +465,15 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				`);
 
 				if (i < 10) {
-					document.getElementById(`fishbuck-slot-${player["id"]}-${i}`).style.left = `calc(295px + ${i} * 35.1px)`;
+					$(`fishbuck-slot-${player["id"]}-${i}`).style.left = `calc(295px + ${i} * 35.1px)`;
 				} else {
-					document.getElementById(`fishbuck-slot-${player["id"]}-${i}`).style.left = `653px`
+					$(`fishbuck-slot-${player["id"]}-${i}`).style.left = `653px`
 				}
 
-				document.getElementById(`fishbuck-slot-${player["id"]}-${i}`).style.backgroundPositionY = `${this.COLOUR_POSITION[colour]}%`;
+				$(`fishbuck-slot-${player["id"]}-${i}`).style.backgroundPositionY = `${this.COLOUR_POSITION[colour]}%`;
 
 				if (player.fishbucks != i) {
-					document.getElementById(`fishbuck-slot-${player["id"]}-${i}`).style.opacity = "0";
+					$(`fishbuck-slot-${player["id"]}-${i}`).style.opacity = "0";
 				}
 			}
 
@@ -482,10 +482,10 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				<div id="spentGrid-${player["id"]}" class="spentGrid"></div>	
 			`)
 
-			this.freshStock[player["id"]] = new BgaCards.LineStock(this.diceManager, document.getElementById(`freshGrid-${player["id"]}`), {sort: BgaCards.sort('type_arg', 'type')});
+			this.freshStock[player["id"]] = new BgaCards.LineStock(this.diceManager, $(`freshGrid-${player["id"]}`), {sort: BgaCards.sort('type_arg', 'type')});
 
 			// TODO: change to scrollable?
-			this.spentStock[player["id"]] = new BgaCards.LineStock(this.diceManager, document.getElementById(`spentGrid-${player["id"]}`), {sort: BgaCards.sort('type_arg', 'type')});
+			this.spentStock[player["id"]] = new BgaCards.LineStock(this.diceManager, $(`spentGrid-${player["id"]}`), {sort: BgaCards.sort('type_arg', 'type')});
 			Object.values(player.dice).forEach(die => {
 				switch (die["location"]) {
 					case "fresh":
@@ -501,12 +501,12 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			})
 
 			this.freshStock[player["id"]].onSelectionChange = () => {
-				if (document.getElementById("confirmButton")) {
-					(document.getElementById("confirmButton") as any).disabled = this.freshStock[player["id"]].getSelection().length == 0;
+				if ($("confirmButton")) {
+					($("confirmButton") as any).disabled = this.freshStock[player["id"]].getSelection().length == 0;
 				}
 			}
 
-			document.getElementById(`playerComponents-${player["id"]}`).insertAdjacentHTML("beforeend", `
+			$(`playerComponents-${player["id"]}`).insertAdjacentHTML("beforeend", `
 				<div id="canOfWorms-${player["id"]}" class="canOfWorms provisions">
 					<div id="canOfWorms-inner-${player["id"]}" class="canOfWorms-inner">
 						<div id="canOfWorms-front-${player["id"]}" class="canOfWorms-front"></div>
@@ -522,11 +522,11 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			`)
 
 			if (!JSON.parse(player.provisions).lifeboat) {
-				document.getElementById(`lifeboat-${player["id"]}`).classList.add("flipped");
+				$(`lifeboat-${player["id"]}`).classList.add("flipped");
 			}
 			
 			if (!JSON.parse(player.provisions).canOfWorms) {
-				document.getElementById(`canOfWorms-${player["id"]}`).classList.add("flipped");
+				$(`canOfWorms-${player["id"]}`).classList.add("flipped");
 			}
 
 			this.getPlayerPanelElement(parseInt(player["id"])).innerHTML = tmpl_playerBoard(player["id"], player.color, gamedatas.firstPlayer, gamedatas.lifePreserver);
@@ -538,16 +538,16 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				tempDeck = 0;
 			}
 			this.shipDecks[tempDeck].addCard({id: player["id"], colour: this.COLOUR_POSITION[player.color], location: player.location});
-			document.getElementById(`madness_${this.MADNESS_LEVEL[player.regretCount]}_${this.COLOUR_POSITION[colour] / -100}`).style.opacity = "1";
+			$(`madness_${this.MADNESS_LEVEL[player.regretCount]}_${this.COLOUR_POSITION[colour] / -100}`).style.opacity = "1";
 		})
 		
 		for (let depth = 0; depth < 3; depth++) {
 			let curDepth = [];
 			for (let num = 0; num < 3; num++) {
-				curDepth.push(new BgaCards.Deck(this.seaCardManager, document.getElementById(`shoal_${depth + 1}_${num + 1}`), {cardNumber: 0}));
+				curDepth.push(new BgaCards.Deck(this.seaCardManager, $(`shoal_${depth + 1}_${num + 1}`), {cardNumber: 0}));
 			}
 			this.shoalStocks.push(curDepth);
-			this.graveyardStocks.push(new BgaCards.DiscardDeck(this.seaCardManager, document.getElementById(`shoal_${depth + 1}_graveyard`), {maxHorizontalShift: 0, maxVerticalShift: 0}));
+			this.graveyardStocks.push(new BgaCards.DiscardDeck(this.seaCardManager, $(`shoal_${depth + 1}_graveyard`), {maxHorizontalShift: 0, maxVerticalShift: 0}));
 		}
 
 		let index = 0;
@@ -565,61 +565,61 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			})
 		})
 
-		this.regretDeck = new BgaCards.Deck(this.regretManager, document.getElementById(`regretDeck`), {cardNumber: gamedatas.regrets[0]});
-		this.regretDiscard = new BgaCards.Deck(this.regretManager, document.getElementById(`regretDiscard`), {cardNumber: gamedatas.regrets[1]});
+		this.regretDeck = new BgaCards.Deck(this.regretManager, $(`regretDeck`), {cardNumber: gamedatas.regrets[0]});
+		this.regretDiscard = new BgaCards.Deck(this.regretManager, $(`regretDiscard`), {cardNumber: gamedatas.regrets[1]});
 
-		this.reelsDeck = new BgaCards.Deck(this.reelsManager, document.getElementById(`reelsDeck`), {cardNumber: gamedatas.reels});
-		this.rodsDeck = new BgaCards.Deck(this.rodsManager, document.getElementById(`rodsDeck`), {cardNumber: gamedatas.rods});
-		this.suppliesDeck = new BgaCards.Deck(this.suppliesManager, document.getElementById(`suppliesDeck`), {cardNumber: gamedatas.supplies});
+		this.reelsDeck = new BgaCards.Deck(this.reelsManager, $(`reelsDeck`), {cardNumber: gamedatas.reels});
+		this.rodsDeck = new BgaCards.Deck(this.rodsManager, $(`rodsDeck`), {cardNumber: gamedatas.rods});
+		this.suppliesDeck = new BgaCards.Deck(this.suppliesManager, $(`suppliesDeck`), {cardNumber: gamedatas.supplies});
 
 		for (let i = 1; i <= 6; i++) {
-			document.getElementById("port_board").insertAdjacentHTML("beforeend", `
+			$("port_board").insertAdjacentHTML("beforeend", `
 				<div id="day-${i}" class="dayTracker-slot"></div>
 			`)
 
 			if (i != gamedatas.day) {
-				document.getElementById(`day-${i}`).style.opacity = "0";
+				$(`day-${i}`).style.opacity = "0";
 			}
 		}
 
-		document.getElementById("game_play_area").insertAdjacentHTML("afterend", `
+		$("game_play_area").insertAdjacentHTML("afterend", `
 			<div id="icon_reference" class="tiny reference"></div>
 			<div id="sea_reference" class="tiny reference"></div>
 		`)
-		document.getElementById("icon_reference").addEventListener("click", () => {
-			if (document.getElementById("icon_reference").classList.contains("tiny")) {
-				document.getElementById("icon_reference").classList.remove("tiny");
-				document.getElementById("icon_reference").classList.add("large");
-				document.getElementById("sea_reference").style.left = `310px`;
-				document.getElementById("madness_board").style.left = `calc(${document.getElementById("madness_board").style.left} + 250px)`;
+		$("icon_reference").addEventListener("click", () => {
+			if ($("icon_reference").classList.contains("tiny")) {
+				$("icon_reference").classList.remove("tiny");
+				$("icon_reference").classList.add("large");
+				$("sea_reference").style.left = `310px`;
+				$("madness_board").style.left = `calc(${$("madness_board").style.left} + 250px)`;
 			} else {
-				document.getElementById("icon_reference").classList.remove("large");
-				document.getElementById("icon_reference").classList.add("tiny");
-				document.getElementById("sea_reference").style.left = `60px`;
-				document.getElementById("madness_board").style.left = `calc(${document.getElementById("madness_board").style.left} - 250px)`;
+				$("icon_reference").classList.remove("large");
+				$("icon_reference").classList.add("tiny");
+				$("sea_reference").style.left = `60px`;
+				$("madness_board").style.left = `calc(${$("madness_board").style.left} - 250px)`;
 			}
 		});
-		document.getElementById("sea_reference").addEventListener("click", () => {
-			if (document.getElementById("sea_reference").classList.contains("tiny")) {
-				document.getElementById("sea_reference").classList.remove("tiny");
-				document.getElementById("sea_reference").classList.add("large");
-				document.getElementById("madness_board").style.left = `calc(${document.getElementById("madness_board").style.left} + 250px)`;
+		$("sea_reference").addEventListener("click", () => {
+			if ($("sea_reference").classList.contains("tiny")) {
+				$("sea_reference").classList.remove("tiny");
+				$("sea_reference").classList.add("large");
+				$("madness_board").style.left = `calc(${$("madness_board").style.left} + 250px)`;
 			} else {
-				document.getElementById("sea_reference").classList.remove("large");
-				document.getElementById("sea_reference").classList.add("tiny");
-				document.getElementById("madness_board").style.left = `calc(${document.getElementById("madness_board").style.left} - 250px)`;
+				$("sea_reference").classList.remove("large");
+				$("sea_reference").classList.add("tiny");
+				$("madness_board").style.left = `calc(${$("madness_board").style.left} - 250px)`;
 			}
 		});
 
-		this.dinkDeck = new BgaCards.Deck(this.dinksManager, document.getElementById("dink_deck"), {cardNumber: gamedatas.dinks, thicknesses: [0, 10, 20], shadowDirection: "top-right"});
+		this.dinkDeck = new BgaCards.Deck(this.dinksManager, $("dink_deck"), {cardNumber: gamedatas.dinks, thicknesses: [0, 10, 20], shadowDirection: "top-right"});
 	} 
 	public onEnteringState(stateName: string, args: any) {
 		switch (stateName) {
 			case "LifePreserver":
 				if (this.isCurrentPlayerActive()) {
 					args.args.possibleChoices.forEach(id => {
-						document.getElementById(`playerBoard-${id}`).classList.add("selectable");
-						document.getElementById(`playerBoard-${id}`).addEventListener("click", e => {
+						$(`playerBoard-${id}`).classList.add("selectable");
+						$(`playerBoard-${id}`).addEventListener("click", e => {
 							if (this.gamedatas.gamestate.name == stateName) {
 								this.bgaPerformAction("actChooseLPPlayer", {"playerId": id});
 							}
@@ -634,7 +634,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 						let depth = parseInt(args.args.depth);
 						for (let i = 1; i <= depth; i++) {
 							for (let j = 1; j <= 3; j++) {
-								let curShoal = document.getElementById(`shoal_${i}_${j}`);
+								let curShoal = $(`shoal_${i}_${j}`);
 								curShoal.classList.add("selectable");
 								curShoal.addEventListener("click", e => {
 								if (this.gamedatas.gamestate.name == stateName) {
@@ -653,11 +653,11 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 
 				if (args.args.casted) {
 					let shoal = [Math.floor(args.args.selectedShoal / 3) + 1, (args.args.selectedShoal - 1) % 3 + 1];
-					document.getElementById(`shoal_${shoal[0]}_${shoal[1]}`).classList.add("selected");
+					$(`shoal_${shoal[0]}_${shoal[1]}`).classList.add("selected");
 				}
 				break;
 			case "client_FreeSeaActions":	
-				var lifeboat = document.getElementById(`lifeboat-${this.player_id}`);
+				var lifeboat = $(`lifeboat-${this.player_id}`);
 				if (args.args.lifeboat) {
 					lifeboat.classList.add("selectable");
 					lifeboat.addEventListener("click", e => {
@@ -667,7 +667,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					});
 				}
 
-				var canOfWorms = document.getElementById(`canOfWorms-${this.player_id}`)
+				var canOfWorms = $(`canOfWorms-${this.player_id}`)
 				console.log(canOfWorms);
 				console.log(args.args);
 				if (args.args.canOfWorms) {
@@ -687,12 +687,14 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				this.shoalStocks.forEach(depth => {
 					depth.forEach(shoal => {
 						shoal.element.classList.add("selectable");
-						shoal.element.addEventListener("click", (e: { currentTarget: HTMLElement; }) => {
+						shoal.element.addEventListener("click", () => {
 							if (this.gamedatas.gamestate.name == stateName) {
 								document.querySelectorAll(".selected").forEach(el => {
 									el.classList.remove("selected");
 								})
 								shoal.element.classList.add("selected");
+
+								($("confirmButton") as any).disabled = false;
 							}
 						})
 					})
@@ -700,7 +702,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				break;
 			case "client_Confirm":
 				if (args.args.selectedId) {
-					document.getElementById(args.args.selectedId).classList.add("selected");
+					$(args.args.selectedId).classList.add("selected");
 				}
 				break;
 		}		
@@ -741,10 +743,13 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				break;
 			case "client_CanOfWorms":
 				this.statusBar.addActionButton(_("Confirm"), () => {
-					// FIXME update these
-					// this.bgaPerformAction("actDropSinker", {dice: this.freshStock[this.player_id].getSelection()[0].id}), {color: "primary", disabled: true, id: "confirmButton"}
-					// this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions"});
-				});
+					let id = document.querySelector(".selected").id;
+					let split = id.split("_").slice(1);
+
+					let shoalNum = (parseInt(split[0]) - 1) * 3 + parseInt(split[1]);
+
+					this.bgaPerformAction("actCanOfWorms", {shoalNum: shoalNum})
+				}, {color: "primary", disabled: true, id: "confirmButton"});
 				this.statusBar.addActionButton(_("Cancel"), () => this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions"}), {color: "alert"});
 				break;
 			case "client_Confirm":
@@ -760,20 +765,20 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 	public notif_playerBoardSide(args) {
 		let position: string;
 		args.newSide == "monster" ? position = "-100%" : position = "0";
-		document.getElementById(`playerBoard-${args.player_id}`).style.backgroundPositionX = position;
+		$(`playerBoard-${args.player_id}`).style.backgroundPositionX = position;
 	}
 
 	public notif_lifePreserver(args) {
 		let lPPlayer = args.player_id2;
 		this.getPlayerPanelElement(lPPlayer).insertAdjacentHTML("beforeend", `<div id="lifePreserverPanel"></div>`);
-		this.animationManager.fadeIn(document.getElementById("lifePreserverPanel"), document.getElementById(`playerBoard-${args.player_id1}`), {duration: 1000})
+		this.animationManager.fadeIn($("lifePreserverPanel"), $(`playerBoard-${args.player_id1}`), {duration: 1000})
 	}
 
 	public notif_selectedShoal(args) {
 		document.querySelectorAll(".shoal.selectable").forEach(shoal => {
 			shoal.classList.remove("selectable");
 		})
-		document.getElementById(`shoal_${args.shoal[0]}_${args.shoal[1]}`).classList.add("selected");
+		$(`shoal_${args.shoal[0]}_${args.shoal[1]}`).classList.add("selected");
 	}
 
 	public notif_revealCard(args: any) {
@@ -784,8 +789,8 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 	}
 
 	public notif_abandonedShip(args: any) {
-		document.getElementById(`lifeboat-${args.player_id}`).classList.add("flipped");
-		document.getElementById(`lifeboat-${args.player_id}`).classList.remove("selectable");
+		$(`lifeboat-${args.player_id}`).classList.add("flipped");
+		$(`lifeboat-${args.player_id}`).classList.remove("selectable");
 
 		this.shipDecks[0].addCard({id: args.player_id, location: "port"})
 	}

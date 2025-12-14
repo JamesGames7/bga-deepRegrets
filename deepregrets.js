@@ -81,9 +81,9 @@ var DeepRegrets = /** @class */ (function (_super) {
     DeepRegrets.prototype.setup = function (gamedatas) {
         var _this = this;
         this.setupNotifications();
-        document.getElementById("game_play_area").insertAdjacentHTML("beforeend", "\n\t\t\t<div id=\"boards\">\n\t\t\t\t<div id=\"sea_board\" style=\"zoom: ".concat(localStorage.getItem("sea_board") || ((document.getElementById("board").clientWidth / 726) > 1 ? document.getElementById("board").clientWidth / 726 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"sea_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"shoal_grid\">\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_graveyard\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_graveyard\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_graveyard\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"ship_grid_sea\">\n\t\t\t\t\t\t<div id=\"ship_grid_1\" class=\"ship_depth\"></div>\n\t\t\t\t\t\t<div id=\"ship_grid_2\" class=\"ship_depth\"></div>\n\t\t\t\t\t\t<div id=\"ship_grid_3\" class=\"ship_depth\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"dink_deck\"></div>\n\t\t\t\t</div>\n\t\t\t\t<div id=\"port_board\" style=\"zoom: ").concat(localStorage.getItem("port_board") || ((document.getElementById("board").clientWidth / 1500) > 1 ? document.getElementById("board").clientWidth / 1500 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"port_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"regret_grid\">\n\t\t\t\t\t\t<div class=\"regret\" id=\"regretDeck\"></div>\n\t\t\t\t\t\t<div class=\"regret\" id=\"regretDiscard\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"reelsDeck\" class=\"itemDeck\"></div>\n\t\t\t\t\t<div id=\"rodsDeck\" class=\"itemDeck\"></div>\n\t\t\t\t\t<div id=\"suppliesDeck\" class=\"itemDeck\"></div>\n\t\t\t\t\t<div id=\"ship_port\"></div>\n\t\t\t\t</div>\t\t\t\n\t\t\t</div>\n\t\t\t<div id=\"playerBoards\"></div>\n\t\t\t<div id=\"lineGrid\"></div>\n\t\t"));
+        $("game_play_area").insertAdjacentHTML("beforeend", "\n\t\t\t<div id=\"boards\">\n\t\t\t\t<div id=\"sea_board\" style=\"zoom: ".concat(localStorage.getItem("sea_board") || (($("board").clientWidth / 726) > 1 ? $("board").clientWidth / 726 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"sea_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"shoal_grid\">\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_graveyard\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_graveyard\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_graveyard\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"ship_grid_sea\">\n\t\t\t\t\t\t<div id=\"ship_grid_1\" class=\"ship_depth\"></div>\n\t\t\t\t\t\t<div id=\"ship_grid_2\" class=\"ship_depth\"></div>\n\t\t\t\t\t\t<div id=\"ship_grid_3\" class=\"ship_depth\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"dink_deck\"></div>\n\t\t\t\t</div>\n\t\t\t\t<div id=\"port_board\" style=\"zoom: ").concat(localStorage.getItem("port_board") || (($("board").clientWidth / 1500) > 1 ? $("board").clientWidth / 1500 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"port_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"regret_grid\">\n\t\t\t\t\t\t<div class=\"regret\" id=\"regretDeck\"></div>\n\t\t\t\t\t\t<div class=\"regret\" id=\"regretDiscard\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"reelsDeck\" class=\"itemDeck\"></div>\n\t\t\t\t\t<div id=\"rodsDeck\" class=\"itemDeck\"></div>\n\t\t\t\t\t<div id=\"suppliesDeck\" class=\"itemDeck\"></div>\n\t\t\t\t\t<div id=\"ship_port\"></div>\n\t\t\t\t</div>\t\t\t\n\t\t\t</div>\n\t\t\t<div id=\"playerBoards\"></div>\n\t\t\t<div id=\"lineGrid\"></div>\n\t\t"));
         document.querySelectorAll(".utility_button").forEach(function (button) {
-            var boards = document.getElementById("boards");
+            var boards = $("boards");
             var id = button.id;
             var boardWidth;
             switch (id.substring(0, 1)) {
@@ -95,7 +95,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                     break;
             }
             button.addEventListener("click", function () {
-                var board = document.getElementById(id.substring(0, id.indexOf("_")) + "_board");
+                var board = $(id.substring(0, id.indexOf("_")) + "_board");
                 var curZoom = parseFloat(getComputedStyle(board).zoom);
                 var newZoom;
                 switch (id.substring(id.indexOf("_") + 1)) {
@@ -117,8 +117,8 @@ var DeepRegrets = /** @class */ (function (_super) {
             });
         });
         window.addEventListener("resize", function () {
-            var port = document.getElementById("port_board");
-            var boards = document.getElementById("boards");
+            var port = $("port_board");
+            var boards = $("boards");
             if (1720 * port.style.zoom + 20 > boards.clientWidth) {
                 port.style.zoom = boards.clientWidth / 1760;
             }
@@ -334,22 +334,22 @@ var DeepRegrets = /** @class */ (function (_super) {
         for (var i = 0; i < 4; i++) {
             var el_1 = void 0;
             if (i == 0) {
-                el_1 = document.getElementById("ship_port");
+                el_1 = $("ship_port");
             }
             else {
-                el_1 = document.getElementById("ship_grid_".concat(i));
+                el_1 = $("ship_grid_".concat(i));
             }
             this.shipDecks.push(new BgaCards.LineStock(this.shipsManager, el_1, { direction: "column", wrap: "nowrap" }));
         }
         // Madness board setup
-        document.getElementById("game_play_area").insertAdjacentHTML("afterend", "\n\t\t\t<div id=\"madness_board\">\n\t\t\t\t<div id=\"tinyMadness\" class=\"tiny\"></div>\n\t\t\t\t<div id=\"largeMadness\" class=\"tiny\">\n\t\t\t\t\t<div id=\"madnessGrid\"></div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t");
-        var mGrid = document.getElementById("madnessGrid");
+        $("game_play_area").insertAdjacentHTML("afterend", "\n\t\t\t<div id=\"madness_board\">\n\t\t\t\t<div id=\"tinyMadness\" class=\"tiny\"></div>\n\t\t\t\t<div id=\"largeMadness\" class=\"tiny\">\n\t\t\t\t\t<div id=\"madnessGrid\"></div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t");
+        var mGrid = $("madnessGrid");
         for (var i = 0; i < 6; i++) {
             for (var j = 0; j < 5; j++) {
                 mGrid.insertAdjacentHTML("beforeend", "<div id=\"madness_".concat(i, "_").concat(j, "\" class=\"madnessSlot madness_").concat(j, "\"></div>"));
             }
         }
-        var el = document.getElementById("madness_board");
+        var el = $("madness_board");
         el.style.left = "115px";
         el.addEventListener("click", function () {
             Array.from(el.children).forEach(function (child) {
@@ -379,8 +379,8 @@ var DeepRegrets = /** @class */ (function (_super) {
             else {
                 space = "beforeend";
             }
-            document.getElementById("playerBoards").insertAdjacentHTML(space, "\n\t\t\t\t<div id=\"playerComponents-".concat(player["id"], "\" class=\"playerComponents\"><div id=\"").concat(id, "\" class=\"playerBoard\"></div></div>\n\t\t\t"));
-            var playerBoard = document.getElementById(id);
+            $("playerBoards").insertAdjacentHTML(space, "\n\t\t\t\t<div id=\"playerComponents-".concat(player["id"], "\" class=\"playerComponents\"><div id=\"").concat(id, "\" class=\"playerBoard\"></div></div>\n\t\t\t"));
+            var playerBoard = $(id);
             playerBoard.style.backgroundPositionY = "".concat(_this.COLOUR_POSITION[colour], "%");
             var position;
             player.playerBoard == "monster" ? position = "0" : position = "-100%";
@@ -391,25 +391,25 @@ var DeepRegrets = /** @class */ (function (_super) {
                         return;
                     _this.bgaPerformAction("actChooseSide", { curPlayer: player["id"] }, { checkAction: false });
                 });
-                document.getElementById("tinyMadness").style.backgroundPositionY = "".concat(_this.COLOUR_POSITION[colour], "%");
+                $("tinyMadness").style.backgroundPositionY = "".concat(_this.COLOUR_POSITION[colour], "%");
             }
             for (var i = 0; i <= 10; i++) {
                 playerBoard.insertAdjacentHTML("beforeend", "\n\t\t\t\t\t<div id=\"fishbuck-slot-".concat(player["id"], "-").concat(i, "\" class=\"fishbuck-slot\"></div>\n\t\t\t\t"));
                 if (i < 10) {
-                    document.getElementById("fishbuck-slot-".concat(player["id"], "-").concat(i)).style.left = "calc(295px + ".concat(i, " * 35.1px)");
+                    $("fishbuck-slot-".concat(player["id"], "-").concat(i)).style.left = "calc(295px + ".concat(i, " * 35.1px)");
                 }
                 else {
-                    document.getElementById("fishbuck-slot-".concat(player["id"], "-").concat(i)).style.left = "653px";
+                    $("fishbuck-slot-".concat(player["id"], "-").concat(i)).style.left = "653px";
                 }
-                document.getElementById("fishbuck-slot-".concat(player["id"], "-").concat(i)).style.backgroundPositionY = "".concat(_this.COLOUR_POSITION[colour], "%");
+                $("fishbuck-slot-".concat(player["id"], "-").concat(i)).style.backgroundPositionY = "".concat(_this.COLOUR_POSITION[colour], "%");
                 if (player.fishbucks != i) {
-                    document.getElementById("fishbuck-slot-".concat(player["id"], "-").concat(i)).style.opacity = "0";
+                    $("fishbuck-slot-".concat(player["id"], "-").concat(i)).style.opacity = "0";
                 }
             }
             playerBoard.insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"freshGrid-".concat(player["id"], "\" class=\"freshGrid\"></div>\n\t\t\t\t<div id=\"spentGrid-").concat(player["id"], "\" class=\"spentGrid\"></div>\t\n\t\t\t"));
-            _this.freshStock[player["id"]] = new BgaCards.LineStock(_this.diceManager, document.getElementById("freshGrid-".concat(player["id"])), { sort: BgaCards.sort('type_arg', 'type') });
+            _this.freshStock[player["id"]] = new BgaCards.LineStock(_this.diceManager, $("freshGrid-".concat(player["id"])), { sort: BgaCards.sort('type_arg', 'type') });
             // TODO: change to scrollable?
-            _this.spentStock[player["id"]] = new BgaCards.LineStock(_this.diceManager, document.getElementById("spentGrid-".concat(player["id"])), { sort: BgaCards.sort('type_arg', 'type') });
+            _this.spentStock[player["id"]] = new BgaCards.LineStock(_this.diceManager, $("spentGrid-".concat(player["id"])), { sort: BgaCards.sort('type_arg', 'type') });
             Object.values(player.dice).forEach(function (die) {
                 switch (die["location"]) {
                     case "fresh":
@@ -424,16 +424,16 @@ var DeepRegrets = /** @class */ (function (_super) {
                 }
             });
             _this.freshStock[player["id"]].onSelectionChange = function () {
-                if (document.getElementById("confirmButton")) {
-                    document.getElementById("confirmButton").disabled = _this.freshStock[player["id"]].getSelection().length == 0;
+                if ($("confirmButton")) {
+                    $("confirmButton").disabled = _this.freshStock[player["id"]].getSelection().length == 0;
                 }
             };
-            document.getElementById("playerComponents-".concat(player["id"])).insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"canOfWorms-".concat(player["id"], "\" class=\"canOfWorms provisions\">\n\t\t\t\t\t<div id=\"canOfWorms-inner-").concat(player["id"], "\" class=\"canOfWorms-inner\">\n\t\t\t\t\t\t<div id=\"canOfWorms-front-").concat(player["id"], "\" class=\"canOfWorms-front\"></div>\n\t\t\t\t\t\t<div id=\"canOfWorms-back-").concat(player["id"], "\" class=\"canOfWorms-back\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div id=\"lifeboat-").concat(player["id"], "\" class=\"lifeboat provisions\">\n\t\t\t\t\t<div id=\"lifeboat-inner-").concat(player["id"], "\" class=\"lifeboat-inner\">\n\t\t\t\t\t\t<div id=\"lifeboat-front-").concat(player["id"], "\" class=\"lifeboat-front\"></div>\n\t\t\t\t\t\t<div id=\"lifeboat-back-").concat(player["id"], "\" class=\"lifeboat-back\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t"));
+            $("playerComponents-".concat(player["id"])).insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"canOfWorms-".concat(player["id"], "\" class=\"canOfWorms provisions\">\n\t\t\t\t\t<div id=\"canOfWorms-inner-").concat(player["id"], "\" class=\"canOfWorms-inner\">\n\t\t\t\t\t\t<div id=\"canOfWorms-front-").concat(player["id"], "\" class=\"canOfWorms-front\"></div>\n\t\t\t\t\t\t<div id=\"canOfWorms-back-").concat(player["id"], "\" class=\"canOfWorms-back\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div id=\"lifeboat-").concat(player["id"], "\" class=\"lifeboat provisions\">\n\t\t\t\t\t<div id=\"lifeboat-inner-").concat(player["id"], "\" class=\"lifeboat-inner\">\n\t\t\t\t\t\t<div id=\"lifeboat-front-").concat(player["id"], "\" class=\"lifeboat-front\"></div>\n\t\t\t\t\t\t<div id=\"lifeboat-back-").concat(player["id"], "\" class=\"lifeboat-back\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t"));
             if (!JSON.parse(player.provisions).lifeboat) {
-                document.getElementById("lifeboat-".concat(player["id"])).classList.add("flipped");
+                $("lifeboat-".concat(player["id"])).classList.add("flipped");
             }
             if (!JSON.parse(player.provisions).canOfWorms) {
-                document.getElementById("canOfWorms-".concat(player["id"])).classList.add("flipped");
+                $("canOfWorms-".concat(player["id"])).classList.add("flipped");
             }
             _this.getPlayerPanelElement(parseInt(player["id"])).innerHTML = tmpl_playerBoard(player["id"], player.color, gamedatas.firstPlayer, gamedatas.lifePreserver);
             var tempDeck;
@@ -444,15 +444,15 @@ var DeepRegrets = /** @class */ (function (_super) {
                 tempDeck = 0;
             }
             _this.shipDecks[tempDeck].addCard({ id: player["id"], colour: _this.COLOUR_POSITION[player.color], location: player.location });
-            document.getElementById("madness_".concat(_this.MADNESS_LEVEL[player.regretCount], "_").concat(_this.COLOUR_POSITION[colour] / -100)).style.opacity = "1";
+            $("madness_".concat(_this.MADNESS_LEVEL[player.regretCount], "_").concat(_this.COLOUR_POSITION[colour] / -100)).style.opacity = "1";
         });
         for (var depth = 0; depth < 3; depth++) {
             var curDepth = [];
             for (var num = 0; num < 3; num++) {
-                curDepth.push(new BgaCards.Deck(this.seaCardManager, document.getElementById("shoal_".concat(depth + 1, "_").concat(num + 1)), { cardNumber: 0 }));
+                curDepth.push(new BgaCards.Deck(this.seaCardManager, $("shoal_".concat(depth + 1, "_").concat(num + 1)), { cardNumber: 0 }));
             }
             this.shoalStocks.push(curDepth);
-            this.graveyardStocks.push(new BgaCards.DiscardDeck(this.seaCardManager, document.getElementById("shoal_".concat(depth + 1, "_graveyard")), { maxHorizontalShift: 0, maxVerticalShift: 0 }));
+            this.graveyardStocks.push(new BgaCards.DiscardDeck(this.seaCardManager, $("shoal_".concat(depth + 1, "_graveyard")), { maxHorizontalShift: 0, maxVerticalShift: 0 }));
         }
         var index = 0;
         this.shoalStocks.forEach(function (depth) {
@@ -469,45 +469,45 @@ var DeepRegrets = /** @class */ (function (_super) {
                 index++;
             });
         });
-        this.regretDeck = new BgaCards.Deck(this.regretManager, document.getElementById("regretDeck"), { cardNumber: gamedatas.regrets[0] });
-        this.regretDiscard = new BgaCards.Deck(this.regretManager, document.getElementById("regretDiscard"), { cardNumber: gamedatas.regrets[1] });
-        this.reelsDeck = new BgaCards.Deck(this.reelsManager, document.getElementById("reelsDeck"), { cardNumber: gamedatas.reels });
-        this.rodsDeck = new BgaCards.Deck(this.rodsManager, document.getElementById("rodsDeck"), { cardNumber: gamedatas.rods });
-        this.suppliesDeck = new BgaCards.Deck(this.suppliesManager, document.getElementById("suppliesDeck"), { cardNumber: gamedatas.supplies });
+        this.regretDeck = new BgaCards.Deck(this.regretManager, $("regretDeck"), { cardNumber: gamedatas.regrets[0] });
+        this.regretDiscard = new BgaCards.Deck(this.regretManager, $("regretDiscard"), { cardNumber: gamedatas.regrets[1] });
+        this.reelsDeck = new BgaCards.Deck(this.reelsManager, $("reelsDeck"), { cardNumber: gamedatas.reels });
+        this.rodsDeck = new BgaCards.Deck(this.rodsManager, $("rodsDeck"), { cardNumber: gamedatas.rods });
+        this.suppliesDeck = new BgaCards.Deck(this.suppliesManager, $("suppliesDeck"), { cardNumber: gamedatas.supplies });
         for (var i = 1; i <= 6; i++) {
-            document.getElementById("port_board").insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"day-".concat(i, "\" class=\"dayTracker-slot\"></div>\n\t\t\t"));
+            $("port_board").insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"day-".concat(i, "\" class=\"dayTracker-slot\"></div>\n\t\t\t"));
             if (i != gamedatas.day) {
-                document.getElementById("day-".concat(i)).style.opacity = "0";
+                $("day-".concat(i)).style.opacity = "0";
             }
         }
-        document.getElementById("game_play_area").insertAdjacentHTML("afterend", "\n\t\t\t<div id=\"icon_reference\" class=\"tiny reference\"></div>\n\t\t\t<div id=\"sea_reference\" class=\"tiny reference\"></div>\n\t\t");
-        document.getElementById("icon_reference").addEventListener("click", function () {
-            if (document.getElementById("icon_reference").classList.contains("tiny")) {
-                document.getElementById("icon_reference").classList.remove("tiny");
-                document.getElementById("icon_reference").classList.add("large");
-                document.getElementById("sea_reference").style.left = "310px";
-                document.getElementById("madness_board").style.left = "calc(".concat(document.getElementById("madness_board").style.left, " + 250px)");
+        $("game_play_area").insertAdjacentHTML("afterend", "\n\t\t\t<div id=\"icon_reference\" class=\"tiny reference\"></div>\n\t\t\t<div id=\"sea_reference\" class=\"tiny reference\"></div>\n\t\t");
+        $("icon_reference").addEventListener("click", function () {
+            if ($("icon_reference").classList.contains("tiny")) {
+                $("icon_reference").classList.remove("tiny");
+                $("icon_reference").classList.add("large");
+                $("sea_reference").style.left = "310px";
+                $("madness_board").style.left = "calc(".concat($("madness_board").style.left, " + 250px)");
             }
             else {
-                document.getElementById("icon_reference").classList.remove("large");
-                document.getElementById("icon_reference").classList.add("tiny");
-                document.getElementById("sea_reference").style.left = "60px";
-                document.getElementById("madness_board").style.left = "calc(".concat(document.getElementById("madness_board").style.left, " - 250px)");
+                $("icon_reference").classList.remove("large");
+                $("icon_reference").classList.add("tiny");
+                $("sea_reference").style.left = "60px";
+                $("madness_board").style.left = "calc(".concat($("madness_board").style.left, " - 250px)");
             }
         });
-        document.getElementById("sea_reference").addEventListener("click", function () {
-            if (document.getElementById("sea_reference").classList.contains("tiny")) {
-                document.getElementById("sea_reference").classList.remove("tiny");
-                document.getElementById("sea_reference").classList.add("large");
-                document.getElementById("madness_board").style.left = "calc(".concat(document.getElementById("madness_board").style.left, " + 250px)");
+        $("sea_reference").addEventListener("click", function () {
+            if ($("sea_reference").classList.contains("tiny")) {
+                $("sea_reference").classList.remove("tiny");
+                $("sea_reference").classList.add("large");
+                $("madness_board").style.left = "calc(".concat($("madness_board").style.left, " + 250px)");
             }
             else {
-                document.getElementById("sea_reference").classList.remove("large");
-                document.getElementById("sea_reference").classList.add("tiny");
-                document.getElementById("madness_board").style.left = "calc(".concat(document.getElementById("madness_board").style.left, " - 250px)");
+                $("sea_reference").classList.remove("large");
+                $("sea_reference").classList.add("tiny");
+                $("madness_board").style.left = "calc(".concat($("madness_board").style.left, " - 250px)");
             }
         });
-        this.dinkDeck = new BgaCards.Deck(this.dinksManager, document.getElementById("dink_deck"), { cardNumber: gamedatas.dinks, thicknesses: [0, 10, 20], shadowDirection: "top-right" });
+        this.dinkDeck = new BgaCards.Deck(this.dinksManager, $("dink_deck"), { cardNumber: gamedatas.dinks, thicknesses: [0, 10, 20], shadowDirection: "top-right" });
     };
     DeepRegrets.prototype.onEnteringState = function (stateName, args) {
         var _this = this;
@@ -515,8 +515,8 @@ var DeepRegrets = /** @class */ (function (_super) {
             case "LifePreserver":
                 if (this.isCurrentPlayerActive()) {
                     args.args.possibleChoices.forEach(function (id) {
-                        document.getElementById("playerBoard-".concat(id)).classList.add("selectable");
-                        document.getElementById("playerBoard-".concat(id)).addEventListener("click", function (e) {
+                        $("playerBoard-".concat(id)).classList.add("selectable");
+                        $("playerBoard-".concat(id)).addEventListener("click", function (e) {
                             if (_this.gamedatas.gamestate.name == stateName) {
                                 _this.bgaPerformAction("actChooseLPPlayer", { "playerId": id });
                             }
@@ -531,7 +531,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                         var depth = parseInt(args.args.depth);
                         var _loop_1 = function (i) {
                             var _loop_2 = function (j) {
-                                var curShoal = document.getElementById("shoal_".concat(i, "_").concat(j));
+                                var curShoal = $("shoal_".concat(i, "_").concat(j));
                                 curShoal.classList.add("selectable");
                                 curShoal.addEventListener("click", function (e) {
                                     if (_this.gamedatas.gamestate.name == stateName) {
@@ -555,11 +555,11 @@ var DeepRegrets = /** @class */ (function (_super) {
                 }
                 if (args.args.casted) {
                     var shoal = [Math.floor(args.args.selectedShoal / 3) + 1, (args.args.selectedShoal - 1) % 3 + 1];
-                    document.getElementById("shoal_".concat(shoal[0], "_").concat(shoal[1])).classList.add("selected");
+                    $("shoal_".concat(shoal[0], "_").concat(shoal[1])).classList.add("selected");
                 }
                 break;
             case "client_FreeSeaActions":
-                var lifeboat = document.getElementById("lifeboat-".concat(this.player_id));
+                var lifeboat = $("lifeboat-".concat(this.player_id));
                 if (args.args.lifeboat) {
                     lifeboat.classList.add("selectable");
                     lifeboat.addEventListener("click", function (e) {
@@ -568,7 +568,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                         }
                     });
                 }
-                var canOfWorms = document.getElementById("canOfWorms-".concat(this.player_id));
+                var canOfWorms = $("canOfWorms-".concat(this.player_id));
                 console.log(canOfWorms);
                 console.log(args.args);
                 if (args.args.canOfWorms) {
@@ -588,12 +588,13 @@ var DeepRegrets = /** @class */ (function (_super) {
                 this.shoalStocks.forEach(function (depth) {
                     depth.forEach(function (shoal) {
                         shoal.element.classList.add("selectable");
-                        shoal.element.addEventListener("click", function (e) {
+                        shoal.element.addEventListener("click", function () {
                             if (_this.gamedatas.gamestate.name == stateName) {
                                 document.querySelectorAll(".selected").forEach(function (el) {
                                     el.classList.remove("selected");
                                 });
                                 shoal.element.classList.add("selected");
+                                $("confirmButton").disabled = false;
                             }
                         });
                     });
@@ -601,7 +602,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                 break;
             case "client_Confirm":
                 if (args.args.selectedId) {
-                    document.getElementById(args.args.selectedId).classList.add("selected");
+                    $(args.args.selectedId).classList.add("selected");
                 }
                 break;
         }
@@ -643,10 +644,12 @@ var DeepRegrets = /** @class */ (function (_super) {
                 break;
             case "client_CanOfWorms":
                 this.statusBar.addActionButton(_("Confirm"), function () {
-                    // FIXME update these
-                    // this.bgaPerformAction("actDropSinker", {dice: this.freshStock[this.player_id].getSelection()[0].id}), {color: "primary", disabled: true, id: "confirmButton"}
-                    // this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions"});
-                });
+                    var id = document.querySelector(".selected").id;
+                    var split = id.split("_").slice(1);
+                    var shoalNum = (parseInt(split[0]) - 1) * 3 + parseInt(split[1]);
+                    console.log(shoalNum);
+                    // this.bgaPerformAction("actCanOfWorms", {shoalNum: document.querySelector(".selected").id})
+                }, { color: "primary", disabled: true, id: "confirmButton" });
                 this.statusBar.addActionButton(_("Cancel"), function () { return _this.setClientState("client_FreeSeaActions", { "descriptionmyturn": "Perform free actions" }); }, { color: "alert" });
                 break;
             case "client_Confirm":
@@ -661,26 +664,26 @@ var DeepRegrets = /** @class */ (function (_super) {
     DeepRegrets.prototype.notif_playerBoardSide = function (args) {
         var position;
         args.newSide == "monster" ? position = "-100%" : position = "0";
-        document.getElementById("playerBoard-".concat(args.player_id)).style.backgroundPositionX = position;
+        $("playerBoard-".concat(args.player_id)).style.backgroundPositionX = position;
     };
     DeepRegrets.prototype.notif_lifePreserver = function (args) {
         var lPPlayer = args.player_id2;
         this.getPlayerPanelElement(lPPlayer).insertAdjacentHTML("beforeend", "<div id=\"lifePreserverPanel\"></div>");
-        this.animationManager.fadeIn(document.getElementById("lifePreserverPanel"), document.getElementById("playerBoard-".concat(args.player_id1)), { duration: 1000 });
+        this.animationManager.fadeIn($("lifePreserverPanel"), $("playerBoard-".concat(args.player_id1)), { duration: 1000 });
     };
     DeepRegrets.prototype.notif_selectedShoal = function (args) {
         document.querySelectorAll(".shoal.selectable").forEach(function (shoal) {
             shoal.classList.remove("selectable");
         });
-        document.getElementById("shoal_".concat(args.shoal[0], "_").concat(args.shoal[1])).classList.add("selected");
+        $("shoal_".concat(args.shoal[0], "_").concat(args.shoal[1])).classList.add("selected");
     };
     DeepRegrets.prototype.notif_revealCard = function (args) {
         var fish = args.fish;
         this.shoalStocks[args.shoal[0] - 1][args.shoal[1] - 1].flipCard({ id: args.shoalNum - 10, size: this.SHOAL_SIZE[fish.size], depth: args.depth, coords: fish.coords }, { updateData: true });
     };
     DeepRegrets.prototype.notif_abandonedShip = function (args) {
-        document.getElementById("lifeboat-".concat(args.player_id)).classList.add("flipped");
-        document.getElementById("lifeboat-".concat(args.player_id)).classList.remove("selectable");
+        $("lifeboat-".concat(args.player_id)).classList.add("flipped");
+        $("lifeboat-".concat(args.player_id)).classList.remove("selectable");
         this.shipDecks[0].addCard({ id: args.player_id, location: "port" });
     };
     DeepRegrets.prototype.notif_dropSinker = function (args) {
