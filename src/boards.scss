@@ -39,6 +39,10 @@
             &.selectable, &.selectable:hover, &.selected {
                 outline-width: 3px;
             }
+
+            .card {
+                transition: 0.5s ease transform;
+            }
         }
 
         #ship_grid_sea {
@@ -249,7 +253,7 @@
     .lifeboat-inner {
         width: 100%;
         height: 100%;
-        transition: all 1s;
+        transition: all 0.5s;
         transform-style: preserve-3d;
     }
 
@@ -284,7 +288,7 @@
     .canOfWorms-inner {
         width: 100%;
         height: 100%;
-        transition: all 1s;
+        transition: all 0.5s;
         transform-style: preserve-3d;
     }
 

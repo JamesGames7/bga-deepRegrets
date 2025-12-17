@@ -22,6 +22,42 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
 // @ts-ignore
 GameGui = (function () {
     function GameGui() { }
@@ -137,6 +173,9 @@ var DeepRegrets = /** @class */ (function (_super) {
             isCardVisible: function (card) {
                 return card.coords[0] != -1;
             },
+            fakeCardGenerator: function (deckId) {
+                return { id: "fake", coords: [-1, -1] };
+            },
             setupDiv: function (card, div) {
                 div.dataset.type = card.type;
                 div.dataset.typeArg = card.type_arg;
@@ -153,8 +192,10 @@ var DeepRegrets = /** @class */ (function (_super) {
                 div.style.backgroundImage = "url(".concat(g_gamethemeurl, "img/seaCards.png)");
                 div.style.backgroundSize = "1300% 900%";
                 div.style.borderRadius = "6px";
-                div.style.backgroundPositionX = "-".concat(card.coords[0], "00%");
-                div.style.backgroundPositionY = "-".concat(card.coords[1], "00%");
+                if (card.coords[0] > -1) {
+                    div.style.backgroundPositionX = "-".concat(card.coords[0], "00%");
+                    div.style.backgroundPositionY = "-".concat(card.coords[1], "00%");
+                }
                 _this.addTooltipHtml(div.id, frontTooltipFish(card.coords, card.name, card.size, card.depth, card.type, card.sell, card.difficulty));
             },
         });
@@ -449,7 +490,7 @@ var DeepRegrets = /** @class */ (function (_super) {
         for (var depth = 0; depth < 3; depth++) {
             var curDepth = [];
             for (var num = 0; num < 3; num++) {
-                curDepth.push(new BgaCards.Deck(this.seaCardManager, $("shoal_".concat(depth + 1, "_").concat(num + 1)), { cardNumber: 0 }));
+                curDepth.push(new BgaCards.Deck(this.seaCardManager, $("shoal_".concat(depth + 1, "_").concat(num + 1)), { cardNumber: 0, autoRemovePreviousCards: false }));
             }
             this.shoalStocks.push(curDepth);
             this.graveyardStocks.push(new BgaCards.DiscardDeck(this.seaCardManager, $("shoal_".concat(depth + 1, "_graveyard")), { maxHorizontalShift: 0, maxVerticalShift: 0 }));
@@ -600,6 +641,13 @@ var DeepRegrets = /** @class */ (function (_super) {
                     });
                 });
                 break;
+            case "CanOfWorms":
+                $("shoal_".concat(args.args.shoal[0], "_").concat(args.args.shoal[1])).classList.add("selected");
+                if (this.isCurrentPlayerActive()) {
+                    var fish = args.args["_private"].fish;
+                    this.shoalStocks[args.args.shoal[0] - 1][args.args.shoal[1] - 1].flipCard({ id: args.args.shoalNum - 10, size: this.SHOAL_SIZE[fish.size], depth: fish.depth, coords: fish.coords }, { updateData: true });
+                }
+                break;
             case "client_Confirm":
                 if (args.args.selectedId) {
                     $(args.args.selectedId).classList.add("selected");
@@ -647,10 +695,13 @@ var DeepRegrets = /** @class */ (function (_super) {
                     var id = document.querySelector(".selected").id;
                     var split = id.split("_").slice(1);
                     var shoalNum = (parseInt(split[0]) - 1) * 3 + parseInt(split[1]);
-                    console.log(shoalNum);
-                    // this.bgaPerformAction("actCanOfWorms", {shoalNum: document.querySelector(".selected").id})
+                    _this.bgaPerformAction("actCanOfWorms", { shoalNum: shoalNum });
                 }, { color: "primary", disabled: true, id: "confirmButton" });
                 this.statusBar.addActionButton(_("Cancel"), function () { return _this.setClientState("client_FreeSeaActions", { "descriptionmyturn": "Perform free actions" }); }, { color: "alert" });
+                break;
+            case "CanOfWorms":
+                this.statusBar.addActionButton(_("Top"), function () { return _this.bgaPerformAction("actSetPlace", { "place": "top" }); });
+                this.statusBar.addActionButton(_("Bottom"), function () { return _this.bgaPerformAction("actSetPlace", { "place": "bottom" }); });
                 break;
             case "client_Confirm":
                 this.statusBar.addActionButton(_("Confirm"), function () { _this.bgaPerformAction(args.name, args.args); _this.restoreServerGameState(); });
@@ -690,6 +741,46 @@ var DeepRegrets = /** @class */ (function (_super) {
         this.shipDecks[args.depth2].addCard({ id: args.player_id });
         this.spentStock[args.player_id].addCard({ id: args.dice });
         this.setClientState("client_FreeSeaActions", { "descriptionmyturn": "Perform free actions" });
+    };
+    DeepRegrets.prototype.notif_canOfWormsMove = function (args) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        this.shoalStocks[args.depth - 1][(args.shoalNum - 1) % 3].flipCard({ id: args.shoalNum - 10, coords: [-1, -1] });
+                        $('canOfWorms-' + this.getActivePlayerId()).classList.add("flipped");
+                        if (!(args.place == "bottom")) return [3 /*break*/, 8];
+                        return [4 /*yield*/, new Promise(function (r) { return setTimeout(r, 500); })];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, this.shoalStocks[args.depth - 1][(args.shoalNum - 1) % 3].addCard({ id: "temp", size: this.SHOAL_SIZE[args.newTop[0]], depth: args.depth, coords: [-1, -1] }, { fadeIn: false, duration: 0, index: 0 })];
+                    case 2:
+                        _a.sent();
+                        $('card-' + (args.shoalNum - 10)).style.zIndex = "3";
+                        $('card-temp').style.zIndex = "2";
+                        $('card-' + (args.shoalNum - 10)).style.transform = 'translateX(30%)';
+                        return [4 /*yield*/, new Promise(function (r) { return setTimeout(r, 500); })];
+                    case 3:
+                        _a.sent();
+                        $('card-' + (args.shoalNum - 10)).style.zIndex = "1";
+                        $('card-' + (args.shoalNum - 10)).style.transform = '';
+                        return [4 /*yield*/, new Promise(function (r) { return setTimeout(r, 500); })];
+                    case 4:
+                        _a.sent();
+                        return [4 /*yield*/, this.shoalStocks[args.depth - 1][(args.shoalNum - 1) % 3].removeCard({ id: args.shoalNum - 10, coords: [-1, -1] }, { autoUpdateCardNumber: false })];
+                    case 5:
+                        _a.sent();
+                        return [4 /*yield*/, this.shoalStocks[args.depth - 1][(args.shoalNum - 1) % 3].addCard({ id: args.shoalNum - 10, size: this.SHOAL_SIZE[args.newTop[0]], depth: args.depth, coords: [-1, -1] }, { fadeIn: false, duration: 0, index: 0 })];
+                    case 6:
+                        _a.sent();
+                        return [4 /*yield*/, this.shoalStocks[args.depth - 1][(args.shoalNum - 1) % 3].removeCard({ id: "temp", coords: [-1, -1] }, { autoUpdateCardNumber: false })];
+                    case 7:
+                        _a.sent();
+                        _a.label = 8;
+                    case 8: return [2 /*return*/];
+                }
+            });
+        });
     };
     DeepRegrets.prototype.notif_test = function (args) {
         console.log(args);

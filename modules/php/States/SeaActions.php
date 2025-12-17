@@ -30,7 +30,7 @@ class SeaActions extends GameState
             // optional
             description: clienttranslate('${actplayer} must perform Sea actions or pass'),
             descriptionMyTurn: clienttranslate('${you} must perform Sea actions or pass'),
-            transitions: ["port" => 41, "sea" => 42, "pass" => 45, "nextPlayer" => 49], // LINK - modules\php\States\PassAction.php
+            transitions: ["port" => 41, "sea" => 42, "canOfWorms" => 43, "pass" => 45, "nextPlayer" => 49], // LINK - modules\php\States\PassAction.php
                                                                            // LINK - modules\php\States\NextPlayer.php
             updateGameProgression: false,
             initialPrivate: null,
@@ -43,7 +43,7 @@ class SeaActions extends GameState
         return [
             "depth" => $this->game->getUniqueValueFromDB("SELECT `depth` FROM `player` WHERE `player_id` = $activePlayerId"), 
             "casted" => $this->globals->get("casted"),
-            "selectedShoal" => $this->globals->get("curShoal"),
+            "selectedShoal" => $this->globals->get("selectedShoal"),
             "lifeboat" => json_decode($this->game->getUniqueValueFromDB("SELECT `provisions` FROM `player` WHERE `player_id` = $activePlayerId"))->lifeboat,
             "canOfWorms" => json_decode($this->game->getUniqueValueFromDB("SELECT `provisions` FROM `player` WHERE `player_id` = $activePlayerId"))->canOfWorms,
             "dice" => $this->game->dice->getCardsInLocation("fresh", $activePlayerId)
@@ -56,7 +56,7 @@ class SeaActions extends GameState
         $shoalNum = ($shoal[0] - 1) * 3 + $shoal[1];
         if (!$this->globals->get("casted")) {
             $this->globals->set("casted", true);
-            $this->globals->set("curShoal", $shoalNum);
+            $this->globals->set("selectedShoal", $shoalNum);
             $this->notify->all("selectedShoal", '${player_name} has selected to fish in a shoal of depth ${depth}', [
                 "player_id" => $activePlayerId,
                 "player_name" => $this->game->getPlayerNameById($activePlayerId),
@@ -73,8 +73,7 @@ class SeaActions extends GameState
 					"depth" => $shoal[0],
 					"shoal" => $shoal,
 					"shoalNum" => $shoalNum,
-					"fish" => $this->game->lists->getFish()[$fish["type"]]->getData(),
-					"revealed" => $revealed
+					"fish" => $this->game->lists->getFish()[$fish["type"]]->getData()
 				]);
 				$this->globals->set("revealedShoals", $revealed);
             }
@@ -87,7 +86,8 @@ class SeaActions extends GameState
     #[PossibleAction]
     function actFinishFish() {
         if ($this->globals->get("casted")) {
-            $shoal = $this->globals->get("curShoal");
+            $shoal = $this->globals->get("selectedShoal");
+            $this->globals->set("selectedShoal", 0);
         } else {
             throw new \BgaUserException("Can only fish after casting");
         }
@@ -153,11 +153,16 @@ class SeaActions extends GameState
     }
 
     #[PossibleAction]
-    function actCanOfWorms() {
-        if (!$this->globals->get("casted")) {
-
+    function actCanOfWorms(int $activePlayerId, string $shoalNum) {
+        if (!$this->globals->get("casted") && $this->getArgs($activePlayerId)["canOfWorms"]) {
+            $this->globals->set("selectedShoal", $shoalNum);
+            return "canOfWorms";
         } else {
-            throw new \BgaUserException("Must use Can of Worms before casting");
+            if ($this->globals->get("casted")) {
+                throw new \BgaUserException("Must use Can of Worms before casting");
+            } else {
+                throw new \BgaUserException("Already used Can of Worms");
+            }
         }
     }
 

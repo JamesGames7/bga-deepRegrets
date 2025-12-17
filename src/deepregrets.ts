@@ -184,6 +184,9 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			isCardVisible(card: {coords}) {
 				return card.coords[0] != -1;
 			},
+			fakeCardGenerator(deckId: string) {
+				return {id: "fake", coords: [-1, -1]};
+			},
 			setupDiv: (card, div) => {
 				div.dataset.type = (card as any).type;
 				div.dataset.typeArg = (card as any).type_arg;
@@ -200,8 +203,10 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				div.style.backgroundImage = `url(${g_gamethemeurl}img/seaCards.png)`
 				div.style.backgroundSize = "1300% 900%";
 				div.style.borderRadius = `6px`;
-				div.style.backgroundPositionX = `-${card.coords[0]}00%`;
-				div.style.backgroundPositionY = `-${card.coords[1]}00%`;
+				if (card.coords[0] > -1) {
+					div.style.backgroundPositionX = `-${card.coords[0]}00%`;
+					div.style.backgroundPositionY = `-${card.coords[1]}00%`;
+				}
                 this.addTooltipHtml(div.id, frontTooltipFish(card.coords, card.name, card.size, card.depth, card.type, card.sell, card.difficulty));
             },
         });
@@ -544,7 +549,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		for (let depth = 0; depth < 3; depth++) {
 			let curDepth = [];
 			for (let num = 0; num < 3; num++) {
-				curDepth.push(new BgaCards.Deck(this.seaCardManager, $(`shoal_${depth + 1}_${num + 1}`), {cardNumber: 0}));
+				curDepth.push(new BgaCards.Deck(this.seaCardManager, $(`shoal_${depth + 1}_${num + 1}`), {cardNumber: 0, autoRemovePreviousCards: false}));
 			}
 			this.shoalStocks.push(curDepth);
 			this.graveyardStocks.push(new BgaCards.DiscardDeck(this.seaCardManager, $(`shoal_${depth + 1}_graveyard`), {maxHorizontalShift: 0, maxVerticalShift: 0}));
@@ -700,6 +705,14 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					})
 				})
 				break;
+			case "CanOfWorms":
+				$(`shoal_${args.args.shoal[0]}_${args.args.shoal[1]}`).classList.add("selected");
+				if (this.isCurrentPlayerActive()) {
+					let fish = args.args["_private"].fish;
+					this.shoalStocks[args.args.shoal[0] - 1][args.args.shoal[1] - 1].flipCard({id: args.args.shoalNum - 10, size: this.SHOAL_SIZE[fish.size], depth: fish.depth, coords: fish.coords},
+																							{updateData: true});
+				}
+				break;
 			case "client_Confirm":
 				if (args.args.selectedId) {
 					$(args.args.selectedId).classList.add("selected");
@@ -752,6 +765,10 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				}, {color: "primary", disabled: true, id: "confirmButton"});
 				this.statusBar.addActionButton(_("Cancel"), () => this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions"}), {color: "alert"});
 				break;
+			case "CanOfWorms":
+				this.statusBar.addActionButton(_("Top"), () => this.bgaPerformAction("actSetPlace", {"place": "top"}));
+				this.statusBar.addActionButton(_("Bottom"), () => this.bgaPerformAction("actSetPlace", {"place": "bottom"}));
+				break;
 			case "client_Confirm":
 				this.statusBar.addActionButton(_("Confirm"), () => {this.bgaPerformAction(args.name, args.args); this.restoreServerGameState()});
 				this.statusBar.addActionButton(_("Cancel"), () => this.restoreServerGameState(), {color: "alert"});
@@ -800,6 +817,33 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		this.spentStock[args.player_id].addCard({id: args.dice});
 
 		this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions"});
+	}
+
+	public async notif_canOfWormsMove(args: any) {
+		this.shoalStocks[args.depth - 1][(args.shoalNum - 1) % 3].flipCard({id: args.shoalNum - 10, coords: [-1, -1]});
+		$('canOfWorms-' + this.getActivePlayerId()).classList.add("flipped");
+
+		if (args.place == "bottom") {
+			await new Promise(r => setTimeout(r, 500));
+		
+			await this.shoalStocks[args.depth - 1][(args.shoalNum - 1) % 3].addCard({id: "temp", size: this.SHOAL_SIZE[args.newTop[0]], depth: args.depth, coords: [-1, -1]}, {fadeIn: false, duration: 0, index: 0});
+
+			$('card-' + (args.shoalNum - 10)).style.zIndex = "3";
+			$('card-temp').style.zIndex = "2";
+			$('card-' + (args.shoalNum - 10)).style.transform = 'translateX(30%)';
+
+			await new Promise(r => setTimeout(r, 500));
+
+			$('card-' + (args.shoalNum - 10)).style.zIndex = "1";
+			$('card-' + (args.shoalNum - 10)).style.transform = '';
+
+			await new Promise(r => setTimeout(r, 500));
+
+			await this.shoalStocks[args.depth - 1][(args.shoalNum - 1) % 3].removeCard({id: args.shoalNum - 10, coords: [-1, -1]}, {autoUpdateCardNumber: false});
+			
+			await this.shoalStocks[args.depth - 1][(args.shoalNum - 1) % 3].addCard({id: args.shoalNum - 10, size: this.SHOAL_SIZE[args.newTop[0]], depth: args.depth, coords: [-1, -1]}, {fadeIn: false, duration: 0, index: 0});
+			await this.shoalStocks[args.depth - 1][(args.shoalNum - 1) % 3].removeCard({id: "temp", coords: [-1, -1]}, {autoUpdateCardNumber: false});
+		}
 	}
 
 	public notif_test(args: any) {

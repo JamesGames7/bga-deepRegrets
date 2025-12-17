@@ -260,6 +260,9 @@ Setup in js:
 #boards #sea_board .shoal.selectable, #boards #sea_board .shoal.selectable:hover, #boards #sea_board .shoal.selected {
   outline-width: 3px;
 }
+#boards #sea_board .shoal .card {
+  transition: 0.5s ease transform;
+}
 #boards #sea_board #ship_grid_sea {
   top: 133px;
   left: 0;
@@ -469,7 +472,7 @@ Setup in js:
 .playerComponents .lifeboat-inner {
   width: 100%;
   height: 100%;
-  transition: all 1s;
+  transition: all 0.5s;
   transform-style: preserve-3d;
 }
 .playerComponents .lifeboat-front, .playerComponents .lifeboat-back {
@@ -498,7 +501,7 @@ Setup in js:
 .playerComponents .canOfWorms-inner {
   width: 100%;
   height: 100%;
-  transition: all 1s;
+  transition: all 0.5s;
   transform-style: preserve-3d;
 }
 .playerComponents .canOfWorms-front, .playerComponents .canOfWorms-back {
