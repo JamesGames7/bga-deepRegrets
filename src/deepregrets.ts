@@ -745,7 +745,9 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			case "client_FreeSeaActions":
 				this.statusBar.addActionButton(_("Abandon Ship"), () => this.bgaPerformAction("actAbandonShip"), {"color": "secondary"});
 				this.statusBar.addActionButton(_("Drop Sinker"), () => this.setClientState("client_DropSinker", {"descriptionmyturn": "Choose a die to use"}), {"color": "secondary"});
-				this.statusBar.addActionButton(_("Use Can of Worms"), () => this.setClientState("client_CanOfWorms", {"descriptionmyturn": "Choose a shoal to peek at"}), {"color": "secondary"});
+				if (args.canOfWorms) {
+					this.statusBar.addActionButton(_("Use Can of Worms"), () => this.setClientState("client_CanOfWorms", {"descriptionmyturn": "Choose a shoal to peek at"}), {"color": "secondary"});
+				}
 				this.statusBar.addActionButton(_("Exit"), () => this.restoreServerGameState(), {color: "alert"});
 				break;
 			case "client_DropSinker":

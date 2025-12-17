@@ -681,7 +681,9 @@ var DeepRegrets = /** @class */ (function (_super) {
             case "client_FreeSeaActions":
                 this.statusBar.addActionButton(_("Abandon Ship"), function () { return _this.bgaPerformAction("actAbandonShip"); }, { "color": "secondary" });
                 this.statusBar.addActionButton(_("Drop Sinker"), function () { return _this.setClientState("client_DropSinker", { "descriptionmyturn": "Choose a die to use" }); }, { "color": "secondary" });
-                this.statusBar.addActionButton(_("Use Can of Worms"), function () { return _this.setClientState("client_CanOfWorms", { "descriptionmyturn": "Choose a shoal to peek at" }); }, { "color": "secondary" });
+                if (args.canOfWorms) {
+                    this.statusBar.addActionButton(_("Use Can of Worms"), function () { return _this.setClientState("client_CanOfWorms", { "descriptionmyturn": "Choose a shoal to peek at" }); }, { "color": "secondary" });
+                }
                 this.statusBar.addActionButton(_("Exit"), function () { return _this.restoreServerGameState(); }, { color: "alert" });
                 break;
             case "client_DropSinker":
