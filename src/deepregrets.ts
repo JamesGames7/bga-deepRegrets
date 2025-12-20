@@ -199,7 +199,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				div.style.backgroundPositionY = `-${card.depth - 1}00%`;
                 this.addTooltipHtml(div.id, `Fish in a shoal<br><strong>Depth:</strong> ${card.depth}<br><strong>Size:</strong> ${toTitleCase(Object.keys(this.SHOAL_SIZE).find(key => this.SHOAL_SIZE[key] === card.size))}`);
 			},
-            setupFrontDiv: (card: {coords: [number, number], name, size, depth, type, sell, difficulty}, div) => {
+            setupFrontDiv: (card: {coords: [number, number], name: any, size: any, depth: any, type: any, sell: any, difficulty: any}, div) => {
 				div.style.backgroundImage = `url(${g_gamethemeurl}img/seaCards.png)`
 				div.style.backgroundSize = "1300% 900%";
 				div.style.borderRadius = `6px`;
@@ -560,11 +560,12 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			depth.forEach(shoal => {
 				let curShoal = gamedatas.shoals[index];
 				if (curShoal[3]) {
-					shoal.addCard({id: curShoal[3]["name"], name: curShoal[3]["name"], depth: curShoal[2], size: curShoal[1], coords: curShoal[3]["coords"], difficulty: curShoal[3]["difficulty"], sell: curShoal[3]["sell"], type: curShoal[3]["type"]}, {initialSide: "front", finalSide: "front"});
+					shoal.addCard(cardTemplate(curShoal[3]["name"], curShoal[1], curShoal[2], curShoal[3]["coords"], curShoal[3]["name"], curShoal[3]["type"], curShoal[3]["sell"], curShoal[3]["difficulty"]));
 				} else {
 					let size = this.SHOAL_SIZE[curShoal[1]];
 					let curDepth = curShoal[2]
-					shoal.addCard({id: index - 9, size: size, depth: curDepth, coords: [-1, -1]}, {finalSide: "back"});
+					console.log(cardTemplate(index - 9, size, curDepth));
+					shoal.addCard(cardTemplate(index - 9, size, curDepth), {finalSide: "back"});
 				}
 				index++;
 			})
@@ -655,11 +656,11 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 						}
 					}
 				}
-
-				if (args.args.casted) {
-					let shoal = [Math.floor(args.args.selectedShoal / 3) + 1, (args.args.selectedShoal - 1) % 3 + 1];
-					$(`shoal_${shoal[0]}_${shoal[1]}`).classList.add("selected");
-				}
+				break;
+			case "FinishFish":
+				let shoalArr = shoalnumToArr(args.args.selected);
+				let shoal = $(`shoal_${shoalArr[0]}_${shoalArr[1]}`);
+				shoal.classList.add("selected");
 				break;
 			case "client_FreeSeaActions":	
 				var lifeboat = $(`lifeboat-${this.player_id}`);
@@ -729,52 +730,53 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		})
 	}
 	public onUpdateActionButtons(stateName: string, args: any) {
-		switch (stateName) {
-			case "LifePreserver":
-				if (this.isCurrentPlayerActive()) {
+		if (this.isCurrentPlayerActive()) {
+			switch (stateName) {
+				case "LifePreserver":
 					args.possibleChoices.forEach(id => {
 						this.statusBar.addActionButton(this.getFormattedPlayerName(id), () => this.bgaPerformAction("actChooseLPPlayer", {"playerId": id}), {"color": "secondary"});
 					});
-				}
-				break;
-			case "SeaActions":
-				if (this.isCurrentPlayerActive()) {
+					break;
+				case "SeaActions":
 					this.statusBar.addActionButton(_("Free Actions"), () => this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions:", args: {"lifeboat": args.lifeboat, "dice": args.dice, "canOfWorms": args.canOfWorms}}), {color: "secondary"})
-				}
-				break;
-			case "client_FreeSeaActions":
-				this.statusBar.addActionButton(_("Abandon Ship"), () => this.bgaPerformAction("actAbandonShip"), {"color": "secondary"});
-				this.statusBar.addActionButton(_("Drop Sinker"), () => this.setClientState("client_DropSinker", {"descriptionmyturn": "Choose a die to use"}), {"color": "secondary"});
-				if (args.canOfWorms) {
-					this.statusBar.addActionButton(_("Use Can of Worms"), () => this.setClientState("client_CanOfWorms", {"descriptionmyturn": "Choose a shoal to peek at"}), {"color": "secondary"});
-				}
-				this.statusBar.addActionButton(_("Exit"), () => this.restoreServerGameState(), {color: "alert"});
-				break;
-			case "client_DropSinker":
-				this.statusBar.addActionButton(_("Confirm"), () => {
-					this.bgaPerformAction("actDropSinker", {dice: this.freshStock[this.player_id].getSelection()[0].id})
-				}, {color: "primary", disabled: true, id: "confirmButton"});
-				this.statusBar.addActionButton(_("Cancel"), () => this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions"}), {color: "alert"});
-				break;
-			case "client_CanOfWorms":
-				this.statusBar.addActionButton(_("Confirm"), () => {
-					let id = document.querySelector(".selected").id;
-					let split = id.split("_").slice(1);
+					break;
+				case "client_FinishFish":
+					this.statusBar.addActionButton(_("Confirm"), () => this.bgaPerformAction("actFinishFish"));
+					break;
+				case "client_FreeSeaActions":
+					this.statusBar.addActionButton(_("Abandon Ship"), () => this.bgaPerformAction("actAbandonShip"), {"color": "secondary"});
+					this.statusBar.addActionButton(_("Drop Sinker"), () => this.setClientState("client_DropSinker", {"descriptionmyturn": "Choose a die to use"}), {"color": "secondary"});
+					if (args.canOfWorms) {
+						this.statusBar.addActionButton(_("Use Can of Worms"), () => this.setClientState("client_CanOfWorms", {"descriptionmyturn": "Choose a shoal to peek at"}), {"color": "secondary"});
+					}
+					this.statusBar.addActionButton(_("Exit"), () => this.restoreServerGameState(), {color: "alert"});
+					break;
+				case "client_DropSinker":
+					this.statusBar.addActionButton(_("Confirm"), () => {
+						this.bgaPerformAction("actDropSinker", {dice: this.freshStock[this.player_id].getSelection()[0].id})
+					}, {color: "primary", disabled: true, id: "confirmButton"});
+					this.statusBar.addActionButton(_("Cancel"), () => this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions"}), {color: "alert"});
+					break;
+				case "client_CanOfWorms":
+					this.statusBar.addActionButton(_("Confirm"), () => {
+						let id = document.querySelector(".selected").id;
+						let split = id.split("_").slice(1);
 
-					let shoalNum = (parseInt(split[0]) - 1) * 3 + parseInt(split[1]);
+						let shoalNum = (parseInt(split[0]) - 1) * 3 + parseInt(split[1]);
 
-					this.bgaPerformAction("actCanOfWorms", {shoalNum: shoalNum})
-				}, {color: "primary", disabled: true, id: "confirmButton"});
-				this.statusBar.addActionButton(_("Cancel"), () => this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions"}), {color: "alert"});
-				break;
-			case "CanOfWorms":
-				this.statusBar.addActionButton(_("Top"), () => this.bgaPerformAction("actSetPlace", {"place": "top"}));
-				this.statusBar.addActionButton(_("Bottom"), () => this.bgaPerformAction("actSetPlace", {"place": "bottom"}));
-				break;
-			case "client_Confirm":
-				this.statusBar.addActionButton(_("Confirm"), () => {this.bgaPerformAction(args.name, args.args); this.restoreServerGameState()});
-				this.statusBar.addActionButton(_("Cancel"), () => this.restoreServerGameState(), {color: "alert"});
-				break;
+						this.bgaPerformAction("actCanOfWorms", {shoalNum: shoalNum})
+					}, {color: "primary", disabled: true, id: "confirmButton"});
+					this.statusBar.addActionButton(_("Cancel"), () => this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions"}), {color: "alert"});
+					break;
+				case "CanOfWorms":
+					this.statusBar.addActionButton(_("Top"), () => this.bgaPerformAction("actSetPlace", {"place": "top"}));
+					this.statusBar.addActionButton(_("Bottom"), () => this.bgaPerformAction("actSetPlace", {"place": "bottom"}));
+					break;
+				case "client_Confirm":
+					this.statusBar.addActionButton(_("Confirm"), () => {this.bgaPerformAction(args.name, args.args); this.restoreServerGameState()});
+					this.statusBar.addActionButton(_("Cancel"), () => this.restoreServerGameState(), {color: "alert"});
+					break;
+			}
 		}
 	}
 	public setupNotifications() {
@@ -828,7 +830,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		if (args.place == "bottom") {
 			await new Promise(r => setTimeout(r, 500));
 		
-			await this.shoalStocks[args.depth - 1][(args.shoalNum - 1) % 3].addCard({id: "temp", size: this.SHOAL_SIZE[args.newTop[0]], depth: args.depth, coords: [-1, -1]}, {fadeIn: false, duration: 0, index: 0});
+			await this.shoalStocks[args.depth - 1][(args.shoalNum - 1) % 3].addCard(cardTemplate("temp", this.SHOAL_SIZE[args.newTop[0]], args.depth), {fadeIn: false, duration: 0, index: 0});
 
 			$('card-' + (args.shoalNum - 10)).style.zIndex = "3";
 			$('card-temp').style.zIndex = "2";
@@ -843,7 +845,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 
 			await this.shoalStocks[args.depth - 1][(args.shoalNum - 1) % 3].removeCard({id: args.shoalNum - 10, coords: [-1, -1]}, {autoUpdateCardNumber: false});
 			
-			await this.shoalStocks[args.depth - 1][(args.shoalNum - 1) % 3].addCard({id: args.shoalNum - 10, size: this.SHOAL_SIZE[args.newTop[0]], depth: args.depth, coords: [-1, -1]}, {fadeIn: false, duration: 0, index: 0});
+			await this.shoalStocks[args.depth - 1][(args.shoalNum - 1) % 3].addCard(cardTemplate(args.shoalNum - 10, this.SHOAL_SIZE[args.newTop[0]], args.depth), {fadeIn: false, duration: 0, index: 0});
 			await this.shoalStocks[args.depth - 1][(args.shoalNum - 1) % 3].removeCard({id: "temp", coords: [-1, -1]}, {autoUpdateCardNumber: false});
 		}
 	}

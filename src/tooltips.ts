@@ -1,4 +1,4 @@
-const frontTooltipFish = (coords: [number, number], name, size, depth, type, sell, difficulty) => `
+const frontTooltipFish = (coords: [number, number], name: any, size: any, depth: any, type: any, sell: any, difficulty: any) => `
     <div class="fishTooltipGrid">
         <div class="fishTooltipImg" style="background-position: -${coords[0]}00% -${coords[1]}00%"></div>
         <div class="fishTooltipText">
@@ -14,4 +14,8 @@ const frontTooltipFish = (coords: [number, number], name, size, depth, type, sel
 
 function toTitleCase(str: string) {
     return typeof str == "string" ? str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase() : str;
+}
+
+function cardTemplate(id: number | string, size: "large" | "middling" | "small", depth: number | string, coords: [number, number] = [-1, -1], name: string = null, type: "fair" | "foul" = null, sell: number = null, difficulty: number = null): {} {
+    return {id: id, coords: coords, name: name, size: size, depth: depth, type: type, sell: sell, difficulty: difficulty};
 }
