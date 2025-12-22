@@ -804,6 +804,9 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					break;
 				case "SeaActions":
 					this.statusBar.addActionButton(_("Free Actions"), () => this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions:", args: {"lifeboat": args.lifeboat, "dice": args.dice, "canOfWorms": args.canOfWorms, "casted": args.casted}}), {color: "secondary"})
+					if (args.casted) {
+						this.statusBar.addActionButton(_("End Turn"), () => this.bgaPerformAction("actEndTurn"), {color: "alert"});
+					}
 					break;
 				case "FinishFish":
 					this.statusBar.addActionButton(_("Confirm"), () => this.bgaPerformAction("actFinishFish", 

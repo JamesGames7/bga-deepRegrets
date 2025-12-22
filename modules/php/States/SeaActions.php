@@ -158,6 +158,14 @@ class SeaActions extends GameState
         }
     }
 
+    #[PossibleAction]
+    function actEndTurn() {
+        if ($this->globals->get("casted")) {
+            $this->globals->set("casted", false);
+            return "nextPlayer";
+        }
+    }
+
     function onEnteringState(int $activePlayerId) {
         // the code to run when entering the state
     }   

@@ -50,6 +50,7 @@ class NextPlayer extends GameState
         // TODO -  change to go to next round / end
         if (!$this->globals->get("firstPlayerReached")) {
             $this->gamestate->changeActivePlayer($this->globals->get("firstPlayer"));
+            $this->globals->set("firstPlayerReached", true);
         } else {
             $this->game->activeNextPlayer();
         }
