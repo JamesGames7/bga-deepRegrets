@@ -737,6 +737,9 @@ var DeepRegrets = /** @class */ (function (_super) {
                     if (args.casted) {
                         this.statusBar.addActionButton(_("End Turn"), function () { return _this.bgaPerformAction("actEndTurn"); }, { color: "alert" });
                     }
+                    else {
+                        this.statusBar.addActionButton(_("Pass"), function () { return _this.bgaPerformAction("actPass"); }, { color: "alert" });
+                    }
                     break;
                 case "FinishFish":
                     this.statusBar.addActionButton(_("Confirm"), function () { return _this.bgaPerformAction("actFinishFish", { dice: JSON.stringify(_this.freshStock[_this.player_id].getSelection()), LP: $('LP').classList.contains("selected") }); }, { disabled: args.target > 0, id: "finishFishButton" });

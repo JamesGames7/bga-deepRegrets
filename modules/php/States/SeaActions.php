@@ -107,7 +107,7 @@ class SeaActions extends GameState
     #[PossibleAction]
     function actPass() {
         if (!$this->globals->get("casted")) {
-
+            return "pass";
         } else {
             throw new \BgaUserException("Must pass before casting");
         }
