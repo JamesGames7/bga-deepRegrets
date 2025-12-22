@@ -213,7 +213,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				div.style.backgroundSize = "300% 300%";
 				div.style.borderRadius = `6px`;
 				let size = typeof card.size == "number" ? card.size : this.SHOAL_SIZE[card.size];
-				console.log(size);
 				div.style.backgroundPositionX = `-${size}00%`;
 				div.style.backgroundPositionY = `-${card.depth - 1}00%`;
                 this.addTooltipHtml(div.id, `Fish in a shoal<br><strong>Depth:</strong> ${card.depth}<br><strong>Size:</strong> ${toTitleCase(Object.keys(this.SHOAL_SIZE).find(key => this.SHOAL_SIZE[key] === size))}`);
@@ -680,12 +679,10 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 								curShoal.classList.add("selectable");
 								curShoal.addEventListener("click", e => {
 								if (this.gamedatas.gamestate.name == stateName) {
-										console.log(this.gamedatas.gamestate.name);
 										this.setClientState("client_Confirm", {
 											descriptionmyturn: "Choose a shoal to cast in: ",
 											args: {name: "actCast", args: {shoal: `${i}|${j}`}, selectedId: `shoal_${i}_${j}`}
 										});
-										console.log(this.gamedatas.gamestate.name);
 									}
 								});
 							}
@@ -698,7 +695,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					let shoalArr = shoalnumToArr(args.args.selected);
 					let shoal = $(`shoal_${shoalArr[0]}_${shoalArr[1]}`);
 					shoal.classList.add("selected");
-					console.log(args.args);
 
 					this.freshStock[this.player_id].setSelectionMode("multiple");
 					this.freshStock[this.player_id].onSelectionChange = (selection: any, lastChange: any) => {
@@ -735,7 +731,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				}
 			case "client_FreeSeaActions":	
 				var lifeboat = $(`lifeboat-${this.player_id}`);
-				if (args.args.lifeboat) {
+				if (args.args.lifeboat && !args.args.casted) {
 					lifeboat.classList.add("selectable");
 					lifeboat.addEventListener("click", e => {
 						if (this.gamedatas.gamestate.name == stateName) {
@@ -745,9 +741,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				}
 
 				var canOfWorms = $(`canOfWorms-${this.player_id}`)
-				console.log(canOfWorms);
-				console.log(args.args);
-				if (args.args.canOfWorms) {
+				if (args.args.canOfWorms && !args.args.casted) {
 					canOfWorms.classList.add("selectable");
 					canOfWorms.addEventListener("click", e => {
 						if (this.gamedatas.gamestate.name == stateName) {
@@ -809,7 +803,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					});
 					break;
 				case "SeaActions":
-					this.statusBar.addActionButton(_("Free Actions"), () => this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions:", args: {"lifeboat": args.lifeboat, "dice": args.dice, "canOfWorms": args.canOfWorms}}), {color: "secondary"})
+					this.statusBar.addActionButton(_("Free Actions"), () => this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions:", args: {"lifeboat": args.lifeboat, "dice": args.dice, "canOfWorms": args.canOfWorms, "casted": args.casted}}), {color: "secondary"})
 					break;
 				case "FinishFish":
 					this.statusBar.addActionButton(_("Confirm"), () => this.bgaPerformAction("actFinishFish", 
@@ -827,9 +821,14 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					}, {color: "secondary"})
 					break;
 				case "client_FreeSeaActions":
-					this.statusBar.addActionButton(_("Abandon Ship"), () => this.bgaPerformAction("actAbandonShip"), {"color": "secondary"});
-					this.statusBar.addActionButton(_("Drop Sinker"), () => this.setClientState("client_DropSinker", {"descriptionmyturn": "Choose a die to use"}), {"color": "secondary"});
-					if (args.canOfWorms) {
+					console.log(args);
+					if (args.lifeboat && !args.casted) {
+						this.statusBar.addActionButton(_("Abandon Ship"), () => this.bgaPerformAction("actAbandonShip"), {"color": "secondary"});
+					}
+					if (!args.casted) {
+						this.statusBar.addActionButton(_("Drop Sinker"), () => this.setClientState("client_DropSinker", {"descriptionmyturn": "Choose a die to use"}), {"color": "secondary"});
+					}
+					if (args.canOfWorms && !args.casted) {
 						this.statusBar.addActionButton(_("Use Can of Worms"), () => this.setClientState("client_CanOfWorms", {"descriptionmyturn": "Choose a shoal to peek at"}), {"color": "secondary"});
 					}
 					this.statusBar.addActionButton(_("Exit"), () => this.restoreServerGameState(), {color: "alert"});
@@ -936,7 +935,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 	}
 
 	public async notif_finishFish(args: any) {
-		console.log(args);
 		this.freshStock[args.player_id].onSelectionChange = null;
 		let shoal = shoalnumToArr(args.shoal)
 		if (args.LP) {
@@ -956,8 +954,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		await this.shoalStocks[shoal[0] - 1][shoal[1] - 1].addCard(cardTemplate(args.shoal - 10, newTop.size, newTop.depth), {index: 0, duration: 0, fadeIn: false});
 
 		await this.handStocks[args.player_id].addCard(curTop, {autoUpdateCardNumber: false});
-
-		// TODO hide free actions if not possible (casted)
 	}
 
 	public notif_test(args: any) {

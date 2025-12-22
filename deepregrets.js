@@ -200,7 +200,6 @@ var DeepRegrets = /** @class */ (function (_super) {
                 div.style.backgroundSize = "300% 300%";
                 div.style.borderRadius = "6px";
                 var size = typeof card.size == "number" ? card.size : _this.SHOAL_SIZE[card.size];
-                console.log(size);
                 div.style.backgroundPositionX = "-".concat(size, "00%");
                 div.style.backgroundPositionY = "-".concat(card.depth - 1, "00%");
                 _this.addTooltipHtml(div.id, "Fish in a shoal<br><strong>Depth:</strong> ".concat(card.depth, "<br><strong>Size:</strong> ").concat(toTitleCase(Object.keys(_this.SHOAL_SIZE).find(function (key) { return _this.SHOAL_SIZE[key] === size; }))));
@@ -606,12 +605,10 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 curShoal.classList.add("selectable");
                                 curShoal.addEventListener("click", function (e) {
                                     if (_this.gamedatas.gamestate.name == stateName) {
-                                        console.log(_this.gamedatas.gamestate.name);
                                         _this.setClientState("client_Confirm", {
                                             descriptionmyturn: "Choose a shoal to cast in: ",
                                             args: { name: "actCast", args: { shoal: "".concat(i, "|").concat(j) }, selectedId: "shoal_".concat(i, "_").concat(j) }
                                         });
-                                        console.log(_this.gamedatas.gamestate.name);
                                     }
                                 });
                             };
@@ -630,7 +627,6 @@ var DeepRegrets = /** @class */ (function (_super) {
                     var shoalArr = shoalnumToArr(args.args.selected);
                     var shoal = $("shoal_".concat(shoalArr[0], "_").concat(shoalArr[1]));
                     shoal.classList.add("selected");
-                    console.log(args.args);
                     this.freshStock[this.player_id].setSelectionMode("multiple");
                     this.freshStock[this.player_id].onSelectionChange = function (selection, lastChange) {
                         if (selection.includes(lastChange)) {
@@ -667,7 +663,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                 }
             case "client_FreeSeaActions":
                 var lifeboat = $("lifeboat-".concat(this.player_id));
-                if (args.args.lifeboat) {
+                if (args.args.lifeboat && !args.args.casted) {
                     lifeboat.classList.add("selectable");
                     lifeboat.addEventListener("click", function (e) {
                         if (_this.gamedatas.gamestate.name == stateName) {
@@ -676,9 +672,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                     });
                 }
                 var canOfWorms = $("canOfWorms-".concat(this.player_id));
-                console.log(canOfWorms);
-                console.log(args.args);
-                if (args.args.canOfWorms) {
+                if (args.args.canOfWorms && !args.args.casted) {
                     canOfWorms.classList.add("selectable");
                     canOfWorms.addEventListener("click", function (e) {
                         if (_this.gamedatas.gamestate.name == stateName) {
@@ -739,7 +733,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                     });
                     break;
                 case "SeaActions":
-                    this.statusBar.addActionButton(_("Free Actions"), function () { return _this.setClientState("client_FreeSeaActions", { "descriptionmyturn": "Perform free actions:", args: { "lifeboat": args.lifeboat, "dice": args.dice, "canOfWorms": args.canOfWorms } }); }, { color: "secondary" });
+                    this.statusBar.addActionButton(_("Free Actions"), function () { return _this.setClientState("client_FreeSeaActions", { "descriptionmyturn": "Perform free actions:", args: { "lifeboat": args.lifeboat, "dice": args.dice, "canOfWorms": args.canOfWorms, "casted": args.casted } }); }, { color: "secondary" });
                     break;
                 case "FinishFish":
                     this.statusBar.addActionButton(_("Confirm"), function () { return _this.bgaPerformAction("actFinishFish", { dice: JSON.stringify(_this.freshStock[_this.player_id].getSelection()), LP: $('LP').classList.contains("selected") }); }, { disabled: args.target > 0, id: "finishFishButton" });
@@ -755,9 +749,14 @@ var DeepRegrets = /** @class */ (function (_super) {
                     }, { color: "secondary" });
                     break;
                 case "client_FreeSeaActions":
-                    this.statusBar.addActionButton(_("Abandon Ship"), function () { return _this.bgaPerformAction("actAbandonShip"); }, { "color": "secondary" });
-                    this.statusBar.addActionButton(_("Drop Sinker"), function () { return _this.setClientState("client_DropSinker", { "descriptionmyturn": "Choose a die to use" }); }, { "color": "secondary" });
-                    if (args.canOfWorms) {
+                    console.log(args);
+                    if (args.lifeboat && !args.casted) {
+                        this.statusBar.addActionButton(_("Abandon Ship"), function () { return _this.bgaPerformAction("actAbandonShip"); }, { "color": "secondary" });
+                    }
+                    if (!args.casted) {
+                        this.statusBar.addActionButton(_("Drop Sinker"), function () { return _this.setClientState("client_DropSinker", { "descriptionmyturn": "Choose a die to use" }); }, { "color": "secondary" });
+                    }
+                    if (args.canOfWorms && !args.casted) {
                         this.statusBar.addActionButton(_("Use Can of Worms"), function () { return _this.setClientState("client_CanOfWorms", { "descriptionmyturn": "Choose a shoal to peek at" }); }, { "color": "secondary" });
                     }
                     this.statusBar.addActionButton(_("Exit"), function () { return _this.restoreServerGameState(); }, { color: "alert" });
@@ -883,7 +882,6 @@ var DeepRegrets = /** @class */ (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        console.log(args);
                         this.freshStock[args.player_id].onSelectionChange = null;
                         shoal = shoalnumToArr(args.shoal);
                         if (args.LP) {

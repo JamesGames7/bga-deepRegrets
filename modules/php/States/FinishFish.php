@@ -88,8 +88,12 @@ class FinishFish extends GameState
 
                 $revealed = $this->globals->get("revealedShoals");
                 $revealed[$this->globals->get("selectedShoal") - 1] = false;
-                $this->globals->set("revealedShoal", $revealed);
+                $this->notify->all("test", '', [
+                    "revealed" => $revealed
+                ]);
+                $this->globals->set("revealedShoals", $revealed);
                 $this->globals->set("selectedShoal", 0);
+                $this->globals->set("casted", true);
                 return "";
             } else {
                 throw new \BgaUserException("Not enough value to fish");

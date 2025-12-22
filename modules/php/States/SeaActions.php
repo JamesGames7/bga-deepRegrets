@@ -160,11 +160,6 @@ class SeaActions extends GameState
 
     function onEnteringState(int $activePlayerId) {
         // the code to run when entering the state
-        if ($this->game->dice->countCardsInLocation("fresh", $activePlayerId) == 0) {
-            return "pass";
-        }
-
-        $this->globals->set("casted", false);
     }   
 
     function zombie(int $playerId): string {
