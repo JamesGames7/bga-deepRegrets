@@ -396,6 +396,10 @@ Setup in js:
   cursor: pointer;
 }
 
+.card {
+  pointer-events: auto;
+}
+
 .playerBoard {
   background-image: url("img/boards/playerBoards.jpg");
   width: calc(100% - 20px);
@@ -415,6 +419,7 @@ Setup in js:
 }
 .playerBoard .freshGrid .selectable, .playerBoard .freshGrid .selectable:hover, .playerBoard .freshGrid .selected {
   outline-width: 3px;
+  cursor: pointer;
 }
 .playerBoard .spentGrid {
   width: 137px;
@@ -426,11 +431,71 @@ Setup in js:
 .playerBoard.selectable, .playerBoard.selectable:hover {
   outline-width: 5px;
 }
-.playerBoard .freshGrid, .playerBoard .spentGrid, .playerBoard .fishbuck-slot {
+.playerBoard .freshGrid, .playerBoard .spentGrid, .playerBoard .fishbuck-slot, .playerBoard .FP-LP {
   pointer-events: none;
 }
 .playerBoard .dice {
   pointer-events: auto;
+}
+.playerBoard .handStock {
+  position: fixed;
+  bottom: -175px;
+  left: 170px;
+  z-index: 5;
+  width: calc(100vw - 440px);
+  pointer-events: none;
+  transition: all 0.8s ease;
+}
+.playerBoard .handStock:hover {
+  bottom: 5px;
+}
+@media (max-width: 990px) {
+  .playerBoard .handStock {
+    width: calc(100vw - 200px);
+  }
+}
+@media (max-width: 740px) {
+  .playerBoard .handStock {
+    width: 560px;
+  }
+}
+.playerBoard .hide {
+  opacity: 0;
+  width: 0;
+}
+
+.removed {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.FP-LP {
+  width: 100px;
+  height: 200px;
+  margin-top: 114px;
+  margin-left: 20px;
+}
+
+#FP, #LP {
+  width: 100px;
+  height: 100px;
+  pointer-events: auto;
+  background-size: 100% 100%;
+  display: inline-block;
+}
+
+#FP {
+  background-image: url(img/other/firstPlayer.png);
+}
+
+#LP {
+  background-image: url(img/other/lifePreserver.png);
+}
+#LP.selectable, #LP.selectable:hover, #LP.selected {
+  outline-width: 3px;
+}
+#LP {
+  border-radius: 50%;
 }
 
 .fishbuck-slot {
@@ -651,6 +716,10 @@ Setup in js:
   aspect-ratio: 1;
   width: 50px;
   display: inline-block;
+  border-radius: 50%;
+}
+#lifePreserverPanel.selectable, #lifePreserverPanel.selectable:hover, #lifePreserverPanel.selected {
+  outline-width: 3px;
 }
 
 .fishTooltipGrid {

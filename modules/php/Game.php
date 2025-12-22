@@ -34,6 +34,17 @@ class Game extends \Bga\GameFramework\Table
     public Deck $fish;
     public Deck $dice;
     public Lists $lists;
+    public $DICE_VALUES = [
+        "blueP" => [1, 1, 2, 3],
+        "greenP" => [1, 1, 2, 3],
+        "orangeP" => [1, 1, 2, 3],
+        "redP" => [1, 1, 2, 3],
+        "tealP" => [1, 1, 2, 3],
+        "blueT" => [0, 0, 1, 2],
+        "greenT" => [1, 1, 2, 3],
+        "orangeT" => [2, 3, 2, 3],
+        "omen" => [1, 2, 3, 4],
+    ];
 
     /**
      * Your global variables labels:
@@ -133,7 +144,7 @@ class Game extends \Bga\GameFramework\Table
     {
         $result = [];
 
-        // WARNING: We must only return information visible by the current player.
+        // ! WARNING: We must only return information visible by the current player.
         $current_player_id = (int) $this->getCurrentPlayerId();
 
         // Get information about players.
@@ -142,9 +153,16 @@ class Game extends \Bga\GameFramework\Table
             "SELECT `player_id` `id`, `player_score` `score`, `playerBoard`, `fishbucks`, `provisions`, `location`, `depth` FROM `player`"
         );
 
+        $handData = [];
+
+        foreach($this->fish->getCardsInLocation("hand", $current_player_id) as $curFish) {
+            $handData[] = $this->lists->getFish()[$curFish["type"]]->getData();
+        }
+
         foreach(array_keys($this->loadPlayersBasicInfos()) as $id) {
             $result["players"][$id]["dice"] = $this->dice->getCardsInLocation(["spent", "fresh", "roll"], $id);
             $result["players"][$id]["regretCount"] = intval($this->dice->countCardsInLocation("hand", $id));
+            $result["players"][$id]["hand"] = $current_player_id == $id ? $handData : $this->fish->countCardInLocation("hand", $id);
         }
 
         $result["playerOrder"] = $this->getNextPlayerTable();

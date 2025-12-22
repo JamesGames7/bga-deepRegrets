@@ -75,4 +75,8 @@ class Fish {
     public function getData() {
         return ["name" => $this->getName(), "difficulty" => $this->getDifficulty(), "size" => $this->getSize(), "type" => $this->getType(), "depth" => $this->getDepth(), "sell" => $this->getSellValue(), "coords" => $this->getCoords()];
     }
+
+    public function getHidden() {
+        return ["size" => $this->getSize(), "depth" => $this->getDepth()];
+    }
 }

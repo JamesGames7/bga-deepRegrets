@@ -30,7 +30,7 @@ class SeaActions extends GameState
             // optional
             description: clienttranslate('${actplayer} must perform Sea actions or pass'),
             descriptionMyTurn: clienttranslate('${you} must perform Sea actions or pass'),
-            transitions: ["port" => 41, "sea" => 42, "canOfWorms" => 43, "pass" => 45, "nextPlayer" => 49], // LINK - modules\php\States\PassAction.php
+            transitions: ["port" => 41, "sea" => 42, "canOfWorms" => 43, "finishFish" => 44, "pass" => 45, "nextPlayer" => 49], // LINK - modules\php\States\PassAction.php
                                                                            // LINK - modules\php\States\NextPlayer.php
             updateGameProgression: false,
             initialPrivate: null,
@@ -78,18 +78,10 @@ class SeaActions extends GameState
 				$this->globals->set("revealedShoals", $revealed);
             }
             // TODO add fish power on reveal
+
+            return "finishFish";
         } else {
             throw new \BgaUserException("Can only cast once per turn");
-        }
-    }
-
-    #[PossibleAction]
-    function actFinishFish() {
-        if ($this->globals->get("casted")) {
-            $shoal = $this->globals->get("selectedShoal");
-            $this->globals->set("selectedShoal", 0);
-        } else {
-            throw new \BgaUserException("Can only fish after casting");
         }
     }
 

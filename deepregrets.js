@@ -76,6 +76,7 @@ var DeepRegrets = /** @class */ (function (_super) {
         _this.spentStock = {};
         _this.shoalStocks = [];
         _this.graveyardStocks = [];
+        _this.handStocks = [];
         _this.reelsDeck = {};
         _this.rodsDeck = {};
         _this.suppliesDeck = {};
@@ -112,6 +113,17 @@ var DeepRegrets = /** @class */ (function (_super) {
             4, 4, 4,
             5
         ];
+        _this.DICE_VALUE = {
+            "blueP": [1, 1, 2, 3],
+            "greenP": [1, 1, 2, 3],
+            "redP": [1, 1, 2, 3],
+            "tealP": [1, 1, 2, 3],
+            "orangeP": [1, 1, 2, 3],
+            "greenT": [1, 1, 2, 3],
+            "blueT": [0, 0, 1, 2],
+            "orangeT": [2, 3, 2, 3],
+            "omen": [1, 2, 3, 4]
+        };
         return _this;
     }
     DeepRegrets.prototype.setup = function (gamedatas) {
@@ -174,19 +186,24 @@ var DeepRegrets = /** @class */ (function (_super) {
                 return card.coords[0] != -1;
             },
             fakeCardGenerator: function (deckId) {
-                return { id: "fake", coords: [-1, -1] };
+                return cardTemplate("fake", "small", 0);
             },
             setupDiv: function (card, div) {
                 div.dataset.type = card.type;
                 div.dataset.typeArg = card.type_arg;
+                if (card.id == "fake") {
+                    div.classList.add("removed");
+                }
             },
             setupBackDiv: function (card, div) {
                 div.style.backgroundImage = "url(".concat(g_gamethemeurl, "img/seaBacks.png)");
                 div.style.backgroundSize = "300% 300%";
                 div.style.borderRadius = "6px";
-                div.style.backgroundPositionX = "-".concat(card.size, "00%");
+                var size = typeof card.size == "number" ? card.size : _this.SHOAL_SIZE[card.size];
+                console.log(size);
+                div.style.backgroundPositionX = "-".concat(size, "00%");
                 div.style.backgroundPositionY = "-".concat(card.depth - 1, "00%");
-                _this.addTooltipHtml(div.id, "Fish in a shoal<br><strong>Depth:</strong> ".concat(card.depth, "<br><strong>Size:</strong> ").concat(toTitleCase(Object.keys(_this.SHOAL_SIZE).find(function (key) { return _this.SHOAL_SIZE[key] === card.size; }))));
+                _this.addTooltipHtml(div.id, "Fish in a shoal<br><strong>Depth:</strong> ".concat(card.depth, "<br><strong>Size:</strong> ").concat(toTitleCase(Object.keys(_this.SHOAL_SIZE).find(function (key) { return _this.SHOAL_SIZE[key] === size; }))));
             },
             setupFrontDiv: function (card, div) {
                 div.style.backgroundImage = "url(".concat(g_gamethemeurl, "img/seaCards.png)");
@@ -447,7 +464,14 @@ var DeepRegrets = /** @class */ (function (_super) {
                     $("fishbuck-slot-".concat(player["id"], "-").concat(i)).style.opacity = "0";
                 }
             }
-            playerBoard.insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"freshGrid-".concat(player["id"], "\" class=\"freshGrid\"></div>\n\t\t\t\t<div id=\"spentGrid-").concat(player["id"], "\" class=\"spentGrid\"></div>\t\n\t\t\t"));
+            playerBoard.insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"FP-LP-".concat(player["id"], "\" class=\"FP-LP\"></div>\n\t\t\t\t<div id=\"freshGrid-").concat(player["id"], "\" class=\"freshGrid\"></div>\n\t\t\t\t<div id=\"spentGrid-").concat(player["id"], "\" class=\"spentGrid\"></div>\n\t\t\t\t<div id=\"hand-").concat(player["id"], "\" class=\"handStock\"></div>\n\t\t\t"));
+            var fpLP = $("FP-LP-".concat(player["id"]));
+            if (gamedatas.firstPlayer == player["id"]) {
+                fpLP.insertAdjacentHTML("beforeend", "<div id=\"FP\"></div>");
+            }
+            if (gamedatas.lifePreserver == player["id"]) {
+                fpLP.insertAdjacentHTML("beforeend", "<div id=\"LP\"></div>");
+            }
             _this.freshStock[player["id"]] = new BgaCards.LineStock(_this.diceManager, $("freshGrid-".concat(player["id"])), { sort: BgaCards.sort('type_arg', 'type') });
             // TODO: change to scrollable?
             _this.spentStock[player["id"]] = new BgaCards.LineStock(_this.diceManager, $("spentGrid-".concat(player["id"])), { sort: BgaCards.sort('type_arg', 'type') });
@@ -464,6 +488,12 @@ var DeepRegrets = /** @class */ (function (_super) {
                         break;
                 }
             });
+            _this.handStocks[player["id"]] = new BgaCards.ScrollableStock(_this.seaCardManager, $("hand-".concat(player["id"])), { leftButton: { classes: ["hide"] }, rightButton: { classes: ["hide"] }, gap: "5px" });
+            if (player["id"] == _this.player_id) {
+                player.hand.forEach(function (fish) {
+                    _this.handStocks[player["id"]].addCard(cardTemplate(fish.name, fish.size, fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty));
+                });
+            }
             _this.freshStock[player["id"]].onSelectionChange = function () {
                 if ($("confirmButton")) {
                     $("confirmButton").disabled = _this.freshStock[player["id"]].getSelection().length == 0;
@@ -505,7 +535,6 @@ var DeepRegrets = /** @class */ (function (_super) {
                 else {
                     var size = _this.SHOAL_SIZE[curShoal[1]];
                     var curDepth = curShoal[2];
-                    console.log(cardTemplate(index - 9, size, curDepth));
                     shoal.addCard(cardTemplate(index - 9, size, curDepth), { finalSide: "back" });
                 }
                 index++;
@@ -597,10 +626,45 @@ var DeepRegrets = /** @class */ (function (_super) {
                 }
                 break;
             case "FinishFish":
-                var shoalArr = shoalnumToArr(args.args.selected);
-                var shoal = $("shoal_".concat(shoalArr[0], "_").concat(shoalArr[1]));
-                shoal.classList.add("selected");
-                break;
+                if (this.isCurrentPlayerActive()) {
+                    var shoalArr = shoalnumToArr(args.args.selected);
+                    var shoal = $("shoal_".concat(shoalArr[0], "_").concat(shoalArr[1]));
+                    shoal.classList.add("selected");
+                    console.log(args.args);
+                    this.freshStock[this.player_id].setSelectionMode("multiple");
+                    this.freshStock[this.player_id].onSelectionChange = function (selection, lastChange) {
+                        if (selection.includes(lastChange)) {
+                            _this.gamedatas.gamestate.args.num += parseInt(_this.DICE_VALUE[lastChange.type][lastChange.type_arg]);
+                        }
+                        else {
+                            _this.gamedatas.gamestate.args.num -= parseInt(_this.DICE_VALUE[lastChange.type][lastChange.type_arg]);
+                        }
+                        args.args.num = _this.gamedatas.gamestate.args.num;
+                        $("finishFishButton").disabled = args.args.num < args.args.target;
+                        _this.statusBar.setTitle('${you} must pay for the fish (${num} / ${target})', args.args);
+                    };
+                    if (args.args.LP) {
+                        ["LP", "lifePreserverPanel"].forEach(function (id) {
+                            $(id).classList.add("selectable");
+                            $(id).addEventListener("click", function () {
+                                if ($("LP").classList.contains("selected")) {
+                                    $("LP").classList.remove("selected");
+                                    $("lifePreserverPanel").classList.remove("selected");
+                                    _this.gamedatas.gamestate.args.num -= 2;
+                                }
+                                else {
+                                    $("LP").classList.add("selected");
+                                    $("lifePreserverPanel").classList.add("selected");
+                                    _this.gamedatas.gamestate.args.num += 2;
+                                }
+                                args.args.num = _this.gamedatas.gamestate.args.num;
+                                $("finishFishButton").disabled = args.args.num < args.args.target;
+                                _this.statusBar.setTitle('${you} must pay for the fish (${num} / ${target})', args.args);
+                            });
+                        });
+                    }
+                    break;
+                }
             case "client_FreeSeaActions":
                 var lifeboat = $("lifeboat-".concat(this.player_id));
                 if (args.args.lifeboat) {
@@ -647,7 +711,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                 $("shoal_".concat(args.args.shoal[0], "_").concat(args.args.shoal[1])).classList.add("selected");
                 if (this.isCurrentPlayerActive()) {
                     var fish = args.args["_private"].fish;
-                    this.shoalStocks[args.args.shoal[0] - 1][args.args.shoal[1] - 1].flipCard({ id: args.args.shoalNum - 10, size: this.SHOAL_SIZE[fish.size], depth: fish.depth, coords: fish.coords }, { updateData: true });
+                    this.shoalStocks[args.args.shoal[0] - 1][args.args.shoal[1] - 1].flipCard(cardTemplate(args.args.shoalNum - 10, this.SHOAL_SIZE[fish.size], fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty), { updateData: true });
                 }
                 break;
             case "client_Confirm":
@@ -677,8 +741,18 @@ var DeepRegrets = /** @class */ (function (_super) {
                 case "SeaActions":
                     this.statusBar.addActionButton(_("Free Actions"), function () { return _this.setClientState("client_FreeSeaActions", { "descriptionmyturn": "Perform free actions:", args: { "lifeboat": args.lifeboat, "dice": args.dice, "canOfWorms": args.canOfWorms } }); }, { color: "secondary" });
                     break;
-                case "client_FinishFish":
-                    this.statusBar.addActionButton(_("Confirm"), function () { return _this.bgaPerformAction("actFinishFish"); });
+                case "FinishFish":
+                    this.statusBar.addActionButton(_("Confirm"), function () { return _this.bgaPerformAction("actFinishFish", { dice: JSON.stringify(_this.freshStock[_this.player_id].getSelection()), LP: $('LP').classList.contains("selected") }); }, { disabled: args.target > 0, id: "finishFishButton" });
+                    this.statusBar.addActionButton(_("Reset"), function () {
+                        _this.freshStock[_this.player_id].unselectAll(true);
+                        if ($("LP").classList.contains("selected")) {
+                            $("LP").classList.remove("selected");
+                            $("lifePreserverPanel").classList.remove("selected");
+                        }
+                        _this.gamedatas.gamestate.args.num = 0;
+                        $("finishFishButton").disabled = true;
+                        _this.statusBar.setTitle('${you} must pay for the fish (${num} / ${target})', args);
+                    }, { color: "secondary" });
                     break;
                 case "client_FreeSeaActions":
                     this.statusBar.addActionButton(_("Abandon Ship"), function () { return _this.bgaPerformAction("actAbandonShip"); }, { "color": "secondary" });
@@ -723,9 +797,24 @@ var DeepRegrets = /** @class */ (function (_super) {
         $("playerBoard-".concat(args.player_id)).style.backgroundPositionX = position;
     };
     DeepRegrets.prototype.notif_lifePreserver = function (args) {
-        var lPPlayer = args.player_id2;
-        this.getPlayerPanelElement(lPPlayer).insertAdjacentHTML("beforeend", "<div id=\"lifePreserverPanel\"></div>");
-        this.animationManager.fadeIn($("lifePreserverPanel"), $("playerBoard-".concat(args.player_id1)), { duration: 1000 });
+        return __awaiter(this, void 0, void 0, function () {
+            var lPPlayer;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        lPPlayer = args.player_id2;
+                        this.getPlayerPanelElement(lPPlayer).insertAdjacentHTML("beforeend", "<div id=\"lifePreserverPanel\"></div>");
+                        return [4 /*yield*/, this.animationManager.fadeIn($("lifePreserverPanel"), $("playerBoard-".concat(args.player_id1)), { duration: 1000 })];
+                    case 1:
+                        _a.sent();
+                        $("FP-LP-".concat(args.player_id2)).insertAdjacentHTML("beforeend", "<div id=\"LP\"></div>");
+                        return [4 /*yield*/, this.animationManager.fadeIn($("LP"), $("playerBoard-".concat(args.player_id1)), { duration: 1000 })];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
     };
     DeepRegrets.prototype.notif_selectedShoal = function (args) {
         document.querySelectorAll(".shoal.selectable").forEach(function (shoal) {
@@ -735,7 +824,7 @@ var DeepRegrets = /** @class */ (function (_super) {
     };
     DeepRegrets.prototype.notif_revealCard = function (args) {
         var fish = args.fish;
-        this.shoalStocks[args.shoal[0] - 1][args.shoal[1] - 1].flipCard({ id: args.shoalNum - 10, size: this.SHOAL_SIZE[fish.size], depth: args.depth, coords: fish.coords }, { updateData: true });
+        this.shoalStocks[args.shoal[0] - 1][args.shoal[1] - 1].flipCard(cardTemplate(args.shoalNum - 10, this.SHOAL_SIZE[fish.size], args.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty), { updateData: true });
     };
     DeepRegrets.prototype.notif_abandonedShip = function (args) {
         $("lifeboat-".concat(args.player_id)).classList.add("flipped");
@@ -783,6 +872,43 @@ var DeepRegrets = /** @class */ (function (_super) {
                         _a.sent();
                         _a.label = 8;
                     case 8: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    DeepRegrets.prototype.notif_finishFish = function (args) {
+        return __awaiter(this, void 0, void 0, function () {
+            var shoal, curTop, newTop;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        console.log(args);
+                        this.freshStock[args.player_id].onSelectionChange = null;
+                        shoal = shoalnumToArr(args.shoal);
+                        if (args.LP) {
+                            this.animationManager.fadeOutAndDestroy($("LP"));
+                            this.animationManager.fadeOutAndDestroy($("lifePreserverPanel"));
+                        }
+                        args.moved.forEach(function (die) {
+                            _this.spentStock[args.player_id].addCard({ id: die["id"], coords: [-1, -1] });
+                        });
+                        curTop = this.shoalStocks[shoal[0] - 1][shoal[1] - 1].getCards()[0];
+                        newTop = args.newTop;
+                        return [4 /*yield*/, this.shoalStocks[shoal[0] - 1][shoal[1] - 1].addCard(cardTemplate(curTop.name, curTop.size, curTop.depth, curTop.coords, curTop.name, curTop.type, curTop.sell, curTop.difficulty), { index: 0, duration: 0, fadeIn: false })];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, this.shoalStocks[shoal[0] - 1][shoal[1] - 1].removeCard({ id: args.shoal - 10 }, { autoUpdateCardNumber: false })];
+                    case 2:
+                        _a.sent();
+                        curTop = this.shoalStocks[shoal[0] - 1][shoal[1] - 1].getCards()[0];
+                        return [4 /*yield*/, this.shoalStocks[shoal[0] - 1][shoal[1] - 1].addCard(cardTemplate(args.shoal - 10, newTop.size, newTop.depth), { index: 0, duration: 0, fadeIn: false })];
+                    case 3:
+                        _a.sent();
+                        return [4 /*yield*/, this.handStocks[args.player_id].addCard(curTop, { autoUpdateCardNumber: false })];
+                    case 4:
+                        _a.sent();
+                        return [2 /*return*/];
                 }
             });
         });

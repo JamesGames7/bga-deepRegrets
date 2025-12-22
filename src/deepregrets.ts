@@ -16,6 +16,7 @@ GameGui = (function () { // this hack required so we fake extend GameGui
 
 // Note: it does not really extend it in es6 way, you cannot call super you have to use dojo way 
 class DeepRegrets extends GameGui<DeepRegretsGamedatas> { 
+	// * Definitions
 	public animationManager: any;
 	public diceManager: any;
 	public dinksManager: any;
@@ -31,11 +32,13 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 	public spentStock = {};
 	public shoalStocks: any[][] = [];
 	public graveyardStocks: any[] = [];
+	public handStocks: any[] = [];
 	public reelsDeck = {};
 	public rodsDeck = {};
 	public suppliesDeck = {};
 	public shipDecks: any[] = [];
 	public dinkDeck = {};
+
 	private COLOUR_POSITION = {
 		"488fc7": 0,
 		"69ba35": -100,
@@ -67,6 +70,17 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		4, 4, 4,
 		5
 	]
+	private DICE_VALUE = {
+		"blueP": [1, 1, 2, 3],
+		"greenP": [1, 1, 2, 3],
+		"redP": [1, 1, 2, 3],
+		"tealP": [1, 1, 2, 3],
+		"orangeP": [1, 1, 2, 3],
+		"greenT": [1, 1, 2, 3],
+		"blueT": [0, 0, 1, 2],
+		"orangeT": [2, 3, 2, 3],
+		"omen": [1, 2, 3, 4]
+	}
 
 	constructor() {
 		// @ts-ignore
@@ -185,19 +199,24 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				return card.coords[0] != -1;
 			},
 			fakeCardGenerator(deckId: string) {
-				return {id: "fake", coords: [-1, -1]};
+				return cardTemplate("fake", "small", 0)
 			},
 			setupDiv: (card, div) => {
 				div.dataset.type = (card as any).type;
 				div.dataset.typeArg = (card as any).type_arg;
+				if ((card as any).id == "fake") {
+					div.classList.add("removed");
+				}
 			},
 			setupBackDiv: (card: {size, depth}, div) => {
 				div.style.backgroundImage = `url(${g_gamethemeurl}img/seaBacks.png)`
 				div.style.backgroundSize = "300% 300%";
 				div.style.borderRadius = `6px`;
-				div.style.backgroundPositionX = `-${card.size}00%`;
+				let size = typeof card.size == "number" ? card.size : this.SHOAL_SIZE[card.size];
+				console.log(size);
+				div.style.backgroundPositionX = `-${size}00%`;
 				div.style.backgroundPositionY = `-${card.depth - 1}00%`;
-                this.addTooltipHtml(div.id, `Fish in a shoal<br><strong>Depth:</strong> ${card.depth}<br><strong>Size:</strong> ${toTitleCase(Object.keys(this.SHOAL_SIZE).find(key => this.SHOAL_SIZE[key] === card.size))}`);
+                this.addTooltipHtml(div.id, `Fish in a shoal<br><strong>Depth:</strong> ${card.depth}<br><strong>Size:</strong> ${toTitleCase(Object.keys(this.SHOAL_SIZE).find(key => this.SHOAL_SIZE[key] === size))}`);
 			},
             setupFrontDiv: (card: {coords: [number, number], name: any, size: any, depth: any, type: any, sell: any, difficulty: any}, div) => {
 				div.style.backgroundImage = `url(${g_gamethemeurl}img/seaCards.png)`
@@ -483,9 +502,20 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			}
 
 			playerBoard.insertAdjacentHTML("beforeend", `
+				<div id="FP-LP-${player["id"]}" class="FP-LP"></div>
 				<div id="freshGrid-${player["id"]}" class="freshGrid"></div>
-				<div id="spentGrid-${player["id"]}" class="spentGrid"></div>	
+				<div id="spentGrid-${player["id"]}" class="spentGrid"></div>
+				<div id="hand-${player["id"]}" class="handStock"></div>
 			`)
+
+			let fpLP = $(`FP-LP-${player["id"]}`);
+			if (gamedatas.firstPlayer == player["id"]) {
+				fpLP.insertAdjacentHTML("beforeend", `<div id="FP"></div>`);
+			}
+			
+			if (gamedatas.lifePreserver == player["id"]) {
+				fpLP.insertAdjacentHTML("beforeend", `<div id="LP"></div>`);
+			}
 
 			this.freshStock[player["id"]] = new BgaCards.LineStock(this.diceManager, $(`freshGrid-${player["id"]}`), {sort: BgaCards.sort('type_arg', 'type')});
 
@@ -504,6 +534,13 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 						break;
 				}
 			})
+
+			this.handStocks[player["id"]] = new BgaCards.ScrollableStock(this.seaCardManager, $(`hand-${player["id"]}`), {leftButton: {classes: ["hide"]}, rightButton: {classes: ["hide"]}, gap: "5px"});
+			if (player["id"] == this.player_id) {
+				player.hand.forEach(fish => {
+					this.handStocks[player["id"]].addCard(cardTemplate(fish.name, fish.size, fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty));
+				});
+			}
 
 			this.freshStock[player["id"]].onSelectionChange = () => {
 				if ($("confirmButton")) {
@@ -564,7 +601,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				} else {
 					let size = this.SHOAL_SIZE[curShoal[1]];
 					let curDepth = curShoal[2]
-					console.log(cardTemplate(index - 9, size, curDepth));
 					shoal.addCard(cardTemplate(index - 9, size, curDepth), {finalSide: "back"});
 				}
 				index++;
@@ -658,10 +694,45 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				}
 				break;
 			case "FinishFish":
-				let shoalArr = shoalnumToArr(args.args.selected);
-				let shoal = $(`shoal_${shoalArr[0]}_${shoalArr[1]}`);
-				shoal.classList.add("selected");
-				break;
+				if (this.isCurrentPlayerActive()) {
+					let shoalArr = shoalnumToArr(args.args.selected);
+					let shoal = $(`shoal_${shoalArr[0]}_${shoalArr[1]}`);
+					shoal.classList.add("selected");
+					console.log(args.args);
+
+					this.freshStock[this.player_id].setSelectionMode("multiple");
+					this.freshStock[this.player_id].onSelectionChange = (selection: any, lastChange: any) => {
+						if (selection.includes(lastChange)) {
+							this.gamedatas.gamestate.args.num += parseInt(this.DICE_VALUE[lastChange.type][lastChange.type_arg]);
+						} else {
+							this.gamedatas.gamestate.args.num -= parseInt(this.DICE_VALUE[lastChange.type][lastChange.type_arg]);
+						}
+						args.args.num = this.gamedatas.gamestate.args.num;
+						($("finishFishButton") as any).disabled = args.args.num < args.args.target;
+						this.statusBar.setTitle('${you} must pay for the fish (${num} / ${target})', args.args);
+					}
+
+					if (args.args.LP) {
+						["LP", "lifePreserverPanel"].forEach(id => {
+							$(id).classList.add("selectable");
+							$(id).addEventListener("click", () => {
+								if ($("LP").classList.contains("selected")) {
+									$("LP").classList.remove("selected");
+									$("lifePreserverPanel").classList.remove("selected");
+									this.gamedatas.gamestate.args.num -= 2;
+								} else {
+									$("LP").classList.add("selected");
+									$("lifePreserverPanel").classList.add("selected");
+									this.gamedatas.gamestate.args.num += 2;
+								}
+								args.args.num = this.gamedatas.gamestate.args.num;
+								($("finishFishButton") as any).disabled = args.args.num < args.args.target;
+								this.statusBar.setTitle('${you} must pay for the fish (${num} / ${target})', args.args);
+							})
+						})
+					}
+					break;
+				}
 			case "client_FreeSeaActions":	
 				var lifeboat = $(`lifeboat-${this.player_id}`);
 				if (args.args.lifeboat) {
@@ -710,7 +781,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				$(`shoal_${args.args.shoal[0]}_${args.args.shoal[1]}`).classList.add("selected");
 				if (this.isCurrentPlayerActive()) {
 					let fish = args.args["_private"].fish;
-					this.shoalStocks[args.args.shoal[0] - 1][args.args.shoal[1] - 1].flipCard({id: args.args.shoalNum - 10, size: this.SHOAL_SIZE[fish.size], depth: fish.depth, coords: fish.coords},
+					this.shoalStocks[args.args.shoal[0] - 1][args.args.shoal[1] - 1].flipCard(cardTemplate(args.args.shoalNum - 10, this.SHOAL_SIZE[fish.size], fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty),
 																							{updateData: true});
 				}
 				break;
@@ -740,8 +811,20 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				case "SeaActions":
 					this.statusBar.addActionButton(_("Free Actions"), () => this.setClientState("client_FreeSeaActions", {"descriptionmyturn": "Perform free actions:", args: {"lifeboat": args.lifeboat, "dice": args.dice, "canOfWorms": args.canOfWorms}}), {color: "secondary"})
 					break;
-				case "client_FinishFish":
-					this.statusBar.addActionButton(_("Confirm"), () => this.bgaPerformAction("actFinishFish"));
+				case "FinishFish":
+					this.statusBar.addActionButton(_("Confirm"), () => this.bgaPerformAction("actFinishFish", 
+																							{dice: JSON.stringify(this.freshStock[this.player_id].getSelection()), LP: $('LP').classList.contains("selected")}), 
+																							{disabled: args.target > 0, id: "finishFishButton"});
+					this.statusBar.addActionButton(_("Reset"), () => {
+						this.freshStock[this.player_id].unselectAll(true);
+						if ($("LP").classList.contains("selected")) {
+							$("LP").classList.remove("selected");
+							$("lifePreserverPanel").classList.remove("selected");
+						}
+						this.gamedatas.gamestate.args.num = 0;
+						($("finishFishButton") as any).disabled = true;
+						this.statusBar.setTitle('${you} must pay for the fish (${num} / ${target})', args);
+					}, {color: "secondary"})
 					break;
 				case "client_FreeSeaActions":
 					this.statusBar.addActionButton(_("Abandon Ship"), () => this.bgaPerformAction("actAbandonShip"), {"color": "secondary"});
@@ -789,10 +872,12 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		$(`playerBoard-${args.player_id}`).style.backgroundPositionX = position;
 	}
 
-	public notif_lifePreserver(args) {
+	public async notif_lifePreserver(args) {
 		let lPPlayer = args.player_id2;
 		this.getPlayerPanelElement(lPPlayer).insertAdjacentHTML("beforeend", `<div id="lifePreserverPanel"></div>`);
-		this.animationManager.fadeIn($("lifePreserverPanel"), $(`playerBoard-${args.player_id1}`), {duration: 1000})
+		await this.animationManager.fadeIn($("lifePreserverPanel"), $(`playerBoard-${args.player_id1}`), {duration: 1000});
+		$(`FP-LP-${args.player_id2}`).insertAdjacentHTML("beforeend", `<div id="LP"></div>`);
+		await this.animationManager.fadeIn($("LP"), $(`playerBoard-${args.player_id1}`), {duration: 1000});
 	}
 
 	public notif_selectedShoal(args) {
@@ -804,7 +889,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 
 	public notif_revealCard(args: any) {
 		let fish = args.fish;
-		this.shoalStocks[args.shoal[0] - 1][args.shoal[1] - 1].flipCard({id: args.shoalNum - 10, size: this.SHOAL_SIZE[fish.size], depth: args.depth, coords: fish.coords},
+		this.shoalStocks[args.shoal[0] - 1][args.shoal[1] - 1].flipCard(cardTemplate(args.shoalNum - 10, this.SHOAL_SIZE[fish.size], args.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty),
 																		{updateData: true}
 		)
 	}
@@ -848,6 +933,31 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			await this.shoalStocks[args.depth - 1][(args.shoalNum - 1) % 3].addCard(cardTemplate(args.shoalNum - 10, this.SHOAL_SIZE[args.newTop[0]], args.depth), {fadeIn: false, duration: 0, index: 0});
 			await this.shoalStocks[args.depth - 1][(args.shoalNum - 1) % 3].removeCard({id: "temp", coords: [-1, -1]}, {autoUpdateCardNumber: false});
 		}
+	}
+
+	public async notif_finishFish(args: any) {
+		console.log(args);
+		this.freshStock[args.player_id].onSelectionChange = null;
+		let shoal = shoalnumToArr(args.shoal)
+		if (args.LP) {
+			this.animationManager.fadeOutAndDestroy($("LP"));
+			this.animationManager.fadeOutAndDestroy($("lifePreserverPanel"));
+		}
+		args.moved.forEach(die => {
+			this.spentStock[args.player_id].addCard({id: die["id"], coords: [-1, -1]});
+		});
+
+
+		let curTop = this.shoalStocks[shoal[0] - 1][shoal[1] - 1].getCards()[0];
+		let newTop = args.newTop;
+		await this.shoalStocks[shoal[0] - 1][shoal[1] - 1].addCard(cardTemplate(curTop.name, curTop.size, curTop.depth, curTop.coords, curTop.name, curTop.type, curTop.sell, curTop.difficulty), {index: 0, duration: 0, fadeIn: false});
+		await this.shoalStocks[shoal[0] - 1][shoal[1] - 1].removeCard({id: args.shoal - 10}, {autoUpdateCardNumber: false});
+		curTop = this.shoalStocks[shoal[0] - 1][shoal[1] - 1].getCards()[0];
+		await this.shoalStocks[shoal[0] - 1][shoal[1] - 1].addCard(cardTemplate(args.shoal - 10, newTop.size, newTop.depth), {index: 0, duration: 0, fadeIn: false});
+
+		await this.handStocks[args.player_id].addCard(curTop, {autoUpdateCardNumber: false});
+
+		// TODO hide free actions if not possible (casted)
 	}
 
 	public notif_test(args: any) {

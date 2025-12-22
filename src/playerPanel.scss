@@ -11,4 +11,8 @@
     aspect-ratio: 1;
     width: 50px;
     display: inline-block;
+    border-radius: 50%;
+    &.selectable, &.selectable:hover, &.selected {
+        outline-width: 3px;
+    }
 }
