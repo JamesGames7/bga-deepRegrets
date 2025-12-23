@@ -260,7 +260,7 @@ Setup in js:
 #boards #sea_board .shoal.selectable, #boards #sea_board .shoal.selectable:hover, #boards #sea_board .shoal.selected {
   outline-width: 3px;
 }
-#boards #sea_board .shoal .card {
+#boards #sea_board .shoal .fish {
   transition: 0.5s ease transform;
 }
 #boards #sea_board #ship_grid_sea {
@@ -396,7 +396,7 @@ Setup in js:
   cursor: pointer;
 }
 
-.card {
+.fish {
   pointer-events: auto;
 }
 
@@ -443,11 +443,25 @@ Setup in js:
   left: 170px;
   z-index: 5;
   width: calc(100vw - 440px);
-  pointer-events: none;
   transition: all 0.8s ease;
 }
+.playerBoard .handStock .selectable, .playerBoard .handStock .selected {
+  outline: none;
+}
+.playerBoard .handStock .selectable::after, .playerBoard .handStock .selected::after {
+  content: "";
+  inset: 0px;
+  position: absolute;
+  border: 3px solid;
+}
+.playerBoard .handStock .selected::after, .playerBoard .handStock .selectable:hover::after {
+  border-color: red;
+}
+.playerBoard .handStock .selectable::after {
+  border-color: black;
+}
 .playerBoard .handStock:hover {
-  bottom: 5px;
+  bottom: 0;
 }
 @media (max-width: 990px) {
   .playerBoard .handStock {
@@ -459,8 +473,12 @@ Setup in js:
     width: 560px;
   }
 }
-.playerBoard .hide {
+
+.hide {
   opacity: 0;
+}
+
+button.hide {
   width: 0;
 }
 
@@ -505,6 +523,7 @@ Setup in js:
   position: absolute;
   border-radius: 50%;
   box-shadow: 1px 1px 1px black;
+  transition: 0.8s ease left;
 }
 
 .fishbuck-slot {

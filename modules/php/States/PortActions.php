@@ -9,6 +9,8 @@ use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\Games\DeepRegrets\Game;
 
+use function PHPSTORM_META\type;
+
 /**
  * Possible actions at the port - 1-2 notification(s)
  * 
@@ -47,6 +49,12 @@ class PortActions extends GameState
             "rods" => $shops->rods,
             "supplies" => $shops->supplies,
             "dice" => $shops->dice,
+            "curFishbucks" => intval($this->game->getUniqueValueFromDB("SELECT `fishbucks` FROM `player` WHERE player_id = $activePlayerId")),
+            "newFishbucks" => 0,
+            "madness" => min($this->game->regrets->countCardsInLocation("hand", $activePlayerId), 13),
+            "display" => 0,
+            "num" => 0,
+            "actionComplete" => $this->globals->get("actionComplete")
         ];
     } 
 
@@ -60,8 +68,38 @@ class PortActions extends GameState
     }
 
     #[PossibleAction]
-    function actSell(string $fish) {
+    function actSell(string $fish, int $activePlayerId) {
+        $json_fish = json_decode($fish);
+        $total = 0;
+        $num = 0;
+        $cards = [];
+        foreach ($json_fish as $curFish) {
+            $singleFish = array_filter($this->game->lists->getFish(), function($f) use($curFish) {return $curFish->id == $f->getName();});
+            $fishData = array_values($singleFish)[0];
+            $sellValue = $fishData->getSellValue();
+            $madness = $this->getArgs($activePlayerId)["madness"];
+            $regretMod = $this->game->REGRET_MODIFIERS[$madness][$fishData->getType()];
+
+            $total += max($sellValue + $regretMod, 0);
+
+            $cards[] = $fishData->getName();
+            
+            $this->game->fish->moveCard(array_keys($this->game->fish->getCardsOfType(strval(array_keys($singleFish)[0])))[0], "discard", $fishData->getDepth());
+            $num++;
+        }
+        $total = min($total, 10 - $this->getArgs($activePlayerId)["curFishbucks"]) + $this->getArgs($activePlayerId)["curFishbucks"];
+        $inc = $total - $this->getArgs($activePlayerId)["curFishbucks"];
         
+        $this->game->DbQuery("UPDATE `player` SET `fishbucks` = $total WHERE `player_id` = $activePlayerId");
+
+        $this->notify->all("sellFish", '${player_name} sold ${num} fish for ${fishbucks} fishbucks', [
+            "player_name" => $this->game->getActivePlayerName(),
+            "player_id" => $activePlayerId,
+            "num" => $num,
+            "fishbucks" => $inc,
+            "total" => $total,
+            "ids" => $cards
+        ]);
     }
 
     #[PossibleAction]

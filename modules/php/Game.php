@@ -45,6 +45,22 @@ class Game extends \Bga\GameFramework\Table
         "orangeT" => [2, 3, 2, 3],
         "omen" => [1, 2, 3, 4],
     ];
+    public $REGRET_MODIFIERS = [
+        0 => ["fair" => 2, "foul" => -2],
+        1 => ["fair" => 1, "foul" => -1],
+        2 => ["fair" => 1, "foul" => -1],
+        3 => ["fair" => 1, "foul" => -1],
+        4 => ["fair" => 1, "foul" => 0],
+        5 => ["fair" => 1, "foul" => 0],
+        6 => ["fair" => 1, "foul" => 0],
+        7 => ["fair" => 0, "foul" => 1],
+        8 => ["fair" => 0, "foul" => 1],
+        9 => ["fair" => 0, "foul" => 1],
+        10 => ["fair" => -1, "foul" => 1],
+        11 => ["fair" => -1, "foul" => 1],
+        12 => ["fair" => -1, "foul" => 1],
+        13 => ["fair" => -2, "foul" => 2],
+    ];
 
     /**
      * Your global variables labels:
@@ -183,6 +199,15 @@ class Game extends \Bga\GameFramework\Table
             } else {
                 $result["shoals"][] = false;
             }
+        }
+
+        $result["discard"] = [];
+        for ($i = 0; $i < 3; $i++) {
+            $temp = [];
+            foreach ($this->fish->getCardsInLocation("discard", $i + 1) as $fish) {
+                $temp[] = $this->lists->getFish()[$fish["type"]]->getData();
+            }
+            $result["discard"][] = $temp;
         }
 
         $result["regrets"] = [$this->regrets->countCardsInLocation("deck"), $this->regrets->countCardsInLocation("discard")];
@@ -387,11 +412,10 @@ class Game extends \Bga\GameFramework\Table
         // $this->tableStats->init('table_teststat1', 0);
         // $this->playerStats->init('player_teststat1', 0);
 
-        // TODO: Finish setup: Regrets, Items, Dinks, Fish
-
         // Activate first player once everything has been initialized and ready.
         $this->activeNextPlayer();
         $this->globals->set("firstPlayer", $this->getActivePlayerId());
+        $this->fish->moveAllCardsInLocation("shoal_1", "hand", null, intval($this->getActivePlayerId()));
         return Start::class;
     }
 

@@ -54,6 +54,7 @@ class NextPlayer extends GameState
         } else {
             $this->game->activeNextPlayer();
         }
+        $this->globals->set("actionComplete", false);
         return "nextPlayer";
     }
 }

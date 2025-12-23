@@ -40,7 +40,7 @@
                 outline-width: 3px;
             }
 
-            .card {
+            .fish {
                 transition: 0.5s ease transform;
             }
         }
@@ -169,7 +169,7 @@
     }
 }
 
-.card {
+.fish {
     pointer-events: auto;
 }
 
@@ -221,12 +221,29 @@
         left: 170px;
         z-index: 5;
         width: calc(100vw - 440px);
-        pointer-events: none;
         transition: all 0.8s ease;
+
+        .selectable, .selected {
+            outline: none;
+        }
+
+        .selectable::after, .selected::after {
+            content: '';
+            inset: 0px;
+            position: absolute;
+            border: 3px solid;
+        }
+
+        .selected::after, .selectable:hover::after {
+            border-color: red;
+        }
+        .selectable::after {
+            border-color: black;
+        }
     }
 
     .handStock:hover {
-        bottom: 5px;
+        bottom: 0;
     }
 
     @media (max-width: 990px) {
@@ -240,11 +257,14 @@
             width: 560px;
         }
     }
+}
 
-    .hide {
-        opacity: 0;
-        width: 0;
-    }
+.hide {
+    opacity: 0;
+}
+
+button.hide {
+    width: 0;
 }
 
 .removed {
@@ -287,6 +307,7 @@
     position: absolute;
     border-radius: 50%;
     box-shadow: 1px 1px 1px black;
+    transition: 0.8s ease left;
 }
 .fishbuck-slot {
     top: 46px;
