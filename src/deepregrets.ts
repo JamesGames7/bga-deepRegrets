@@ -793,6 +793,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		document.querySelectorAll(".selected").forEach(el => {
 			el.classList.remove("selected");
 		})
+		this.freshStock[this.player_id].setSelectionMode("none");
 	}
 	public onUpdateActionButtons(stateName: string, args: any) {
 		if (this.isCurrentPlayerActive()) {
@@ -858,6 +859,27 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				case "CanOfWorms":
 					this.statusBar.addActionButton(_("Top"), () => this.bgaPerformAction("actSetPlace", {"place": "top"}));
 					this.statusBar.addActionButton(_("Bottom"), () => this.bgaPerformAction("actSetPlace", {"place": "bottom"}));
+					break;
+				case "PortActions":
+					this.statusBar.addActionButton("Visit a Shop", () => this.setClientState("client_Shop", args));
+					this.statusBar.addActionButton("Sell Fish", () => console.log("sell"));
+					this.statusBar.addActionButton("Mount Fish", () => console.log("mount"));
+					this.statusBar.addActionButton("Pass", () => console.log("pass"), {color: "alert"});
+					break;
+				case "client_Shop":
+					if (!args.dice) {
+						this.statusBar.addActionButton("Dice Shop", () => console.log("dice"));
+					}
+					if (!args.rods) {
+						this.statusBar.addActionButton("Rod Shop", () => console.log("rod"));
+					}
+					if (!args.reels) {
+						this.statusBar.addActionButton("Reel Shop", () => console.log("reel"));
+					}
+					if (!args.supplies) {
+						this.statusBar.addActionButton("Supply Shop", () => console.log("supply"));
+					}
+					this.statusBar.addActionButton("Back", () => this.restoreServerGameState(), {color: "secondary"});
 					break;
 				case "client_Confirm":
 					this.statusBar.addActionButton(_("Confirm"), () => {this.bgaPerformAction(args.name, args.args); this.restoreServerGameState()});

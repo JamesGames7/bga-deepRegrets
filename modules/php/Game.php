@@ -238,6 +238,7 @@ class Game extends \Bga\GameFramework\Table
 
         // Init global values with their initial values.
         static::DbQuery("UPDATE `player` SET `provisions` = JSON_OBJECT('canOfWorms', true, 'lifeboat', true);");
+        static::DbQuery("UPDATE `player` SET `shops` = JSON_OBJECT('dice', false, 'reels', false, 'rods', false, 'supplies', false);");
         $this->globals->set("firstPlayer", 0);
         $this->globals->set("lifePreserver", 0);
         $this->globals->set("day", 0);

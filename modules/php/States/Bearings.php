@@ -45,7 +45,7 @@ class Bearings extends GameState
     function actChooseLocation(string $location, int $activePlayerId) {
         if ($location == "sea" || $location == "port") {
             $this->game->DbQuery("UPDATE `player` SET `location` = $location WHERE `player_id` = $activePlayerId");
-            // ! Notify
+            // FIXME Notify & do port stuff
             return "";
         } else {
             throw new \BgaUserException("Not a valid location");

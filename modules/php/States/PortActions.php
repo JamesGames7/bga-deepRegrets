@@ -38,15 +38,41 @@ class PortActions extends GameState
         );
     }
 
-    public function getArgs(): array
+    public function getArgs(int $activePlayerId): array
     {
         // the data sent to the front when entering the state
-        return [];
+        $shops = json_decode($this->game->getUniqueValueFromDB("SELECT `shops` FROM `player` WHERE player_id = $activePlayerId"));
+        return [
+            "reels" => $shops->reels,
+            "rods" => $shops->rods,
+            "supplies" => $shops->supplies,
+            "dice" => $shops->dice,
+        ];
     } 
 
     function onEnteringState(int $activePlayerId) {
         // the code to run when entering the state
     }   
+
+    #[PossibleAction]
+    function actShop(string $shop) {
+        
+    }
+
+    #[PossibleAction]
+    function actSell(string $fish) {
+        
+    }
+
+    #[PossibleAction]
+    function actMount(int $fishId) {
+        
+    }
+
+    #[PossibleAction]
+    function actPass() {
+        return "pass";
+    }
 
     function zombie(int $playerId): string {
         // the code to run when the player is a Zombie

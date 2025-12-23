@@ -722,6 +722,7 @@ var DeepRegrets = /** @class */ (function (_super) {
         document.querySelectorAll(".selected").forEach(function (el) {
             el.classList.remove("selected");
         });
+        this.freshStock[this.player_id].setSelectionMode("none");
     };
     DeepRegrets.prototype.onUpdateActionButtons = function (stateName, args) {
         var _this = this;
@@ -785,6 +786,27 @@ var DeepRegrets = /** @class */ (function (_super) {
                 case "CanOfWorms":
                     this.statusBar.addActionButton(_("Top"), function () { return _this.bgaPerformAction("actSetPlace", { "place": "top" }); });
                     this.statusBar.addActionButton(_("Bottom"), function () { return _this.bgaPerformAction("actSetPlace", { "place": "bottom" }); });
+                    break;
+                case "PortActions":
+                    this.statusBar.addActionButton("Visit a Shop", function () { return _this.setClientState("client_Shop", args); });
+                    this.statusBar.addActionButton("Sell Fish", function () { return console.log("sell"); });
+                    this.statusBar.addActionButton("Mount Fish", function () { return console.log("mount"); });
+                    this.statusBar.addActionButton("Pass", function () { return console.log("pass"); }, { color: "alert" });
+                    break;
+                case "client_Shop":
+                    if (!args.dice) {
+                        this.statusBar.addActionButton("Dice Shop", function () { return console.log("dice"); });
+                    }
+                    if (!args.rods) {
+                        this.statusBar.addActionButton("Rod Shop", function () { return console.log("rod"); });
+                    }
+                    if (!args.reels) {
+                        this.statusBar.addActionButton("Reel Shop", function () { return console.log("reel"); });
+                    }
+                    if (!args.supplies) {
+                        this.statusBar.addActionButton("Supply Shop", function () { return console.log("supply"); });
+                    }
+                    this.statusBar.addActionButton("Back", function () { return _this.restoreServerGameState(); }, { color: "secondary" });
                     break;
                 case "client_Confirm":
                     this.statusBar.addActionButton(_("Confirm"), function () { _this.bgaPerformAction(args.name, args.args); _this.restoreServerGameState(); });

@@ -87,6 +87,7 @@ class SeaActions extends GameState
 
     #[PossibleAction]
     function actAbandonShip(int $activePlayerId) {
+        // TODO when entering port actions
         $provisions = json_decode($this->game->getUniqueValueFromDB("SELECT `provisions` FROM `player` WHERE `player_id` = $activePlayerId"));
         if (!$this->globals->get("casted") && $provisions->lifeboat == "true") {
             $provisions->lifeboat = false;
