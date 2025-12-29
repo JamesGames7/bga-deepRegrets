@@ -758,7 +758,8 @@ button.hide {
   bottom: -175px;
   left: 170px;
   z-index: 5;
-  width: calc(100vw - 440px);
+  width: fit-content;
+  max-width: calc(100vw - 440px);
   transition: all 0.8s ease;
   overflow-x: scroll;
   display: flex;
@@ -790,12 +791,12 @@ button.hide {
 
 @media (max-width: 990px) {
   .handStock {
-    width: calc(100vw - 200px);
+    max-width: calc(100vw - 200px);
   }
 }
 @media (max-width: 740px) {
   .handStock {
-    width: 560px;
+    max-width: 560px;
   }
 }
 /* the other files */
