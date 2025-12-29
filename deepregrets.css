@@ -721,6 +721,31 @@ button.hide {
   flex-direction: column;
 }
 
+.itemTooltipGrid {
+  display: grid;
+  grid-template-columns: 200px 200px;
+  gap: 5px;
+}
+.itemTooltipGrid .itemTooltipImg {
+  background-size: 500% 300%;
+  width: 100%;
+  aspect-ratio: 225/315;
+}
+.itemTooltipGrid .itemTooltipImg.reels {
+  background-image: url("img/reels.png");
+}
+.itemTooltipGrid .itemTooltipImg.rods {
+  background-image: url("img/rods.png");
+}
+.itemTooltipGrid .itemTooltipImg.supplies {
+  background-image: url("img/supplies.png");
+  background-size: 600% 400%;
+}
+.itemTooltipGrid .itemTooltipText {
+  display: flex;
+  flex-direction: column;
+}
+
 #reveal_area > * {
   zoom: 0.5;
 }

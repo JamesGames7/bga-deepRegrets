@@ -301,7 +301,8 @@ var DeepRegrets = /** @class */ (function (_super) {
                 div.style.backgroundPositionY = "-".concat(Math.floor((parseInt(card.type) + 1) / 5), "00%");
                 div.style.backgroundSize = "500% 300%";
                 div.style.borderRadius = "12px";
-                _this.addTooltipHtml(div.id, "Reel");
+                // TODO add effect description
+                _this.addTooltipHtml(div.id, "\n\t\t\t\t\t<div class=\"itemTooltipGrid\">\n\t\t\t\t\t\t<div class=\"itemTooltipImg reels\" style=\"background-position: ".concat(div.style.backgroundPosition, "\"></div>\n\t\t\t\t\t\t<div class=\"itemTooltipText\">\n\t\t\t\t\t\t\t<div><strong>Name:</strong> ").concat(card.name, "</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t"));
                 div.style.backgroundImage = "url(".concat(g_gamethemeurl, "img/reels.png)");
             },
             selectableCardStyle: { class: "selectable" },
@@ -328,7 +329,8 @@ var DeepRegrets = /** @class */ (function (_super) {
                 div.style.backgroundPositionY = "-".concat(Math.floor((parseInt(card.type) + 1) / 5), "00%");
                 div.style.backgroundSize = "500% 300%";
                 div.style.borderRadius = "12px";
-                _this.addTooltipHtml(div.id, "Rod");
+                // TODO add effect description
+                _this.addTooltipHtml(div.id, "\n\t\t\t\t\t<div class=\"itemTooltipGrid\">\n\t\t\t\t\t\t<div class=\"itemTooltipImg rods\" style=\"background-position: ".concat(div.style.backgroundPosition, "\"></div>\n\t\t\t\t\t\t<div class=\"itemTooltipText\">\n\t\t\t\t\t\t\t<div><strong>Name:</strong> ").concat(card.name, "</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t"));
                 div.style.backgroundImage = "url(".concat(g_gamethemeurl, "img/rods.png)");
             },
             selectableCardStyle: { class: "selectable" },
@@ -355,7 +357,8 @@ var DeepRegrets = /** @class */ (function (_super) {
                 div.style.backgroundPositionY = "-".concat(Math.floor((parseInt(card.type) + 1) / 6), "00%");
                 div.style.backgroundSize = "600% 400%";
                 div.style.borderRadius = "12px";
-                _this.addTooltipHtml(div.id, "Rod");
+                // TODO add effect description
+                _this.addTooltipHtml(div.id, "\n\t\t\t\t\t<div class=\"itemTooltipGrid\">\n\t\t\t\t\t\t<div class=\"itemTooltipImg supplies\" style=\"background-position: ".concat(div.style.backgroundPosition, "\"></div>\n\t\t\t\t\t\t<div class=\"itemTooltipText\">\n\t\t\t\t\t\t\t<div><strong>Name:</strong> ").concat(card.name, "</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t"));
                 div.style.backgroundImage = "url(".concat(g_gamethemeurl, "img/supplies.png)");
             },
             selectableCardStyle: { class: "selectable" },

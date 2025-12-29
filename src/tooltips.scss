@@ -15,3 +15,30 @@
         flex-direction: column;
     }
 }
+
+.itemTooltipGrid {
+    display: grid;
+    grid-template-columns: 200px 200px;
+    gap: 5px;
+
+    .itemTooltipImg {
+        background-size: 500% 300%;
+        width: 100%;
+        aspect-ratio: 225 / 315;
+
+        $types: "reels", "rods", "supplies";
+        @each $type in $types {
+            &.#{$type} {
+                background-image: url("img/" + $type + ".png");
+                @if $type == "supplies" {
+                    background-size: 600% 400%;
+                }
+            }
+        }
+    }
+
+    .itemTooltipText {
+        display: flex;
+        flex-direction: column;
+    }
+}

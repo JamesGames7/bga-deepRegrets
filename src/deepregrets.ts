@@ -322,7 +322,15 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				div.style.backgroundPositionY = `-${Math.floor((parseInt(card.type) + 1) / 5)}00%`;
 				div.style.backgroundSize = "500% 300%";
 				div.style.borderRadius = `12px`;
-                this.addTooltipHtml(div.id, `Reel`);
+				// TODO add effect description
+                this.addTooltipHtml(div.id, `
+					<div class="itemTooltipGrid">
+						<div class="itemTooltipImg reels" style="background-position: ${div.style.backgroundPosition}"></div>
+						<div class="itemTooltipText">
+							<div><strong>Name:</strong> ${card.name}</div>
+						</div>
+					</div>
+				`);
 				div.style.backgroundImage = `url(${g_gamethemeurl}img/reels.png)`;
             },
 			selectableCardStyle: {class: "selectable"},
@@ -350,7 +358,15 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				div.style.backgroundPositionY = `-${Math.floor((parseInt(card.type) + 1) / 5)}00%`;
 				div.style.backgroundSize = "500% 300%";
 				div.style.borderRadius = `12px`;
-                this.addTooltipHtml(div.id, `Rod`);
+				// TODO add effect description
+                this.addTooltipHtml(div.id, `
+					<div class="itemTooltipGrid">
+						<div class="itemTooltipImg rods" style="background-position: ${div.style.backgroundPosition}"></div>
+						<div class="itemTooltipText">
+							<div><strong>Name:</strong> ${card.name}</div>
+						</div>
+					</div>
+				`);
 				div.style.backgroundImage = `url(${g_gamethemeurl}img/rods.png)`;
             },
 			selectableCardStyle: {class: "selectable"},
@@ -378,7 +394,15 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				div.style.backgroundPositionY = `-${Math.floor((parseInt(card.type) + 1) / 6)}00%`;
 				div.style.backgroundSize = "600% 400%";
 				div.style.borderRadius = `12px`;
-                this.addTooltipHtml(div.id, `Rod`);
+				// TODO add effect description
+                this.addTooltipHtml(div.id, `
+					<div class="itemTooltipGrid">
+						<div class="itemTooltipImg supplies" style="background-position: ${div.style.backgroundPosition}"></div>
+						<div class="itemTooltipText">
+							<div><strong>Name:</strong> ${card.name}</div>
+						</div>
+					</div>
+				`);
 				div.style.backgroundImage = `url(${g_gamethemeurl}img/supplies.png)`;
             },
 			selectableCardStyle: {class: "selectable"},
