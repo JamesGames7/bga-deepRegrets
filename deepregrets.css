@@ -437,42 +437,6 @@ Setup in js:
 .playerBoard .dice {
   pointer-events: auto;
 }
-.playerBoard .handStock {
-  position: fixed;
-  bottom: -175px;
-  left: 170px;
-  z-index: 5;
-  width: calc(100vw - 440px);
-  transition: all 0.8s ease;
-}
-.playerBoard .handStock .selectable, .playerBoard .handStock .selected {
-  outline: none;
-}
-.playerBoard .handStock .selectable::after, .playerBoard .handStock .selected::after {
-  content: "";
-  inset: 0px;
-  position: absolute;
-  border: 3px solid;
-}
-.playerBoard .handStock .selected::after, .playerBoard .handStock .selectable:hover::after {
-  border-color: red;
-}
-.playerBoard .handStock .selectable::after {
-  border-color: black;
-}
-.playerBoard .handStock:hover {
-  bottom: 0;
-}
-@media (max-width: 990px) {
-  .playerBoard .handStock {
-    width: calc(100vw - 200px);
-  }
-}
-@media (max-width: 740px) {
-  .playerBoard .handStock {
-    width: 560px;
-  }
-}
 
 .hide {
   opacity: 0;
@@ -757,6 +721,58 @@ button.hide {
   flex-direction: column;
 }
 
+#reveal_area > * {
+  zoom: 0.5;
+}
+#reveal_area .selected {
+  cursor: pointer;
+}
+
+.handStock {
+  position: fixed;
+  bottom: -175px;
+  left: 170px;
+  z-index: 5;
+  width: calc(100vw - 440px);
+  transition: all 0.8s ease;
+  overflow-x: scroll;
+  display: flex;
+  flex-wrap: nowrap;
+  column-gap: 5px;
+}
+.handStock .bga-cards_card:not(.fish) {
+  zoom: 0.445;
+}
+.handStock .selectable, .handStock .selected {
+  outline: none;
+}
+.handStock .selectable::after, .handStock .selected::after {
+  content: "";
+  inset: 0px;
+  position: absolute;
+  border: 3px solid;
+}
+.handStock .selected::after, .handStock .selectable:hover::after {
+  border-color: red;
+}
+.handStock .selectable::after {
+  border-color: black;
+}
+
+.handStock:hover {
+  bottom: 0;
+}
+
+@media (max-width: 990px) {
+  .handStock {
+    width: calc(100vw - 200px);
+  }
+}
+@media (max-width: 740px) {
+  .handStock {
+    width: 560px;
+  }
+}
 /* the other files */
 #ebd-body {
   background-image: url(img/woodbg.jpg);

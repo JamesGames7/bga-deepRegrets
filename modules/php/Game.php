@@ -169,16 +169,18 @@ class Game extends \Bga\GameFramework\Table
             "SELECT `player_id` `id`, `player_score` `score`, `playerBoard`, `fishbucks`, `provisions`, `location`, `depth` FROM `player`"
         );
 
-        $handData = [];
-
-        foreach($this->fish->getCardsInLocation("hand", $current_player_id) as $curFish) {
-            $handData[] = $this->lists->getFish()[$curFish["type"]]->getData();
-        }
+        $fishHandData = array_values(array_map(fn($card) => $this->lists->getFish()[$card["type"]]->getData(), $this->fish->getCardsInLocation("hand", $current_player_id)));
+        $reelHandData = array_values(array_map(fn($card) => ["name" => $this->lists->getReels()[$card["type"]]->getName(), "type" => $card["type"]], $this->reels->getCardsInLocation("hand", $current_player_id)));
+        $rodHandData = array_values(array_map(fn($card) => ["name" => $this->lists->getRods()[$card["type"]]->getName(), "type" => $card["type"]], $this->rods->getCardsInLocation("hand", $current_player_id)));
+        $supplyHandData = array_values(array_map(fn($card) => ["name" => $this->lists->getSupplies()[$card["type"]]->getName(), "type" => $card["type"]], $this->supplies->getCardsInLocation("hand", $current_player_id)));
 
         foreach(array_keys($this->loadPlayersBasicInfos()) as $id) {
             $result["players"][$id]["dice"] = $this->dice->getCardsInLocation(["spent", "fresh", "roll"], $id);
             $result["players"][$id]["regretCount"] = intval($this->dice->countCardsInLocation("hand", $id));
-            $result["players"][$id]["hand"] = $current_player_id == $id ? $handData : $this->fish->countCardInLocation("hand", $id);
+            $result["players"][$id]["hand"]["fish"] = $current_player_id == $id ? $fishHandData : $this->fish->countCardInLocation("hand", $id);
+            $result["players"][$id]["hand"]["reels"] = $current_player_id == $id ? $reelHandData : $this->fish->countCardInLocation("hand", $id);
+            $result["players"][$id]["hand"]["rods"] = $current_player_id == $id ? $rodHandData : $this->fish->countCardInLocation("hand", $id);
+            $result["players"][$id]["hand"]["supplies"] = $current_player_id == $id ? $supplyHandData : $this->fish->countCardInLocation("hand", $id);
         }
 
         $result["playerOrder"] = $this->getNextPlayerTable();
@@ -387,7 +389,7 @@ class Game extends \Bga\GameFramework\Table
         // Everything for supplies setup
         $supplies = [];
         $i = 0;
-        foreach ($this->lists->getReels() as $supply) {
+        foreach ($this->lists->getSupplies() as $supply) {
             $supplies[] = ["type" => $i, "type_arg" => $i, "nbr" => 1];
             $i++;
         }
@@ -415,7 +417,6 @@ class Game extends \Bga\GameFramework\Table
         // Activate first player once everything has been initialized and ready.
         $this->activeNextPlayer();
         $this->globals->set("firstPlayer", $this->getActivePlayerId());
-        $this->fish->moveAllCardsInLocation("shoal_1", "hand", null, intval($this->getActivePlayerId()));
         return Start::class;
     }
 

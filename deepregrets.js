@@ -284,12 +284,11 @@ var DeepRegrets = /** @class */ (function (_super) {
         this.reelsManager = new BgaCards.Manager({
             animationManager: this.animationManager,
             type: 'reels',
-            getId: function (card) { return card.id; },
+            getId: function (card) { return card.name; },
             cardWidth: 350,
             cardHeight: 490,
             setupDiv: function (card, div) {
                 div.dataset.type = card.type;
-                div.dataset.typeArg = card.type_arg;
             },
             setupBackDiv: function (card, div) {
                 div.style.backgroundImage = "url(".concat(g_gamethemeurl, "img/reels.png)");
@@ -298,18 +297,20 @@ var DeepRegrets = /** @class */ (function (_super) {
                 div.style.borderRadius = "12px";
             },
             setupFrontDiv: function (card, div) {
-                div.style.backgroundPositionX = "-".concat(card.type % 10, "%");
-                div.style.backgroundPositionY = "-".concat(Math.floor(card.type / 10));
+                div.style.backgroundPositionX = "-".concat((parseInt(card.type) + 1) % 5, "00%");
+                div.style.backgroundPositionY = "-".concat(Math.floor((parseInt(card.type) + 1) / 5), "00%");
                 div.style.backgroundSize = "500% 300%";
                 div.style.borderRadius = "12px";
                 _this.addTooltipHtml(div.id, "Reel");
                 div.style.backgroundImage = "url(".concat(g_gamethemeurl, "img/reels.png)");
             },
+            selectableCardStyle: { class: "selectable" },
+            selectedCardStyle: { class: "selected" }
         });
         this.rodsManager = new BgaCards.Manager({
             animationManager: this.animationManager,
             type: 'rods',
-            getId: function (card) { return card.id; },
+            getId: function (card) { return card.name; },
             cardWidth: 350,
             cardHeight: 490,
             setupDiv: function (card, div) {
@@ -323,18 +324,20 @@ var DeepRegrets = /** @class */ (function (_super) {
                 div.style.borderRadius = "12px";
             },
             setupFrontDiv: function (card, div) {
-                div.style.backgroundPositionX = "-".concat(card.type % 10, "%");
-                div.style.backgroundPositionY = "-".concat(Math.floor(card.type / 10));
+                div.style.backgroundPositionX = "-".concat((parseInt(card.type) + 1) % 5, "00%");
+                div.style.backgroundPositionY = "-".concat(Math.floor((parseInt(card.type) + 1) / 5), "00%");
                 div.style.backgroundSize = "500% 300%";
                 div.style.borderRadius = "12px";
                 _this.addTooltipHtml(div.id, "Rod");
                 div.style.backgroundImage = "url(".concat(g_gamethemeurl, "img/rods.png)");
             },
+            selectableCardStyle: { class: "selectable" },
+            selectedCardStyle: { class: "selected" }
         });
         this.suppliesManager = new BgaCards.Manager({
             animationManager: this.animationManager,
-            type: 'rods',
-            getId: function (card) { return card.id; },
+            type: 'supplies',
+            getId: function (card) { return card.name; },
             cardWidth: 350,
             cardHeight: 490,
             setupDiv: function (card, div) {
@@ -348,13 +351,15 @@ var DeepRegrets = /** @class */ (function (_super) {
                 div.style.borderRadius = "12px";
             },
             setupFrontDiv: function (card, div) {
-                div.style.backgroundPositionX = "-".concat(card.type % 10, "%");
-                div.style.backgroundPositionY = "-".concat(Math.floor(card.type / 10));
+                div.style.backgroundPositionX = "-".concat((parseInt(card.type) + 1) % 6, "00%");
+                div.style.backgroundPositionY = "-".concat(Math.floor((parseInt(card.type) + 1) / 6), "00%");
                 div.style.backgroundSize = "600% 400%";
                 div.style.borderRadius = "12px";
                 _this.addTooltipHtml(div.id, "Rod");
                 div.style.backgroundImage = "url(".concat(g_gamethemeurl, "img/supplies.png)");
             },
+            selectableCardStyle: { class: "selectable" },
+            selectedCardStyle: { class: "selected" }
         });
         // create the ships manager
         this.shipsManager = new BgaCards.Manager({
@@ -489,7 +494,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                 fpLP.insertAdjacentHTML("beforeend", "<div id=\"LP\"></div>");
             }
             _this.freshStock[player["id"]] = new BgaCards.LineStock(_this.diceManager, $("freshGrid-".concat(player["id"])), { sort: BgaCards.sort('type_arg', 'type') });
-            // TODO: change to scrollable?
+            // REVIEW change to scrollable?
             _this.spentStock[player["id"]] = new BgaCards.LineStock(_this.diceManager, $("spentGrid-".concat(player["id"])), { sort: BgaCards.sort('type_arg', 'type') });
             Object.values(player.dice).forEach(function (die) {
                 switch (die["location"]) {
@@ -504,10 +509,27 @@ var DeepRegrets = /** @class */ (function (_super) {
                         break;
                 }
             });
+            // Creating all hand stocks
             if (player["id"] == _this.player_id) {
-                _this.handStock = new BgaCards.ScrollableStock(_this.seaCardManager, $("hand-".concat(player["id"])), { leftButton: { classes: ["hide"] }, rightButton: { classes: ["hide"] }, gap: "5px" });
-                player.hand.forEach(function (fish) {
-                    _this.handStock.addCard(cardTemplate(fish.name, fish.size, fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty));
+                $("hand-".concat(player["id"])).insertAdjacentHTML("beforeend", "<div id=\"fishHand\"></div>");
+                _this.fishHandStock = new BgaCards.LineStock(_this.seaCardManager, $("fishHand"), { gap: "5px", wrap: "nowrap", center: false });
+                player.hand.fish.forEach(function (fish) {
+                    _this.fishHandStock.addCard(cardTemplate(fish.name, fish.size, fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty));
+                });
+                $("hand-".concat(player["id"])).insertAdjacentHTML("beforeend", "<div id=\"reelHand\"></div>");
+                _this.reelHandStock = new BgaCards.LineStock(_this.reelsManager, $("reelHand"), { gap: "5px", wrap: "nowrap", center: false });
+                player.hand.reels.forEach(function (reel) {
+                    _this.reelHandStock.addCard(reel);
+                });
+                $("hand-".concat(player["id"])).insertAdjacentHTML("beforeend", "<div id=\"rodHand\"></div>");
+                _this.rodHandStock = new BgaCards.LineStock(_this.rodsManager, $("rodHand"), { gap: "5px", wrap: "nowrap", center: false });
+                player.hand.rods.forEach(function (rod) {
+                    _this.rodHandStock.addCard(rod);
+                });
+                $("hand-".concat(player["id"])).insertAdjacentHTML("beforeend", "<div id=\"supplyHand\"></div>");
+                _this.supplyHandStock = new BgaCards.LineStock(_this.suppliesManager, $("supplyHand"), { gap: "5px", wrap: "nowrap", center: false });
+                player.hand.supplies.forEach(function (supply) {
+                    _this.supplyHandStock.addCard(supply);
                 });
             }
             _this.freshStock[player["id"]].onSelectionChange = function () {
@@ -540,7 +562,6 @@ var DeepRegrets = /** @class */ (function (_super) {
             }
             this_1.shoalStocks.push(curDepth);
             this_1.graveyardStocks.push(new BgaCards.DiscardDeck(this_1.seaCardManager, $("shoal_".concat(depth + 1, "_graveyard")), { maxHorizontalShift: 0, maxVerticalShift: 0, maxRotation: 0 }));
-            console.log(gamedatas.discard);
             gamedatas.discard[depth].forEach(function (fish) {
                 _this.graveyardStocks[depth].addCard(cardTemplate(fish.name, fish.size, fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty));
             });
@@ -567,9 +588,10 @@ var DeepRegrets = /** @class */ (function (_super) {
         });
         this.regretDeck = new BgaCards.Deck(this.regretManager, $("regretDeck"), { cardNumber: gamedatas.regrets[0] });
         this.regretDiscard = new BgaCards.Deck(this.regretManager, $("regretDiscard"), { cardNumber: gamedatas.regrets[1] });
-        this.reelsDeck = new BgaCards.Deck(this.reelsManager, $("reelsDeck"), { cardNumber: gamedatas.reels });
-        this.rodsDeck = new BgaCards.Deck(this.rodsManager, $("rodsDeck"), { cardNumber: gamedatas.rods });
-        this.suppliesDeck = new BgaCards.Deck(this.suppliesManager, $("suppliesDeck"), { cardNumber: gamedatas.supplies });
+        // FIXME Displays empty when taking cards out on reload
+        this.reelsDeck = new BgaCards.Deck(this.reelsManager, $("reelsDeck"), { cardNumber: parseInt(gamedatas.reels) });
+        this.rodsDeck = new BgaCards.Deck(this.rodsManager, $("rodsDeck"), { cardNumber: parseInt(gamedatas.rods) });
+        this.suppliesDeck = new BgaCards.Deck(this.suppliesManager, $("suppliesDeck"), { cardNumber: parseInt(gamedatas.supplies) });
         for (var i = 1; i <= 6; i++) {
             $("port_board").insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"day-".concat(i, "\" class=\"dayTracker-slot\"></div>\n\t\t\t"));
             if (i != gamedatas.day) {
@@ -604,162 +626,217 @@ var DeepRegrets = /** @class */ (function (_super) {
             }
         });
         this.dinkDeck = new BgaCards.Deck(this.dinksManager, $("dink_deck"), { cardNumber: gamedatas.dinks, thicknesses: [0, 10, 20], shadowDirection: "top-right" });
+        console.log(this.reelsDeck.isEmpty());
     };
     DeepRegrets.prototype.onEnteringState = function (stateName, args) {
-        var _this = this;
-        switch (stateName) {
-            case "LifePreserver":
-                if (this.isCurrentPlayerActive()) {
-                    args.args.possibleChoices.forEach(function (id) {
-                        $("playerBoard-".concat(id)).classList.add("selectable");
-                        $("playerBoard-".concat(id)).addEventListener("click", function (e) {
-                            if (_this.gamedatas.gamestate.name == stateName) {
-                                _this.bgaPerformAction("actChooseLPPlayer", { "playerId": id });
-                            }
-                        });
-                    });
-                }
-                break;
-            case "SeaActions":
-                // TODO use "allowed" class: only trigger certain events if class is on object
-                if (this.isCurrentPlayerActive()) {
-                    if (!args.args.casted) {
-                        var depth = parseInt(args.args.depth);
-                        var _loop_2 = function (i) {
-                            var _loop_3 = function (j) {
-                                var curShoal = $("shoal_".concat(i, "_").concat(j));
-                                curShoal.classList.add("selectable");
-                                curShoal.addEventListener("click", function (e) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, depth, _loop_2, i, shoalArr, shoal, lifeboat, canOfWorms, fish;
+            var _this = this;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = stateName;
+                        switch (_a) {
+                            case "LifePreserver": return [3 /*break*/, 1];
+                            case "SeaActions": return [3 /*break*/, 2];
+                            case "FinishFish": return [3 /*break*/, 3];
+                            case "client_FreeSeaActions": return [3 /*break*/, 4];
+                            case "client_DropSinker": return [3 /*break*/, 5];
+                            case "client_CanOfWorms": return [3 /*break*/, 6];
+                            case "CanOfWorms": return [3 /*break*/, 7];
+                            case "client_Sell": return [3 /*break*/, 8];
+                            case "ShopReveal": return [3 /*break*/, 9];
+                            case "client_Mount": return [3 /*break*/, 12];
+                            case "client_Confirm": return [3 /*break*/, 13];
+                        }
+                        return [3 /*break*/, 14];
+                    case 1:
+                        if (this.isCurrentPlayerActive()) {
+                            args.args.possibleChoices.forEach(function (id) {
+                                $("playerBoard-".concat(id)).classList.add("selectable");
+                                $("playerBoard-".concat(id)).addEventListener("click", function (e) {
                                     if (_this.gamedatas.gamestate.name == stateName) {
-                                        _this.setClientState("client_Confirm", {
-                                            descriptionmyturn: "Choose a shoal to cast in: ",
-                                            args: { name: "actCast", args: { shoal: "".concat(i, "|").concat(j) }, selectedId: "shoal_".concat(i, "_").concat(j) }
-                                        });
+                                        _this.bgaPerformAction("actChooseLPPlayer", { "playerId": id });
                                     }
                                 });
-                            };
-                            for (var j = 1; j <= 3; j++) {
-                                _loop_3(j);
+                            });
+                        }
+                        return [3 /*break*/, 14];
+                    case 2:
+                        if (this.isCurrentPlayerActive()) {
+                            if (!args.args.casted) {
+                                depth = parseInt(args.args.depth);
+                                _loop_2 = function (i) {
+                                    var _loop_3 = function (j) {
+                                        var curShoal = $("shoal_".concat(i, "_").concat(j));
+                                        curShoal.classList.add("selectable");
+                                        curShoal.addEventListener("click", function (e) {
+                                            if (_this.gamedatas.gamestate.name == stateName) {
+                                                _this.setClientState("client_Confirm", {
+                                                    descriptionmyturn: "Choose a shoal to cast in: ",
+                                                    args: { name: "actCast", args: { shoal: "".concat(i, "|").concat(j) }, selectedId: "shoal_".concat(i, "_").concat(j) }
+                                                });
+                                            }
+                                        });
+                                    };
+                                    for (var j = 1; j <= 3; j++) {
+                                        _loop_3(j);
+                                    }
+                                };
+                                for (i = 1; i <= depth; i++) {
+                                    _loop_2(i);
+                                }
                             }
-                        };
-                        for (var i = 1; i <= depth; i++) {
-                            _loop_2(i);
                         }
-                    }
-                }
-                break;
-            case "FinishFish":
-                if (this.isCurrentPlayerActive()) {
-                    var shoalArr = shoalnumToArr(args.args.selected);
-                    var shoal = $("shoal_".concat(shoalArr[0], "_").concat(shoalArr[1]));
-                    shoal.classList.add("selected");
-                    this.freshStock[this.player_id].setSelectionMode("multiple");
-                    this.freshStock[this.player_id].onSelectionChange = function (selection, lastChange) {
-                        if (selection.includes(lastChange)) {
-                            _this.gamedatas.gamestate.args.num += parseInt(_this.DICE_VALUE[lastChange.type][lastChange.type_arg]);
-                        }
-                        else {
-                            _this.gamedatas.gamestate.args.num -= parseInt(_this.DICE_VALUE[lastChange.type][lastChange.type_arg]);
-                        }
-                        args.args.num = _this.gamedatas.gamestate.args.num;
-                        $("finishFishButton").disabled = args.args.num < args.args.target;
-                        _this.statusBar.setTitle('${you} must pay for the fish (${num} / ${target})', args.args);
-                    };
-                    if (args.args.LP) {
-                        ["LP", "lifePreserverPanel"].forEach(function (id) {
-                            $(id).classList.add("selectable");
-                            $(id).addEventListener("click", function () {
-                                if ($("LP").classList.contains("selected")) {
-                                    $("LP").classList.remove("selected");
-                                    $("lifePreserverPanel").classList.remove("selected");
-                                    _this.gamedatas.gamestate.args.num -= 2;
+                        return [3 /*break*/, 14];
+                    case 3:
+                        if (this.isCurrentPlayerActive()) {
+                            shoalArr = shoalnumToArr(args.args.selected);
+                            shoal = $("shoal_".concat(shoalArr[0], "_").concat(shoalArr[1]));
+                            shoal.classList.add("selected");
+                            this.freshStock[this.player_id].setSelectionMode("multiple");
+                            this.freshStock[this.player_id].onSelectionChange = function (selection, lastChange) {
+                                if (selection.includes(lastChange)) {
+                                    _this.gamedatas.gamestate.args.num += parseInt(_this.DICE_VALUE[lastChange.type][lastChange.type_arg]);
                                 }
                                 else {
-                                    $("LP").classList.add("selected");
-                                    $("lifePreserverPanel").classList.add("selected");
-                                    _this.gamedatas.gamestate.args.num += 2;
+                                    _this.gamedatas.gamestate.args.num -= parseInt(_this.DICE_VALUE[lastChange.type][lastChange.type_arg]);
                                 }
                                 args.args.num = _this.gamedatas.gamestate.args.num;
                                 $("finishFishButton").disabled = args.args.num < args.args.target;
                                 _this.statusBar.setTitle('${you} must pay for the fish (${num} / ${target})', args.args);
+                            };
+                            if (args.args.LP) {
+                                ["LP", "lifePreserverPanel"].forEach(function (id) {
+                                    $(id).classList.add("selectable");
+                                    $(id).addEventListener("click", function () {
+                                        if ($("LP").classList.contains("selected")) {
+                                            $("LP").classList.remove("selected");
+                                            $("lifePreserverPanel").classList.remove("selected");
+                                            _this.gamedatas.gamestate.args.num -= 2;
+                                        }
+                                        else {
+                                            $("LP").classList.add("selected");
+                                            $("lifePreserverPanel").classList.add("selected");
+                                            _this.gamedatas.gamestate.args.num += 2;
+                                        }
+                                        args.args.num = _this.gamedatas.gamestate.args.num;
+                                        $("finishFishButton").disabled = args.args.num < args.args.target;
+                                        _this.statusBar.setTitle('${you} must pay for the fish (${num} / ${target})', args.args);
+                                    });
+                                });
+                            }
+                            return [3 /*break*/, 14];
+                        }
+                        _b.label = 4;
+                    case 4:
+                        lifeboat = $("lifeboat-".concat(this.player_id));
+                        if (args.args.lifeboat && !args.args.casted) {
+                            lifeboat.classList.add("selectable");
+                            lifeboat.addEventListener("click", function (e) {
+                                if (_this.gamedatas.gamestate.name == stateName) {
+                                    _this.bgaPerformAction("actAbandonShip");
+                                }
+                            });
+                        }
+                        canOfWorms = $("canOfWorms-".concat(this.player_id));
+                        if (args.args.canOfWorms && !args.args.casted) {
+                            canOfWorms.classList.add("selectable");
+                            canOfWorms.addEventListener("click", function (e) {
+                                if (_this.gamedatas.gamestate.name == stateName) {
+                                    _this.setClientState("client_CanOfWorms", { "descriptionmyturn": "Choose a shoal to peek at" });
+                                }
+                            });
+                        }
+                        this.freshStock[this.player_id].setSelectionMode("none");
+                        return [3 /*break*/, 14];
+                    case 5:
+                        this.freshStock[this.player_id].setSelectionMode("single");
+                        return [3 /*break*/, 14];
+                    case 6:
+                        this.shoalStocks.forEach(function (depth) {
+                            depth.forEach(function (shoal) {
+                                shoal.element.classList.add("selectable");
+                                shoal.element.addEventListener("click", function () {
+                                    if (_this.gamedatas.gamestate.name == stateName) {
+                                        document.querySelectorAll(".selected").forEach(function (el) {
+                                            el.classList.remove("selected");
+                                        });
+                                        shoal.element.classList.add("selected");
+                                        $("confirmButton").disabled = false;
+                                    }
+                                });
                             });
                         });
-                    }
-                    break;
-                }
-            case "client_FreeSeaActions":
-                var lifeboat = $("lifeboat-".concat(this.player_id));
-                if (args.args.lifeboat && !args.args.casted) {
-                    lifeboat.classList.add("selectable");
-                    lifeboat.addEventListener("click", function (e) {
-                        if (_this.gamedatas.gamestate.name == stateName) {
-                            _this.bgaPerformAction("actAbandonShip");
+                        return [3 /*break*/, 14];
+                    case 7:
+                        $("shoal_".concat(args.args.shoal[0], "_").concat(args.args.shoal[1])).classList.add("selected");
+                        if (this.isCurrentPlayerActive()) {
+                            fish = args.args["_private"].fish;
+                            this.shoalStocks[args.args.shoal[0] - 1][args.args.shoal[1] - 1].flipCard(cardTemplate(args.args.shoalNum - 10, this.SHOAL_SIZE[fish.size], fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty), { updateData: true });
                         }
-                    });
-                }
-                var canOfWorms = $("canOfWorms-".concat(this.player_id));
-                if (args.args.canOfWorms && !args.args.casted) {
-                    canOfWorms.classList.add("selectable");
-                    canOfWorms.addEventListener("click", function (e) {
-                        if (_this.gamedatas.gamestate.name == stateName) {
-                            _this.setClientState("client_CanOfWorms", { "descriptionmyturn": "Choose a shoal to peek at" });
-                        }
-                    });
-                }
-                this.freshStock[this.player_id].setSelectionMode("none");
-                break;
-            case "client_DropSinker":
-                this.freshStock[this.player_id].setSelectionMode("single");
-                break;
-            case "client_CanOfWorms":
-                this.shoalStocks.forEach(function (depth) {
-                    depth.forEach(function (shoal) {
-                        shoal.element.classList.add("selectable");
-                        shoal.element.addEventListener("click", function () {
-                            if (_this.gamedatas.gamestate.name == stateName) {
-                                document.querySelectorAll(".selected").forEach(function (el) {
-                                    el.classList.remove("selected");
-                                });
-                                shoal.element.classList.add("selected");
-                                $("confirmButton").disabled = false;
+                        return [3 /*break*/, 14];
+                    case 8:
+                        this.fishHandStock.setSelectionMode("multiple");
+                        this.fishHandStock.onSelectionChange = function (selection, lastChange) {
+                            var pm = lastChange.sell + _this.REGRET_VALUES[args.madness][lastChange.type];
+                            pm = Math.max(pm, 0);
+                            if (selection.includes(lastChange)) {
+                                _this.gamedatas.gamestate.args.newFishbucks += pm;
+                                _this.gamedatas.gamestate.args.num++;
                             }
-                        });
-                    });
-                });
-                break;
-            case "CanOfWorms":
-                $("shoal_".concat(args.args.shoal[0], "_").concat(args.args.shoal[1])).classList.add("selected");
-                if (this.isCurrentPlayerActive()) {
-                    var fish = args.args["_private"].fish;
-                    this.shoalStocks[args.args.shoal[0] - 1][args.args.shoal[1] - 1].flipCard(cardTemplate(args.args.shoalNum - 10, this.SHOAL_SIZE[fish.size], fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty), { updateData: true });
+                            else {
+                                _this.gamedatas.gamestate.args.newFishbucks -= pm;
+                                _this.gamedatas.gamestate.args.num--;
+                            }
+                            _this.gamedatas.gamestate.args.display = args.args.newFishbucks + parseInt(args.args.curFishbucks) > 10 ? 10 : args.args.newFishbucks;
+                            _this.statusBar.setTitle("${you} are selling ${num} fish for ${display} fishbucks", args.args);
+                        };
+                        return [3 /*break*/, 14];
+                    case 9:
+                        if (!this.isCurrentPlayerActive()) return [3 /*break*/, 11];
+                        $('game_play_area').insertAdjacentHTML("afterbegin", "<div id=\"reveal_area\" class=\"whiteblock\"></div>");
+                        this.revealStock = new BgaCards.LineStock(this[args.args.shop + "Manager"], $("reveal_area"));
+                        return [4 /*yield*/, this.revealStock.addCards(args.args["_private"].reveal, { fromStock: this[args.args.shop + "Deck"], preserveScale: true, autoUpdateCardNumber: false })];
+                    case 10:
+                        _b.sent();
+                        switch (args.args.shop) {
+                            case "rods":
+                            case "reels":
+                                this.revealStock.setSelectionMode(args.args.num == 5 ? "multiple" : "single");
+                                this.revealStock.onSelectionChange = function () {
+                                    $('shopConfirm').disabled = ((args.args.num == 5 && _this.revealStock.getSelection().length != 2)
+                                        || (args.args.num != 5 && _this.revealStock.getSelection().length != 1));
+                                };
+                                $("".concat(args.args.shop, "Deck")).dataset.empty = "false";
+                                break;
+                            case "supplies":
+                                this.revealStock.setSelectionMode(args.args.num == 1 ? "single" : "multiple");
+                                this.revealStock.onSelectionChange = function () {
+                                    $('shopConfirm').disabled = ((args.args.num == 5 && _this.revealStock.getSelection().length != 3)
+                                        || (args.args.num == 3 && _this.revealStock.getSelection().length != 2)
+                                        || (args.args.num == 1 && _this.revealStock.getSelection().length != 1));
+                                };
+                                $("".concat(args.args.shop, "Deck")).dataset.empty = "false";
+                                break;
+                            case "dice":
+                                // FIXME complicated stuff
+                                break;
+                        }
+                        _b.label = 11;
+                    case 11: return [3 /*break*/, 14];
+                    case 12:
+                        this.fishHandStock.setSelectionMode("multiple");
+                        return [3 /*break*/, 14];
+                    case 13:
+                        if (args.args.selectedId) {
+                            $(args.args.selectedId).classList.add("selected");
+                        }
+                        return [3 /*break*/, 14];
+                    case 14: return [2 /*return*/];
                 }
-                break;
-            case "client_Sell":
-                this.handStock.setSelectionMode("multiple");
-                this.handStock.onSelectionChange = function (selection, lastChange) {
-                    var pm = lastChange.sell + _this.REGRET_VALUES[args.madness][lastChange.type];
-                    pm = Math.max(pm, 0);
-                    if (selection.includes(lastChange)) {
-                        _this.gamedatas.gamestate.args.newFishbucks += pm;
-                        _this.gamedatas.gamestate.args.num++;
-                    }
-                    else {
-                        _this.gamedatas.gamestate.args.newFishbucks -= pm;
-                        _this.gamedatas.gamestate.args.num--;
-                    }
-                    _this.gamedatas.gamestate.args.display = args.args.newFishbucks + parseInt(args.args.curFishbucks) > 10 ? 10 : args.args.newFishbucks;
-                    _this.statusBar.setTitle("${you} are selling ${num} fish for ${display} fishbucks", args.args);
-                };
-                break;
-            case "client_Mount":
-                this.handStock.setSelectionMode("multiple");
-                break;
-            case "client_Confirm":
-                if (args.args.selectedId) {
-                    $(args.args.selectedId).classList.add("selected");
-                }
-                break;
-        }
+            });
+        });
     };
     DeepRegrets.prototype.onLeavingState = function (stateName) {
         document.querySelectorAll(".selectable").forEach(function (el) {
@@ -769,7 +846,10 @@ var DeepRegrets = /** @class */ (function (_super) {
             el.classList.remove("selected");
         });
         this.freshStock[this.player_id].setSelectionMode("none");
-        this.handStock.setSelectionMode("none");
+        this.fishHandStock.setSelectionMode("none");
+        if ($('reveal_area')) {
+            $('reveal_area').remove();
+        }
     };
     DeepRegrets.prototype.onUpdateActionButtons = function (stateName, args) {
         var _this = this;
@@ -835,46 +915,77 @@ var DeepRegrets = /** @class */ (function (_super) {
                     this.statusBar.addActionButton(_("Bottom"), function () { return _this.bgaPerformAction("actSetPlace", { "place": "bottom" }); });
                     break;
                 case "PortActions":
-                    this.statusBar.addActionButton("Visit a Shop", function () { return _this.setClientState("client_Shop", Object.assign(args, { "descriptionmyturn": "${you} are visiting shops" })); });
-                    this.statusBar.addActionButton("Sell Fish", function () { return _this.setClientState("client_Sell", Object.assign(args, { "descriptionmyturn": "${you} are selling ${num} fish for ${newFishbucks} fishbucks" })); });
-                    this.statusBar.addActionButton("Mount Fish", function () { return _this.setClientState("client_Mount", Object.assign(args, { "descriptionmyturn": "${you} are mounting fish" })); });
-                    this.statusBar.addActionButton("Pass", function () { return console.log("pass"); }, { color: "alert" });
+                    if (!args.actionComplete) {
+                        this.statusBar.addActionButton("Visit a Shop", function () { return _this.setClientState("client_Shop", Object.assign(args, { "descriptionmyturn": "${you} are visiting shops" })); });
+                        this.statusBar.addActionButton("Sell Fish", function () { return _this.setClientState("client_Sell", Object.assign(args, { "descriptionmyturn": "${you} are selling ${num} fish for ${newFishbucks} fishbucks" })); });
+                        this.statusBar.addActionButton("Mount Fish", function () { return _this.setClientState("client_Mount", Object.assign(args, { "descriptionmyturn": "${you} are mounting fish" })); });
+                        this.statusBar.addActionButton("Free Actions", function () { return console.log("fA"); }, { color: "secondary" });
+                        this.statusBar.addActionButton("Pass", function () { return console.log("pass"); }, { color: "alert" });
+                    }
+                    else {
+                        // TODO add free actions port
+                        this.statusBar.addActionButton("Free Actions", function () { return console.log("fA"); }, { color: "secondary" });
+                        this.statusBar.addActionButton("End Turn", function () { return _this.bgaPerformAction("actEndTurn"); }, { color: "alert" });
+                    }
                     break;
                 case "client_Shop":
                     if (!args.dice) {
-                        this.statusBar.addActionButton("Dice Shop", function () { return console.log("dice"); });
+                        this.statusBar.addActionButton("Dice Shop", function () { return _this.setClientState("client_ShopValue", { descriptionmyturn: "${you} are visiting the ${shop} shop and spending ${num} fishbucks", args: { shop: "dice", num: 1 } }); });
                     }
                     if (!args.rods) {
-                        this.statusBar.addActionButton("Rod Shop", function () { return console.log("rod"); });
+                        this.statusBar.addActionButton("Rod Shop", function () { return _this.setClientState("client_ShopValue", { descriptionmyturn: "${you} are visiting the ${shop} shop and spending ${num} fishbucks", args: { shop: "rod", num: 1 } }); });
                     }
                     if (!args.reels) {
-                        this.statusBar.addActionButton("Reel Shop", function () { return console.log("reel"); });
+                        this.statusBar.addActionButton("Reel Shop", function () { return _this.setClientState("client_ShopValue", { descriptionmyturn: "${you} are visiting the ${shop} shop and spending ${num} fishbucks", args: { shop: "reel", num: 1 } }); });
                     }
                     if (!args.supplies) {
-                        this.statusBar.addActionButton("Supply Shop", function () { return console.log("supply"); });
+                        this.statusBar.addActionButton("Supply Shop", function () { return _this.setClientState("client_ShopValue", { descriptionmyturn: "${you} are visiting the ${shop} shop and spending ${num} fishbucks", args: { shop: "supply", num: 1 } }); });
                     }
-                    this.statusBar.addActionButton("Back", function () { return _this.restoreServerGameState(); }, { color: "secondary" });
+                    this.statusBar.addActionButton("Back", function () { return _this.restoreServerGameState(); }, { color: "alert" });
+                    break;
+                case "client_ShopValue":
+                    this.statusBar.addActionButton("+", function () {
+                        if (args.num < 5) {
+                            _this.gamedatas.gamestate.args.num += 2;
+                            _this.statusBar.setTitle("${you} are visiting the ${shop} shop and spending ${num} fishbucks", args);
+                        }
+                    }, { color: "secondary" });
+                    this.statusBar.addActionButton("-", function () {
+                        if (args.num > 1) {
+                            _this.gamedatas.gamestate.args.num -= 2;
+                            _this.statusBar.setTitle("${you} are visiting the ${shop} shop and spending ${num} fishbucks", args);
+                        }
+                    }, { color: "secondary" });
+                    this.statusBar.addActionButton("Confirm", function () { return _this.bgaPerformAction("actShop", { shop: args.shop, cost: args.num }); });
+                    this.statusBar.addActionButton("Back", function () { return _this.setClientState("client_Shop", Object.assign(args, { "descriptionmyturn": "${you} are visiting shops" })); }, { color: "alert" });
                     break;
                 case "client_Sell":
-                    this.statusBar.addActionButton("Confirm", function () { return _this.bgaPerformAction("actSell", { fish: JSON.stringify(_this.handStock.getSelection()) }); });
+                    this.statusBar.addActionButton("Confirm", function () { return _this.bgaPerformAction("actSell", { fish: JSON.stringify(_this.fishHandStock.getSelection()) }); });
                     this.statusBar.addActionButton("Select All", function () {
-                        _this.handStock.selectAll(true);
-                        var totalSelection = _this.handStock.getSelection()
+                        _this.fishHandStock.selectAll(true);
+                        var totalSelection = _this.fishHandStock.getSelection()
                             .filter(function (curVal) { return curVal.sell + _this.REGRET_VALUES[args.madness][curVal.type] > 0; })
                             .reduce(function (total, curVal) { return total + curVal.sell + _this.REGRET_VALUES[args.madness][curVal.type]; }, 0);
                         _this.gamedatas.gamestate.args.newFishbucks = totalSelection;
                         _this.gamedatas.gamestate.args.display = args.newFishbucks + parseInt(args.curFishbucks) > 10 ? 10 : args.newFishbucks;
-                        _this.gamedatas.gamestate.args.num = _this.handStock.getSelection().length;
+                        _this.gamedatas.gamestate.args.num = _this.fishHandStock.getSelection().length;
                         _this.statusBar.setTitle("${you} are selling ${num} fish for ${display} fishbucks", args);
                     }, { color: "secondary" });
                     this.statusBar.addActionButton("Reset", function () {
-                        _this.handStock.unselectAll(true);
+                        _this.fishHandStock.unselectAll(true);
                         _this.gamedatas.gamestate.args.newFishbucks = 0;
                         _this.gamedatas.gamestate.args.display = 0;
                         _this.gamedatas.gamestate.args.num = 0;
                         _this.statusBar.setTitle("${you} are selling ${num} fish for ${display} fishbucks", args);
                     }, { color: "secondary" });
                     this.statusBar.addActionButton("Back", function () { return _this.restoreServerGameState(); }, { color: "alert" });
+                    break;
+                case "ShopReveal":
+                    this.statusBar.addActionButton("Confirm", function () { return _this.bgaPerformAction("actBuyCards", { cards: JSON.stringify(_this.revealStock.getSelection()) }); }, { id: "shopConfirm", disabled: true });
+                    this.statusBar.addActionButton("Reset", function () {
+                        _this.revealStock.unselectAll();
+                        $('shopConfirm').disabled = true;
+                    }, { color: "secondary" });
                     break;
                 case "client_Mount":
                     this.statusBar.addActionButton("Confirm", function () { return console.log("mount"); });
@@ -1004,7 +1115,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                         return [4 /*yield*/, this.shoalStocks[shoal[0] - 1][shoal[1] - 1].addCard(cardTemplate(args.shoal - 10, newTop.size, newTop.depth), { index: 0, duration: 0, fadeIn: false })];
                     case 3:
                         _a.sent();
-                        return [4 /*yield*/, this.handStock.addCard(curTop, { autoUpdateCardNumber: false })];
+                        return [4 /*yield*/, this.fishHandStock.addCard(curTop, { autoUpdateCardNumber: false })];
                     case 4:
                         _a.sent();
                         return [2 /*return*/];
@@ -1019,7 +1130,7 @@ var DeepRegrets = /** @class */ (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        console.log(args);
+                        this.gamedatas.gamestate.args.actionComplete = true;
                         curFishbucks = document.querySelector(".fishbuck-slot:not(.hide)");
                         curLeft = curFishbucks.style.left;
                         curFishbucks.style.left = "calc(295px + ".concat(args.total, " * 35.1px)");
@@ -1034,7 +1145,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
                                     case 0:
-                                        fish = this.handStock.getCards().filter(function (card) { return card.id == id; })[0];
+                                        fish = this.fishHandStock.getCards().filter(function (card) { return card.id == id; })[0];
                                         return [4 /*yield*/, this.graveyardStocks[fish.depth - 1].addCard(fish)];
                                     case 1:
                                         _a.sent();
@@ -1043,6 +1154,32 @@ var DeepRegrets = /** @class */ (function (_super) {
                             });
                         }); });
                         this.restoreServerGameState();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    DeepRegrets.prototype.notif_buyCards = function (args) {
+        return __awaiter(this, void 0, void 0, function () {
+            var toHandStock;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        toHandStock = {
+                            reels: "reelHandStock",
+                            rods: "rodHandStock",
+                            supplies: "supplyHandStock"
+                        };
+                        return [4 /*yield*/, this[toHandStock[args.shop]].addCards(args.cards, 800)];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, this.revealStock.removeAll({ slideTo: $("".concat(args.shop, "Deck")) })];
+                    case 2:
+                        _a.sent();
+                        $('reveal_area').remove();
+                        return [4 /*yield*/, this[args.shop + "Deck"].shuffle()];
+                    case 3:
+                        _a.sent();
                         return [2 /*return*/];
                 }
             });

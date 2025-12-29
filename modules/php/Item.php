@@ -23,4 +23,6 @@ class Item {
     public function getCoords() {
         return [$this->x, $this->y];
     }
+
+    // FIXME add "text" for tooltip
 }

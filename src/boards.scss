@@ -214,49 +214,6 @@
     .dice {
         pointer-events: auto;
     }
-
-    .handStock {
-        position: fixed;
-        bottom: -175px;
-        left: 170px;
-        z-index: 5;
-        width: calc(100vw - 440px);
-        transition: all 0.8s ease;
-
-        .selectable, .selected {
-            outline: none;
-        }
-
-        .selectable::after, .selected::after {
-            content: '';
-            inset: 0px;
-            position: absolute;
-            border: 3px solid;
-        }
-
-        .selected::after, .selectable:hover::after {
-            border-color: red;
-        }
-        .selectable::after {
-            border-color: black;
-        }
-    }
-
-    .handStock:hover {
-        bottom: 0;
-    }
-
-    @media (max-width: 990px) {
-        .handStock {
-            width: calc(100vw - 200px);
-        }
-    }
-
-    @media (max-width: 740px) {
-        .handStock {
-            width: 560px;
-        }
-    }
 }
 
 .hide {

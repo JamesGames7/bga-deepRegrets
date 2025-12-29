@@ -29,10 +29,14 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 	public regretDeck = {};
 	public regretDiscard = {};
 	public freshStock = {};
+	public revealStock: any;
 	public spentStock = {};
 	public shoalStocks: any[][] = [];
 	public graveyardStocks: any[] = [];
-	public handStock: any;
+	public fishHandStock: any;
+	public reelHandStock: any;
+	public rodHandStock: any;
+	public supplyHandStock: any;
 	public reelsDeck = {};
 	public rodsDeck = {};
 	public suppliesDeck = {};
@@ -295,18 +299,17 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
                 this.addTooltipHtml(div.id, `Regret of magnitude ${card.type_arg}`);
 				div.style.backgroundImage = `url(${g_gamethemeurl}img/regrets.png)`;
             },
-        });		
+        });
 
 		// create the rods / reels / supplies managers
         this.reelsManager = new BgaCards.Manager({
             animationManager: this.animationManager,
             type: 'reels',
-            getId: (card: any) => card.id,
+            getId: (card: any) => card.name,
 			cardWidth: 350,
 			cardHeight: 490,
 			setupDiv: (card: any, div) => {
 				div.dataset.type = card.type;
-				div.dataset.typeArg = card.type_arg;
 			},
 			setupBackDiv: (card: any, div) => {
 				div.style.backgroundImage = `url(${g_gamethemeurl}img/reels.png)`;
@@ -315,19 +318,21 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				div.style.borderRadius = `12px`;
 			},
             setupFrontDiv: (card: any, div) => {
-				div.style.backgroundPositionX = `-${card.type % 10}%`; 
-				div.style.backgroundPositionY = `-${Math.floor(card.type / 10)}`;
+				div.style.backgroundPositionX = `-${(parseInt(card.type) + 1) % 5}00%`; 
+				div.style.backgroundPositionY = `-${Math.floor((parseInt(card.type) + 1) / 5)}00%`;
 				div.style.backgroundSize = "500% 300%";
 				div.style.borderRadius = `12px`;
                 this.addTooltipHtml(div.id, `Reel`);
 				div.style.backgroundImage = `url(${g_gamethemeurl}img/reels.png)`;
             },
+			selectableCardStyle: {class: "selectable"},
+			selectedCardStyle: {class: "selected"}
         });		
 
         this.rodsManager = new BgaCards.Manager({
             animationManager: this.animationManager,
             type: 'rods',
-            getId: (card: any) => card.id,
+            getId: (card: any) => card.name,
 			cardWidth: 350,
 			cardHeight: 490,
 			setupDiv: (card: any, div) => {
@@ -341,19 +346,21 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				div.style.borderRadius = `12px`;
 			},
             setupFrontDiv: (card: any, div) => {
-				div.style.backgroundPositionX = `-${card.type % 10}%`; 
-				div.style.backgroundPositionY = `-${Math.floor(card.type / 10)}`;
+				div.style.backgroundPositionX = `-${(parseInt(card.type) + 1) % 5}00%`; 
+				div.style.backgroundPositionY = `-${Math.floor((parseInt(card.type) + 1) / 5)}00%`;
 				div.style.backgroundSize = "500% 300%";
 				div.style.borderRadius = `12px`;
                 this.addTooltipHtml(div.id, `Rod`);
 				div.style.backgroundImage = `url(${g_gamethemeurl}img/rods.png)`;
             },
+			selectableCardStyle: {class: "selectable"},
+			selectedCardStyle: {class: "selected"}
         });	
 		
         this.suppliesManager = new BgaCards.Manager({
             animationManager: this.animationManager,
-            type: 'rods',
-            getId: (card: any) => card.id,
+            type: 'supplies',
+            getId: (card: any) => card.name,
 			cardWidth: 350,
 			cardHeight: 490,
 			setupDiv: (card: any, div) => {
@@ -367,13 +374,15 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				div.style.borderRadius = `12px`;
 			},
             setupFrontDiv: (card: any, div) => {
-				div.style.backgroundPositionX = `-${card.type % 10}%`; 
-				div.style.backgroundPositionY = `-${Math.floor(card.type / 10)}`;
+				div.style.backgroundPositionX = `-${(parseInt(card.type) + 1) % 6}00%`; 
+				div.style.backgroundPositionY = `-${Math.floor((parseInt(card.type) + 1) / 6)}00%`;
 				div.style.backgroundSize = "600% 400%";
 				div.style.borderRadius = `12px`;
                 this.addTooltipHtml(div.id, `Rod`);
 				div.style.backgroundImage = `url(${g_gamethemeurl}img/supplies.png)`;
             },
+			selectableCardStyle: {class: "selectable"},
+			selectedCardStyle: {class: "selected"}
         });			
 
 		// create the ships manager
@@ -536,7 +545,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 
 			this.freshStock[player["id"]] = new BgaCards.LineStock(this.diceManager, $(`freshGrid-${player["id"]}`), {sort: BgaCards.sort('type_arg', 'type')});
 
-			// TODO: change to scrollable?
+			// REVIEW change to scrollable?
 			this.spentStock[player["id"]] = new BgaCards.LineStock(this.diceManager, $(`spentGrid-${player["id"]}`), {sort: BgaCards.sort('type_arg', 'type')});
 			Object.values(player.dice).forEach(die => {
 				switch (die["location"]) {
@@ -552,10 +561,30 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				}
 			})
 
+			// Creating all hand stocks
 			if (player["id"] == this.player_id) {
-				this.handStock = new BgaCards.ScrollableStock(this.seaCardManager, $(`hand-${player["id"]}`), {leftButton: {classes: ["hide"]}, rightButton: {classes: ["hide"]}, gap: "5px"});
-				player.hand.forEach(fish => {
-					this.handStock.addCard(cardTemplate(fish.name, fish.size, fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty));
+				$(`hand-${player["id"]}`).insertAdjacentHTML("beforeend", `<div id="fishHand"></div>`)
+				this.fishHandStock = new BgaCards.LineStock(this.seaCardManager, $(`fishHand`), {gap: "5px", wrap: "nowrap", center: false});
+				player.hand.fish.forEach(fish => {
+					this.fishHandStock.addCard(cardTemplate(fish.name, fish.size, fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty));
+				});
+
+				$(`hand-${player["id"]}`).insertAdjacentHTML("beforeend", `<div id="reelHand"></div>`)
+				this.reelHandStock = new BgaCards.LineStock(this.reelsManager, $(`reelHand`), {gap: "5px", wrap: "nowrap", center: false});
+				player.hand.reels.forEach(reel => {
+					this.reelHandStock.addCard(reel);
+				});
+
+				$(`hand-${player["id"]}`).insertAdjacentHTML("beforeend", `<div id="rodHand"></div>`)
+				this.rodHandStock = new BgaCards.LineStock(this.rodsManager, $(`rodHand`), {gap: "5px", wrap: "nowrap", center: false});
+				player.hand.rods.forEach(rod => {
+					this.rodHandStock.addCard(rod);
+				});
+
+				$(`hand-${player["id"]}`).insertAdjacentHTML("beforeend", `<div id="supplyHand"></div>`)
+				this.supplyHandStock = new BgaCards.LineStock(this.suppliesManager, $(`supplyHand`), {gap: "5px", wrap: "nowrap", center: false});
+				player.hand.supplies.forEach(supply => {
+					this.supplyHandStock.addCard(supply);
 				});
 			}
 
@@ -607,7 +636,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			}
 			this.shoalStocks.push(curDepth);
 			this.graveyardStocks.push(new BgaCards.DiscardDeck(this.seaCardManager, $(`shoal_${depth + 1}_graveyard`), {maxHorizontalShift: 0, maxVerticalShift: 0, maxRotation: 0}));
-			console.log(gamedatas.discard);
 			gamedatas.discard[depth].forEach(fish => {
 				this.graveyardStocks[depth].addCard(cardTemplate(fish.name, fish.size, fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty));
 			});
@@ -632,9 +660,10 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		this.regretDeck = new BgaCards.Deck(this.regretManager, $(`regretDeck`), {cardNumber: gamedatas.regrets[0]});
 		this.regretDiscard = new BgaCards.Deck(this.regretManager, $(`regretDiscard`), {cardNumber: gamedatas.regrets[1]});
 
-		this.reelsDeck = new BgaCards.Deck(this.reelsManager, $(`reelsDeck`), {cardNumber: gamedatas.reels});
-		this.rodsDeck = new BgaCards.Deck(this.rodsManager, $(`rodsDeck`), {cardNumber: gamedatas.rods});
-		this.suppliesDeck = new BgaCards.Deck(this.suppliesManager, $(`suppliesDeck`), {cardNumber: gamedatas.supplies});
+		// FIXME Displays empty when taking cards out on reload
+		this.reelsDeck = new BgaCards.Deck(this.reelsManager, $(`reelsDeck`), {cardNumber: parseInt(gamedatas.reels)});
+		this.rodsDeck = new BgaCards.Deck(this.rodsManager, $(`rodsDeck`), {cardNumber: parseInt(gamedatas.rods)});
+		this.suppliesDeck = new BgaCards.Deck(this.suppliesManager, $(`suppliesDeck`), {cardNumber: parseInt(gamedatas.supplies)});
 
 		for (let i = 1; i <= 6; i++) {
 			$("port_board").insertAdjacentHTML("beforeend", `
@@ -676,8 +705,10 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		});
 
 		this.dinkDeck = new BgaCards.Deck(this.dinksManager, $("dink_deck"), {cardNumber: gamedatas.dinks, thicknesses: [0, 10, 20], shadowDirection: "top-right"});
+
+		console.log((this.reelsDeck as any).isEmpty());
 	} 
-	public onEnteringState(stateName: string, args: any) {
+	public async onEnteringState(stateName: string, args: any) {
 		switch (stateName) {
 			case "LifePreserver":
 				if (this.isCurrentPlayerActive()) {
@@ -692,7 +723,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				}
 				break;
 			case "SeaActions":
-				// TODO use "allowed" class: only trigger certain events if class is on object
 				if (this.isCurrentPlayerActive()) {
 					if (!args.args.casted) {
 						let depth = parseInt(args.args.depth);
@@ -803,8 +833,8 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				}
 				break;
 			case "client_Sell":
-				this.handStock.setSelectionMode("multiple");
-				this.handStock.onSelectionChange = (selection, lastChange) => {
+				this.fishHandStock.setSelectionMode("multiple");
+				this.fishHandStock.onSelectionChange = (selection, lastChange) => {
 					let pm = lastChange.sell + this.REGRET_VALUES[args.madness][lastChange.type]
 					pm = Math.max(pm, 0);
 					if (selection.includes(lastChange)) {
@@ -818,8 +848,38 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					this.statusBar.setTitle("${you} are selling ${num} fish for ${display} fishbucks", args.args)
 				}
 				break;
+			case "ShopReveal":
+				if (this.isCurrentPlayerActive()) {
+					$('game_play_area').insertAdjacentHTML("afterbegin", "<div id=\"reveal_area\" class=\"whiteblock\"></div>");
+					this.revealStock = new BgaCards.LineStock(this[args.args.shop + "Manager"], $("reveal_area"));
+					await this.revealStock.addCards(args.args["_private"].reveal, {fromStock: this[args.args.shop + "Deck"], preserveScale: true, autoUpdateCardNumber: false})
+					switch (args.args.shop) {
+						case "rods":
+						case "reels":
+							this.revealStock.setSelectionMode(args.args.num == 5 ? "multiple" : "single");
+							this.revealStock.onSelectionChange = () => {
+								($('shopConfirm') as any).disabled = ((args.args.num == 5 && this.revealStock.getSelection().length != 2) 
+																	|| (args.args.num != 5 && this.revealStock.getSelection().length != 1));
+							};
+							$(`${args.args.shop}Deck`).dataset.empty = "false";
+							break;
+						case "supplies":
+							this.revealStock.setSelectionMode(args.args.num == 1 ? "single" : "multiple");
+							this.revealStock.onSelectionChange = () => {
+								($('shopConfirm') as any).disabled = ((args.args.num == 5 && this.revealStock.getSelection().length != 3) 
+																	|| (args.args.num == 3 && this.revealStock.getSelection().length != 2)
+																	|| (args.args.num == 1 && this.revealStock.getSelection().length != 1));
+							};
+							$(`${args.args.shop}Deck`).dataset.empty = "false";
+							break;
+						case "dice":
+							// FIXME complicated stuff
+							break;
+					}
+				}
+				break;
 			case "client_Mount":
-				this.handStock.setSelectionMode("multiple");
+				this.fishHandStock.setSelectionMode("multiple");
 				break;
 			case "client_Confirm":
 				if (args.args.selectedId) {
@@ -836,7 +896,10 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			el.classList.remove("selected");
 		})
 		this.freshStock[this.player_id].setSelectionMode("none");
-		this.handStock.setSelectionMode("none");
+		this.fishHandStock.setSelectionMode("none");
+		if ($('reveal_area')) {
+			$('reveal_area').remove();
+		}
 	}
 	public onUpdateActionButtons(stateName: string, args: any) {
 		if (this.isCurrentPlayerActive()) {
@@ -904,46 +967,76 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					this.statusBar.addActionButton(_("Bottom"), () => this.bgaPerformAction("actSetPlace", {"place": "bottom"}));
 					break;
 				case "PortActions":
-					this.statusBar.addActionButton("Visit a Shop", () => this.setClientState("client_Shop", Object.assign(args, {"descriptionmyturn": "${you} are visiting shops"})));
-					this.statusBar.addActionButton("Sell Fish", () => this.setClientState("client_Sell", Object.assign(args, {"descriptionmyturn": "${you} are selling ${num} fish for ${newFishbucks} fishbucks"})));
-					this.statusBar.addActionButton("Mount Fish", () => this.setClientState("client_Mount", Object.assign(args, {"descriptionmyturn": "${you} are mounting fish"})));
-					this.statusBar.addActionButton("Pass", () => console.log("pass"), {color: "alert"});
+					if (!args.actionComplete) {
+						this.statusBar.addActionButton("Visit a Shop", () => this.setClientState("client_Shop", Object.assign(args, {"descriptionmyturn": "${you} are visiting shops"})));
+						this.statusBar.addActionButton("Sell Fish", () => this.setClientState("client_Sell", Object.assign(args, {"descriptionmyturn": "${you} are selling ${num} fish for ${newFishbucks} fishbucks"})));
+						this.statusBar.addActionButton("Mount Fish", () => this.setClientState("client_Mount", Object.assign(args, {"descriptionmyturn": "${you} are mounting fish"})));
+						this.statusBar.addActionButton("Free Actions", () => console.log("fA"), {color: "secondary"});
+						this.statusBar.addActionButton("Pass", () => console.log("pass"), {color: "alert"});
+					} else {
+						// TODO add free actions port
+						this.statusBar.addActionButton("Free Actions", () => console.log("fA"), {color: "secondary"});
+						this.statusBar.addActionButton("End Turn", () => this.bgaPerformAction("actEndTurn"), {color: "alert"});
+					}
 					break;
 				case "client_Shop":
 					if (!args.dice) {
-						this.statusBar.addActionButton("Dice Shop", () => console.log("dice"));
+						this.statusBar.addActionButton("Dice Shop", () => this.setClientState("client_ShopValue", {descriptionmyturn: "${you} are visiting the ${shop} shop and spending ${num} fishbucks", args: {shop: "dice", num: 1}}));
 					}
 					if (!args.rods) {
-						this.statusBar.addActionButton("Rod Shop", () => console.log("rod"));
+						this.statusBar.addActionButton("Rod Shop", () => this.setClientState("client_ShopValue", {descriptionmyturn: "${you} are visiting the ${shop} shop and spending ${num} fishbucks", args: {shop: "rod", num: 1}}));
 					}
 					if (!args.reels) {
-						this.statusBar.addActionButton("Reel Shop", () => console.log("reel"));
+						this.statusBar.addActionButton("Reel Shop", () => this.setClientState("client_ShopValue", {descriptionmyturn: "${you} are visiting the ${shop} shop and spending ${num} fishbucks", args: {shop: "reel", num: 1}}));
 					}
 					if (!args.supplies) {
-						this.statusBar.addActionButton("Supply Shop", () => console.log("supply"));
+						this.statusBar.addActionButton("Supply Shop", () => this.setClientState("client_ShopValue", {descriptionmyturn: "${you} are visiting the ${shop} shop and spending ${num} fishbucks", args: {shop: "supply", num: 1}}));
 					}
-					this.statusBar.addActionButton("Back", () => this.restoreServerGameState(), {color: "secondary"});
+					this.statusBar.addActionButton("Back", () => this.restoreServerGameState(), {color: "alert"});
+					break;
+				case "client_ShopValue":
+					this.statusBar.addActionButton("+", () => {
+						if (args.num < 5) {
+							this.gamedatas.gamestate.args.num += 2;
+							this.statusBar.setTitle("${you} are visiting the ${shop} shop and spending ${num} fishbucks", args);
+						}
+					}, {color: "secondary"});
+					this.statusBar.addActionButton("-", () => {
+						if (args.num > 1) {
+							this.gamedatas.gamestate.args.num -= 2;
+							this.statusBar.setTitle("${you} are visiting the ${shop} shop and spending ${num} fishbucks", args);
+						}
+					}, {color: "secondary"});
+					this.statusBar.addActionButton("Confirm", () => this.bgaPerformAction("actShop", {shop: args.shop, cost: args.num}));
+					this.statusBar.addActionButton("Back", () => this.setClientState("client_Shop", Object.assign(args, {"descriptionmyturn": "${you} are visiting shops"})), {color: "alert"})
 					break;
 				case "client_Sell":
-					this.statusBar.addActionButton("Confirm", () => this.bgaPerformAction("actSell", {fish: JSON.stringify(this.handStock.getSelection())}));
+					this.statusBar.addActionButton("Confirm", () => this.bgaPerformAction("actSell", {fish: JSON.stringify(this.fishHandStock.getSelection())}));
 					this.statusBar.addActionButton("Select All", () => {
-						this.handStock.selectAll(true);
-						let totalSelection = this.handStock.getSelection()
+						this.fishHandStock.selectAll(true);
+						let totalSelection = this.fishHandStock.getSelection()
 							.filter((curVal) => curVal.sell + this.REGRET_VALUES[args.madness][curVal.type] > 0)
 							.reduce((total, curVal) => total + curVal.sell + this.REGRET_VALUES[args.madness][curVal.type], 0)
 						this.gamedatas.gamestate.args.newFishbucks = totalSelection;
 						this.gamedatas.gamestate.args.display = args.newFishbucks + parseInt(args.curFishbucks) > 10 ? 10 : args.newFishbucks;
-						this.gamedatas.gamestate.args.num = this.handStock.getSelection().length;
+						this.gamedatas.gamestate.args.num = this.fishHandStock.getSelection().length;
 						this.statusBar.setTitle("${you} are selling ${num} fish for ${display} fishbucks", args);
 					}, {color: "secondary"});
 					this.statusBar.addActionButton("Reset", () => {
-						this.handStock.unselectAll(true);
+						this.fishHandStock.unselectAll(true);
 						this.gamedatas.gamestate.args.newFishbucks = 0;
 						this.gamedatas.gamestate.args.display = 0;
 						this.gamedatas.gamestate.args.num = 0;
 						this.statusBar.setTitle("${you} are selling ${num} fish for ${display} fishbucks", args);
 					}, {color: "secondary"});
 					this.statusBar.addActionButton("Back", () => this.restoreServerGameState(), {color: "alert"});
+					break;
+				case "ShopReveal":
+					this.statusBar.addActionButton("Confirm", () => this.bgaPerformAction("actBuyCards", {cards: JSON.stringify(this.revealStock.getSelection())}), {id: "shopConfirm", disabled: true});
+					this.statusBar.addActionButton("Reset", () => {
+						this.revealStock.unselectAll();
+						($('shopConfirm') as any).disabled = true;
+					}, {color: "secondary"});
 					break;
 				case "client_Mount":
 					this.statusBar.addActionButton("Confirm", () => console.log("mount"));
@@ -1049,11 +1142,11 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		curTop = this.shoalStocks[shoal[0] - 1][shoal[1] - 1].getCards()[0];
 		await this.shoalStocks[shoal[0] - 1][shoal[1] - 1].addCard(cardTemplate(args.shoal - 10, newTop.size, newTop.depth), {index: 0, duration: 0, fadeIn: false});
 
-		await this.handStock.addCard(curTop, {autoUpdateCardNumber: false});
+		await this.fishHandStock.addCard(curTop, {autoUpdateCardNumber: false});
 	}
 
 	public async notif_sellFish(args: any) {
-		console.log(args);
+		this.gamedatas.gamestate.args.actionComplete = true;
 		let curFishbucks = document.querySelector(".fishbuck-slot:not(.hide)");
 		let curLeft = (curFishbucks as HTMLElement).style.left;
 		(curFishbucks as HTMLElement).style.left = `calc(295px + ${args.total} * 35.1px)`;
@@ -1064,11 +1157,24 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		(curFishbucks as HTMLElement).style.left = curLeft;
 
 		args.ids.forEach(async id => {
-			let fish = this.handStock.getCards().filter(card => card.id == id)[0];
+			let fish = this.fishHandStock.getCards().filter(card => card.id == id)[0];
 			await this.graveyardStocks[fish.depth - 1].addCard(fish);
 		});
 
 		this.restoreServerGameState();
+	}
+
+	public async notif_buyCards(args: any) {
+		let toHandStock = {
+			reels: "reelHandStock",
+			rods: "rodHandStock",
+			supplies: "supplyHandStock"
+		}
+		
+		await this[toHandStock[args.shop]].addCards(args.cards, 800);
+		await this.revealStock.removeAll({slideTo: $(`${args.shop}Deck`)});
+		$('reveal_area').remove();
+		await this[args.shop + "Deck"].shuffle();
 	}
 
 	public notif_test(args: any) {

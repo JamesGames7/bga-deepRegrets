@@ -33,8 +33,8 @@ class PortActions extends GameState
             // optional
             description: clienttranslate('${actplayer} must perform Port actions or pass'),
             descriptionMyTurn: clienttranslate('${you} must perform Port actions or pass'),
-            transitions: ["pass" => 45, "nextPlayer" => 49], // LINK - modules\php\States\PassAction.php
-                                                             // LINK - modules\php\States\NextPlayer.php
+            transitions: ["pass" => 45, "shop" => 46, "nextPlayer" => 49], // LINK - modules\php\States\PassAction.php
+                                                                           // LINK - modules\php\States\NextPlayer.php
             updateGameProgression: false,
             initialPrivate: null,
         );
@@ -63,43 +63,68 @@ class PortActions extends GameState
     }   
 
     #[PossibleAction]
-    function actShop(string $shop) {
-        
+    function actShop(string $shop, int $cost) {
+        if (!$this->globals->get("actionComplete")) {
+            $name = "";
+            switch ($shop) {
+                case "dice":
+                    $this->game->dice->pickCardsForLocation(($cost + 1) / 3, "deck", "reveal");
+                    break;
+                case "rod":
+                    $name = "rods";
+                case "reel":
+                    if (!$name) $name = "reels";
+                case "supply":
+                    if (!$name) $name = "supplies";
+                    $this->game->$name->pickCardsForLocation($cost, "deck", "reveal");
+                    break;
+            }
+            $this->game->globals->set("curShop", $name);
+            return "shop";
+        } else {
+            throw new \BgaUserException("Already performed an action this turn");
+        }
     }
 
     #[PossibleAction]
     function actSell(string $fish, int $activePlayerId) {
-        $json_fish = json_decode($fish);
-        $total = 0;
-        $num = 0;
-        $cards = [];
-        foreach ($json_fish as $curFish) {
-            $singleFish = array_filter($this->game->lists->getFish(), function($f) use($curFish) {return $curFish->id == $f->getName();});
-            $fishData = array_values($singleFish)[0];
-            $sellValue = $fishData->getSellValue();
-            $madness = $this->getArgs($activePlayerId)["madness"];
-            $regretMod = $this->game->REGRET_MODIFIERS[$madness][$fishData->getType()];
+        if (!$this->globals->get("actionComplete")) {
+            $json_fish = json_decode($fish);
+            $total = 0;
+            $num = 0;
+            $cards = [];
+            foreach ($json_fish as $curFish) {
+                $singleFish = array_filter($this->game->lists->getFish(), function($f) use($curFish) {return $curFish->id == $f->getName();});
+                $fishData = array_values($singleFish)[0];
+                $sellValue = $fishData->getSellValue();
+                $madness = $this->getArgs($activePlayerId)["madness"];
+                $regretMod = $this->game->REGRET_MODIFIERS[$madness][$fishData->getType()];
 
-            $total += max($sellValue + $regretMod, 0);
+                $total += max($sellValue + $regretMod, 0);
 
-            $cards[] = $fishData->getName();
+                $cards[] = $fishData->getName();
+                
+                $this->game->fish->moveCard(array_keys($this->game->fish->getCardsOfType(strval(array_keys($singleFish)[0])))[0], "discard", $fishData->getDepth());
+                $num++;
+            }
+            $total = min($total, 10 - $this->getArgs($activePlayerId)["curFishbucks"]) + $this->getArgs($activePlayerId)["curFishbucks"];
+            $inc = $total - $this->getArgs($activePlayerId)["curFishbucks"];
             
-            $this->game->fish->moveCard(array_keys($this->game->fish->getCardsOfType(strval(array_keys($singleFish)[0])))[0], "discard", $fishData->getDepth());
-            $num++;
-        }
-        $total = min($total, 10 - $this->getArgs($activePlayerId)["curFishbucks"]) + $this->getArgs($activePlayerId)["curFishbucks"];
-        $inc = $total - $this->getArgs($activePlayerId)["curFishbucks"];
-        
-        $this->game->DbQuery("UPDATE `player` SET `fishbucks` = $total WHERE `player_id` = $activePlayerId");
+            $this->game->DbQuery("UPDATE `player` SET `fishbucks` = $total WHERE `player_id` = $activePlayerId");
 
-        $this->notify->all("sellFish", '${player_name} sold ${num} fish for ${fishbucks} fishbucks', [
-            "player_name" => $this->game->getActivePlayerName(),
-            "player_id" => $activePlayerId,
-            "num" => $num,
-            "fishbucks" => $inc,
-            "total" => $total,
-            "ids" => $cards
-        ]);
+            $this->globals->set("actionComplete", true);
+
+            $this->notify->all("sellFish", '${player_name} sold ${num} fish for ${fishbucks} fishbucks', [
+                "player_name" => $this->game->getActivePlayerName(),
+                "player_id" => $activePlayerId,
+                "num" => $num,
+                "fishbucks" => $inc,
+                "total" => $total,
+                "ids" => $cards
+            ]);
+        } else {
+
+        }
     }
 
     #[PossibleAction]
@@ -109,7 +134,19 @@ class PortActions extends GameState
 
     #[PossibleAction]
     function actPass() {
-        return "pass";
+        if (!$this->globals->get("actionComplete")) {
+            return "pass";
+        }
+        throw new \BgaUserException("Must pass before performing an action");
+    }
+
+    #[PossibleAction]
+    function actEndTurn() {
+        if ($this->globals->get("actionComplete")) {
+            return "nextPlayer";
+        } else {
+            throw new \BgaUserException("Must perform an action");
+        }
     }
 
     function zombie(int $playerId): string {
