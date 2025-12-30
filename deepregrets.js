@@ -629,7 +629,6 @@ var DeepRegrets = /** @class */ (function (_super) {
             }
         });
         this.dinkDeck = new BgaCards.Deck(this.dinksManager, $("dink_deck"), { cardNumber: gamedatas.dinks, thicknesses: [0, 10, 20], shadowDirection: "top-right" });
-        console.log(this.reelsDeck.isEmpty());
     };
     DeepRegrets.prototype.onEnteringState = function (stateName, args) {
         return __awaiter(this, void 0, void 0, function () {
@@ -649,10 +648,10 @@ var DeepRegrets = /** @class */ (function (_super) {
                             case "CanOfWorms": return [3 /*break*/, 7];
                             case "client_Sell": return [3 /*break*/, 8];
                             case "ShopReveal": return [3 /*break*/, 9];
-                            case "client_Mount": return [3 /*break*/, 12];
-                            case "client_Confirm": return [3 /*break*/, 13];
+                            case "client_Mount": return [3 /*break*/, 13];
+                            case "client_Confirm": return [3 /*break*/, 14];
                         }
-                        return [3 /*break*/, 14];
+                        return [3 /*break*/, 15];
                     case 1:
                         if (this.isCurrentPlayerActive()) {
                             args.args.possibleChoices.forEach(function (id) {
@@ -664,7 +663,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 });
                             });
                         }
-                        return [3 /*break*/, 14];
+                        return [3 /*break*/, 15];
                     case 2:
                         if (this.isCurrentPlayerActive()) {
                             if (!args.args.casted) {
@@ -691,7 +690,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 }
                             }
                         }
-                        return [3 /*break*/, 14];
+                        return [3 /*break*/, 15];
                     case 3:
                         if (this.isCurrentPlayerActive()) {
                             shoalArr = shoalnumToArr(args.args.selected);
@@ -729,9 +728,8 @@ var DeepRegrets = /** @class */ (function (_super) {
                                     });
                                 });
                             }
-                            return [3 /*break*/, 14];
                         }
-                        _b.label = 4;
+                        return [3 /*break*/, 15];
                     case 4:
                         lifeboat = $("lifeboat-".concat(this.player_id));
                         if (args.args.lifeboat && !args.args.casted) {
@@ -752,10 +750,10 @@ var DeepRegrets = /** @class */ (function (_super) {
                             });
                         }
                         this.freshStock[this.player_id].setSelectionMode("none");
-                        return [3 /*break*/, 14];
+                        return [3 /*break*/, 15];
                     case 5:
                         this.freshStock[this.player_id].setSelectionMode("single");
-                        return [3 /*break*/, 14];
+                        return [3 /*break*/, 15];
                     case 6:
                         this.shoalStocks.forEach(function (depth) {
                             depth.forEach(function (shoal) {
@@ -771,14 +769,14 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 });
                             });
                         });
-                        return [3 /*break*/, 14];
+                        return [3 /*break*/, 15];
                     case 7:
                         $("shoal_".concat(args.args.shoal[0], "_").concat(args.args.shoal[1])).classList.add("selected");
                         if (this.isCurrentPlayerActive()) {
                             fish = args.args["_private"].fish;
                             this.shoalStocks[args.args.shoal[0] - 1][args.args.shoal[1] - 1].flipCard(cardTemplate(args.args.shoalNum - 10, this.SHOAL_SIZE[fish.size], fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty), { updateData: true });
                         }
-                        return [3 /*break*/, 14];
+                        return [3 /*break*/, 15];
                     case 8:
                         this.fishHandStock.setSelectionMode("multiple");
                         this.fishHandStock.onSelectionChange = function (selection, lastChange) {
@@ -795,14 +793,17 @@ var DeepRegrets = /** @class */ (function (_super) {
                             _this.gamedatas.gamestate.args.display = args.args.newFishbucks + parseInt(args.args.curFishbucks) > 10 ? 10 : args.args.newFishbucks;
                             _this.statusBar.setTitle("${you} are selling ${num} fish for ${display} fishbucks", args.args);
                         };
-                        return [3 /*break*/, 14];
+                        return [3 /*break*/, 15];
                     case 9:
-                        if (!this.isCurrentPlayerActive()) return [3 /*break*/, 11];
+                        if (!this.isCurrentPlayerActive()) return [3 /*break*/, 12];
                         $('game_play_area').insertAdjacentHTML("afterbegin", "<div id=\"reveal_area\" class=\"whiteblock\"></div>");
+                        if (!(args.args.shop != "dice")) return [3 /*break*/, 11];
                         this.revealStock = new BgaCards.LineStock(this[args.args.shop + "Manager"], $("reveal_area"));
                         return [4 /*yield*/, this.revealStock.addCards(args.args["_private"].reveal, { fromStock: this[args.args.shop + "Deck"], preserveScale: true, autoUpdateCardNumber: false })];
                     case 10:
                         _b.sent();
+                        _b.label = 11;
+                    case 11:
                         switch (args.args.shop) {
                             case "rods":
                             case "reels":
@@ -823,20 +824,27 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 $("".concat(args.args.shop, "Deck")).dataset.empty = "false";
                                 break;
                             case "dice":
-                                // FIXME complicated stuff
+                                $("reveal_area").classList.add("roll", "scene");
+                                args.args["_private"].reveal.forEach(function (dice) {
+                                    $("reveal_area").insertAdjacentHTML("beforeend", "\n\t\t\t\t\t\t\t\t\t<div class=\"outlineDice\" id=\"outline-".concat(dice.id, "\">\n\t\t\t\t\t\t\t\t\t\t<div class=\"").concat(dice.type, " dice\" id=\"dice-").concat(dice.id, "\">\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"face f1\" id=\"f1-").concat(dice.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"face f2\" id=\"f2-").concat(dice.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"face f3\" id=\"f3-").concat(dice.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"face f4\" id=\"f4-").concat(dice.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"triangle top 1\" id=\"t1-").concat(dice.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"triangle top t2\" id=\"t2-").concat(dice.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"triangle top t3\" id=\"t3-").concat(dice.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"triangle top t4\" id=\"t4-").concat(dice.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"triangle bottom t5\" id=\"t5-").concat(dice.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"triangle bottom t6\" id=\"t6-").concat(dice.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"triangle bottom t7\" id=\"t7-").concat(dice.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t<div class=\"triangle bottom t8\" id=\"t8-").concat(dice.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t"));
+                                    _this.animationManager.slideIn($("dice-".concat(dice.id)), $('port_board'));
+                                    $("dice-".concat(dice.id)).dataset.dieId = dice.id;
+                                    $("outline-".concat(dice.id)).dataset.dieId = dice.id;
+                                    diceSetup(dice.id);
+                                });
                                 break;
                         }
-                        _b.label = 11;
-                    case 11: return [3 /*break*/, 14];
-                    case 12:
-                        this.fishHandStock.setSelectionMode("multiple");
-                        return [3 /*break*/, 14];
+                        _b.label = 12;
+                    case 12: return [3 /*break*/, 15];
                     case 13:
+                        this.fishHandStock.setSelectionMode("multiple");
+                        return [3 /*break*/, 15];
+                    case 14:
                         if (args.args.selectedId) {
                             $(args.args.selectedId).classList.add("selected");
                         }
-                        return [3 /*break*/, 14];
-                    case 14: return [2 /*return*/];
+                        return [3 /*break*/, 15];
+                    case 15: return [2 /*return*/];
                 }
             });
         });
@@ -886,7 +894,6 @@ var DeepRegrets = /** @class */ (function (_super) {
                     }, { color: "secondary" });
                     break;
                 case "client_FreeSeaActions":
-                    console.log(args);
                     if (args.lifeboat && !args.casted) {
                         this.statusBar.addActionButton(_("Abandon Ship"), function () { return _this.bgaPerformAction("actAbandonShip"); }, { "color": "secondary" });
                     }
@@ -984,11 +991,54 @@ var DeepRegrets = /** @class */ (function (_super) {
                     this.statusBar.addActionButton("Back", function () { return _this.restoreServerGameState(); }, { color: "alert" });
                     break;
                 case "ShopReveal":
-                    this.statusBar.addActionButton("Confirm", function () { return _this.bgaPerformAction("actBuyCards", { cards: JSON.stringify(_this.revealStock.getSelection()) }); }, { id: "shopConfirm", disabled: true });
-                    this.statusBar.addActionButton("Reset", function () {
-                        _this.revealStock.unselectAll();
-                        $('shopConfirm').disabled = true;
-                    }, { color: "secondary" });
+                    if (args.shop != "dice") {
+                        this.statusBar.addActionButton("Confirm", function () { return _this.bgaPerformAction("actBuyCards", { cards: JSON.stringify(_this.revealStock.getSelection()) }); }, { id: "shopConfirm", disabled: true });
+                        this.statusBar.addActionButton("Reset", function () {
+                            _this.revealStock.unselectAll();
+                            $('shopConfirm').disabled = true;
+                        }, { color: "secondary" });
+                    }
+                    else {
+                        this.statusBar.addActionButton("Roll", function () {
+                            console.log(_this.gamedatas.gamestate.args);
+                            console.log(args["_private"].reveal);
+                            var children = $('reveal_area').children;
+                            for (var i = 0; i < children.length; i++) {
+                                var child = children[i];
+                                diceRotation(child.dataset.dieId, parseInt(args["_private"].reveal[i].type_arg));
+                            }
+                            _this.statusBar.removeActionButtons();
+                            _this.statusBar.setTitle("${you} must choose which dice to place in your fresh pool");
+                            _this.statusBar.addActionButton("Confirm", function () {
+                                var send = [];
+                                document.querySelectorAll(".selected").forEach(function (el) {
+                                    send.push(el.dataset.dieId);
+                                });
+                                _this.bgaPerformAction("actChooseDice", { diceJSON: JSON.stringify(send) });
+                            }, { disabled: true, id: "rollButton" });
+                            _this.statusBar.addActionButton("Reset", function () {
+                                document.querySelectorAll(".selected").forEach(function (el) { return el.classList.remove("selected"); });
+                                $('rollButton').disabled = true;
+                            }, { color: "secondary" });
+                            document.querySelectorAll(".outlineDice").forEach(function (dice) {
+                                dice.classList.add("selectable");
+                                dice.addEventListener("click", function () {
+                                    if (dice.classList.contains("selected")) {
+                                        dice.classList.remove("selected");
+                                    }
+                                    else {
+                                        dice.classList.add("selected");
+                                    }
+                                    if (document.querySelectorAll(".selected").length == args.maxFresh - args.freshSize) {
+                                        $('rollButton').disabled = false;
+                                    }
+                                    else {
+                                        $('rollButton').disabled = true;
+                                    }
+                                });
+                            });
+                        });
+                    }
                     break;
                 case "client_Mount":
                     this.statusBar.addActionButton("Confirm", function () { return console.log("mount"); });
@@ -1188,6 +1238,28 @@ var DeepRegrets = /** @class */ (function (_super) {
             });
         });
     };
+    DeepRegrets.prototype.notif_chooseFresh = function (args) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        console.log(args);
+                        document.querySelectorAll(".outlineDice.selected").forEach(function (dice) {
+                            dice.remove();
+                        });
+                        return [4 /*yield*/, this.freshStock[args.player_id].addCards(args.fresh, { fromElement: $('reveal_area') })];
+                    case 1:
+                        _a.sent();
+                        document.querySelectorAll(".outlineDice").forEach(function (dice) {
+                            dice.remove();
+                        });
+                        this.spentStock[args.player_id].addCards(args.spent, { fromElement: $('reveal_area') });
+                        $('reveal_area').remove();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
     DeepRegrets.prototype.notif_test = function (args) {
         console.log(args);
     };
@@ -1207,21 +1279,19 @@ define([
 // Three equations for brightness of dice based on rotation
 // Depends on angle: main side, top side, bottom side (45deg off each other)
 /*
-<div id="scene">
-    <div class="redP" id="dice">
-        <div class="face" id="f1"></div>
-        <div class="face" id="f2"></div>
-        <div class="face" id="f3"></div>
-        <div class="face" id="f4"></div>
-        <div class="triangle top" id="t1"></div>
-        <div class="triangle top" id="t2"></div>
-        <div class="triangle top" id="t3"></div>
-        <div class="triangle top" id="t4"></div>
-        <div class="triangle bottom" id="t5"></div>
-        <div class="triangle bottom" id="t6"></div>
-        <div class="triangle bottom" id="t7"></div>
-        <div class="triangle bottom" id="t8"></div>
-    </div>
+<div class="redP" id="dice">
+    <div class="face" id="f1"></div>
+    <div class="face" id="f2"></div>
+    <div class="face" id="f3"></div>
+    <div class="face" id="f4"></div>
+    <div class="triangle top" id="t1"></div>
+    <div class="triangle top" id="t2"></div>
+    <div class="triangle top" id="t3"></div>
+    <div class="triangle top" id="t4"></div>
+    <div class="triangle bottom" id="t5"></div>
+    <div class="triangle bottom" id="t6"></div>
+    <div class="triangle bottom" id="t7"></div>
+    <div class="triangle bottom" id="t8"></div>
 </div>
  */
 var faceEq = function (x) { return (1 / 4 * Math.cos(-19 * Math.PI / 180 * Math.cos(x + Math.PI / 4) + Math.PI / 2) + 9 / 10); };
@@ -1230,7 +1300,7 @@ var bottomEq = function (x) { return (1 / 4 * Math.cos(-19 * Math.PI / 180 * Mat
 // Original setup of dice
 function diceSetup(elementId) {
     // Element to apply to
-    var el = document.getElementById(elementId);
+    var el = $("dice-" + elementId);
     // Finding the rotation on correct axis
     var style = window.getComputedStyle(el).transform;
     var rotateY;
@@ -1244,38 +1314,36 @@ function diceSetup(elementId) {
     // For each side (90deg off each other)
     var add = 0;
     ["f1", "f2", "f3", "f4"].forEach(function (id) {
-        document.getElementById(id).style.filter = "brightness(".concat(faceEq(rotateY + add), ")");
+        $(id + "-" + elementId).style.filter = "brightness(".concat(faceEq(rotateY + add), ")");
         add += Math.PI / 2;
     });
     ["t1", "t2", "t3", "t4"].forEach(function (id) {
-        document.getElementById(id).style.filter = "brightness(".concat(topEq(rotateY + add), ")");
+        $(id + "-" + elementId).style.filter = "brightness(".concat(topEq(rotateY + add), ")");
         add += Math.PI / 2;
     });
     ["t5", "t6", "t7", "t8"].forEach(function (id) {
-        document.getElementById(id).style.filter = "brightness(".concat(bottomEq(rotateY + add), ")");
+        $(id + "-" + elementId).style.filter = "brightness(".concat(bottomEq(rotateY + add), ")");
         add += Math.PI / 2;
     });
 }
 // EventListener for when it rotates (for now click)
-function diceRotation(elementId) {
-    var el = document.getElementById(elementId);
+function diceRotation(elementId, rotation) {
+    var el = $("dice-" + elementId);
     var rot = 0;
-    el.addEventListener("click", function () {
-        // Set rotation / transformation
-        rot += 810;
-        el.style.transform = "rotateY(".concat(rot, "deg)");
-        // Start time
-        var start = performance.now();
-        function update(t) {
-            // Find how long it's been
-            var progress = Math.min((t - start) / 1000, 2);
-            diceSetup(el.id);
-            // Recursively repeat until done
-            if (progress < 2)
-                requestAnimationFrame(update);
-        }
-        requestAnimationFrame(update);
-    });
+    // Set rotation / transformation
+    rot -= 720 + 90 * rotation;
+    el.style.transform = "rotateY(".concat(rot, "deg)");
+    // Start time
+    var start = performance.now();
+    function update(t) {
+        // Find how long it's been
+        var progress = Math.min((t - start) / 1000, 2);
+        diceSetup(elementId);
+        // Recursively repeat until done
+        if (progress < 2)
+            requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
 }
 window.diceSetup = diceSetup;
 window.diceRotation = diceRotation;

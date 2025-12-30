@@ -61,6 +61,22 @@ class Game extends \Bga\GameFramework\Table
         12 => ["fair" => -1, "foul" => 1],
         13 => ["fair" => -2, "foul" => 2],
     ];
+    public $REGRET_DICE = [
+        0 => 4,
+        1 => 5,
+        2 => 5,
+        3 => 5,
+        4 => 5,
+        5 => 5,
+        6 => 5,
+        7 => 6,
+        8 => 6,
+        9 => 6,
+        10 => 7,
+        11 => 7,
+        12 => 7,
+        13 => 8,
+    ];
 
     /**
      * Your global variables labels:

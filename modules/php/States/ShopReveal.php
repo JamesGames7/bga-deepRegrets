@@ -19,8 +19,8 @@ class ShopReveal extends GameState
             type: StateType::ACTIVE_PLAYER,
 
             // optional
-            description: clienttranslate('${actplayer} is viewing what they bought'),
-            descriptionMyTurn: clienttranslate('${you} are viewing what you bought'),
+            description: clienttranslate('${actplayer} is viewing the shop\'s wares'),
+            descriptionMyTurn: clienttranslate('${you} are viewing the shop\'s wares'),
             transitions: ["" => 41],
             updateGameProgression: false,
             initialPrivate: null,
@@ -30,17 +30,35 @@ class ShopReveal extends GameState
     public function getArgs(int $activePlayerId): array
     {
         // the data sent to the front when entering the state
+        if ($this->globals->get("curShop") == "dice" && !$this->globals->get("diceRolled")) {
+            foreach ($this->game->dice->getCardsInLocation("reveal") as $id => $dice) {
+                $rand = \bga_rand(0, 3);
+                $this->game->DbQuery("UPDATE `dice` SET `card_type_arg` = $rand WHERE `card_id` = '$id'");
+            }
+            $this->globals->set("diceRolled", true);
+        }
+
+
         $shop = $this->globals->get("curShop");
         $methodText = "get" . strtoupper(substr($shop, 0, 1)) . substr($shop, 1);
+
+        if ($shop != "dice") {
+            $reveal = array_map(fn($item) => ["name" => $this->game->lists->$methodText()[$item["type"]]->getName(), "type" => $item["type"], "id" => $item["id"]], 
+                                            array_values($this->game->$shop->getCardsInLocation("reveal")));
+        } else {
+            $reveal = array_map(fn($dice) => ["id" => $dice["id"], "type" => $dice["type"], "type_arg" => $dice["type_arg"]], array_values($this->game->dice->getCardsInLocation("reveal")));
+        }
+
         return [
             "_private" => [
                 $activePlayerId => [
-                    "reveal" => array_map(fn($item) => ["name" => $this->game->lists->$methodText()[$item["type"]]->getName(), "type" => $item["type"], "id" => $item["id"]], 
-                                            array_values($this->game->$shop->getCardsInLocation("reveal")))
+                    "reveal" => $reveal,
                 ]
             ],
             "shop" => $shop,
-            "num" => count($this->game->$shop->getCardsInLocation("reveal"))
+            "num" => count($this->game->$shop->getCardsInLocation("reveal")),
+            "freshSize" => intval($this->game->dice->countCardsInLocation("fresh", $activePlayerId)),
+            "maxFresh" => $this->game->REGRET_DICE[min(13, intval($this->game->regrets->countCardsInLocation("hand", $activePlayerId)))]
         ];
     } 
 
@@ -72,6 +90,34 @@ class ShopReveal extends GameState
             return "";
         } else {
             throw new \BgaUserException("Incorrect number of cards selected");
+        }
+    }
+
+    #[PossibleAction]
+    function actChooseDice(int $activePlayerId, string $diceJSON) {
+        $total = $this->game->dice->getCardsInLocation("reveal");
+        $allDice = json_decode($diceJSON);
+        $newDice = $this->getArgs($activePlayerId)["maxFresh"] - $this->getArgs($activePlayerId)["freshSize"];
+        if (count($allDice) <= $newDice) {
+            foreach (array_map(fn($item) => $this->game->dice->getCard($item), $allDice) as $die) {
+                $this->notify->all("test", '', [$die["id"]]);
+                $this->game->dice->moveCard(intval($die["id"]), "fresh", $activePlayerId);
+            }
+            $spent = $this->game->dice->getCardsInLocation("reveal");
+            $this->game->dice->moveAllCardsInLocation("reveal", "spent", null, $activePlayerId);
+
+            $this->notify->all("chooseFresh", '${player_name} got ${num} dice', [
+                "player_name" => $this->game->getActivePlayerName(),
+                "player_id" => $activePlayerId,
+                "num" => $total,
+                "spent" => array_values($spent),
+                "fresh" => array_map(fn($item) => $this->game->dice->getCard($item), $allDice)
+            ]);
+            $this->globals->set("diceRolled", false);
+            $this->globals->set("actionComplete", true);
+            return "";
+        } else {
+            throw new \BgaUserException("You must select $newDice dice");
         }
     }
 

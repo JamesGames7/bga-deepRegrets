@@ -729,8 +729,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		});
 
 		this.dinkDeck = new BgaCards.Deck(this.dinksManager, $("dink_deck"), {cardNumber: gamedatas.dinks, thicknesses: [0, 10, 20], shadowDirection: "top-right"});
-
-		console.log((this.reelsDeck as any).isEmpty());
 	} 
 	public async onEnteringState(stateName: string, args: any) {
 		switch (stateName) {
@@ -804,8 +802,8 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 							})
 						})
 					}
-					break;
 				}
+				break;
 			case "client_FreeSeaActions":	
 				var lifeboat = $(`lifeboat-${this.player_id}`);
 				if (args.args.lifeboat && !args.args.casted) {
@@ -875,8 +873,10 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			case "ShopReveal":
 				if (this.isCurrentPlayerActive()) {
 					$('game_play_area').insertAdjacentHTML("afterbegin", "<div id=\"reveal_area\" class=\"whiteblock\"></div>");
-					this.revealStock = new BgaCards.LineStock(this[args.args.shop + "Manager"], $("reveal_area"));
-					await this.revealStock.addCards(args.args["_private"].reveal, {fromStock: this[args.args.shop + "Deck"], preserveScale: true, autoUpdateCardNumber: false})
+					if (args.args.shop != "dice") {
+						this.revealStock = new BgaCards.LineStock(this[args.args.shop + "Manager"], $("reveal_area"));
+						await this.revealStock.addCards(args.args["_private"].reveal, {fromStock: this[args.args.shop + "Deck"], preserveScale: true, autoUpdateCardNumber: false})
+					}	
 					switch (args.args.shop) {
 						case "rods":
 						case "reels":
@@ -897,7 +897,31 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 							$(`${args.args.shop}Deck`).dataset.empty = "false";
 							break;
 						case "dice":
-							// FIXME complicated stuff
+							$("reveal_area").classList.add("roll", "scene");
+							args.args["_private"].reveal.forEach(dice => {
+								$("reveal_area").insertAdjacentHTML("beforeend", `
+									<div class="outlineDice" id="outline-${dice.id}">
+										<div class="${dice.type} dice" id="dice-${dice.id}">
+											<div class="face f1" id="f1-${dice.id}"></div>
+											<div class="face f2" id="f2-${dice.id}"></div>
+											<div class="face f3" id="f3-${dice.id}"></div>
+											<div class="face f4" id="f4-${dice.id}"></div>
+											<div class="triangle top 1" id="t1-${dice.id}"></div>
+											<div class="triangle top t2" id="t2-${dice.id}"></div>
+											<div class="triangle top t3" id="t3-${dice.id}"></div>
+											<div class="triangle top t4" id="t4-${dice.id}"></div>
+											<div class="triangle bottom t5" id="t5-${dice.id}"></div>
+											<div class="triangle bottom t6" id="t6-${dice.id}"></div>
+											<div class="triangle bottom t7" id="t7-${dice.id}"></div>
+											<div class="triangle bottom t8" id="t8-${dice.id}"></div>
+										</div>
+									</div>
+								`)
+								this.animationManager.slideIn($(`dice-${dice.id}`), $('port_board'))
+								$(`dice-${dice.id}`).dataset.dieId = dice.id;
+								$(`outline-${dice.id}`).dataset.dieId = dice.id;
+								diceSetup(dice.id);
+							});
 							break;
 					}
 				}
@@ -957,7 +981,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					}, {color: "secondary"})
 					break;
 				case "client_FreeSeaActions":
-					console.log(args);
 					if (args.lifeboat && !args.casted) {
 						this.statusBar.addActionButton(_("Abandon Ship"), () => this.bgaPerformAction("actAbandonShip"), {"color": "secondary"});
 					}
@@ -1056,11 +1079,51 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					this.statusBar.addActionButton("Back", () => this.restoreServerGameState(), {color: "alert"});
 					break;
 				case "ShopReveal":
-					this.statusBar.addActionButton("Confirm", () => this.bgaPerformAction("actBuyCards", {cards: JSON.stringify(this.revealStock.getSelection())}), {id: "shopConfirm", disabled: true});
-					this.statusBar.addActionButton("Reset", () => {
-						this.revealStock.unselectAll();
-						($('shopConfirm') as any).disabled = true;
-					}, {color: "secondary"});
+					if (args.shop != "dice") {
+						this.statusBar.addActionButton("Confirm", () => this.bgaPerformAction("actBuyCards", {cards: JSON.stringify(this.revealStock.getSelection())}), {id: "shopConfirm", disabled: true});
+						this.statusBar.addActionButton("Reset", () => {
+							this.revealStock.unselectAll();
+							($('shopConfirm') as any).disabled = true;
+						}, {color: "secondary"});
+					} else {
+						this.statusBar.addActionButton("Roll", () => {
+							console.log(this.gamedatas.gamestate.args);
+							console.log(args["_private"].reveal);
+							let children = $('reveal_area').children;
+							for (let i = 0; i < children.length; i++) {
+								let child: any = children[i];
+								diceRotation(child.dataset.dieId, parseInt(args["_private"].reveal[i].type_arg));
+							}
+							this.statusBar.removeActionButtons();
+							this.statusBar.setTitle("${you} must choose which dice to place in your fresh pool");
+							this.statusBar.addActionButton("Confirm", () => {
+								let send = [];
+								document.querySelectorAll(".selected").forEach((el: any) => {
+									send.push(el.dataset.dieId);
+								})
+								this.bgaPerformAction("actChooseDice", {diceJSON: JSON.stringify(send)});
+							}, {disabled: true, id: "rollButton"});
+							this.statusBar.addActionButton("Reset", () => {
+								document.querySelectorAll(".selected").forEach(el => el.classList.remove("selected"));
+								($('rollButton') as any).disabled = true;
+							}, {color: "secondary"});
+							document.querySelectorAll(".outlineDice").forEach(dice => {
+								dice.classList.add("selectable");
+								dice.addEventListener("click", () => {
+									if (dice.classList.contains("selected")) {
+										dice.classList.remove("selected");
+									} else {
+										dice.classList.add("selected");
+									}
+									if (document.querySelectorAll(".selected").length == args.maxFresh - args.freshSize) {
+										($('rollButton') as any).disabled = false;
+									} else {
+										($('rollButton') as any).disabled = true;
+									}
+								})
+							})
+						});
+					}
 					break;
 				case "client_Mount":
 					this.statusBar.addActionButton("Confirm", () => console.log("mount"));
@@ -1199,6 +1262,19 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		await this.revealStock.removeAll({slideTo: $(`${args.shop}Deck`)});
 		$('reveal_area').remove();
 		await this[args.shop + "Deck"].shuffle();
+	}
+
+	public async notif_chooseFresh(args: any) {
+		console.log(args);
+		document.querySelectorAll(".outlineDice.selected").forEach(dice => {
+			dice.remove();
+		})
+		await this.freshStock[args.player_id].addCards(args.fresh, {fromElement: $('reveal_area')})
+		document.querySelectorAll(".outlineDice").forEach(dice => {
+			dice.remove();
+		})
+		this.spentStock[args.player_id].addCards(args.spent, {fromElement: $('reveal_area')})
+		$('reveal_area').remove();
 	}
 
 	public notif_test(args: any) {

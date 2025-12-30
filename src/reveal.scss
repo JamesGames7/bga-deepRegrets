@@ -6,4 +6,24 @@
     .selected {
         cursor: pointer;
     }
+
+    &.roll {
+        display: flex;
+        gap: 50px;
+        height: 100px;
+        align-items: start;
+        justify-content: center;
+    }
+
+    .outlineDice {
+        padding-top: 40px;
+        height: 164px;
+        width: 120px;
+        display: flex;
+        justify-content: center;
+
+        &.selectable, &.selected {
+            outline-width: 5px;
+        }
+    }
 }

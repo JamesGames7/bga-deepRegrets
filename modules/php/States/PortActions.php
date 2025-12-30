@@ -64,11 +64,13 @@ class PortActions extends GameState
 
     #[PossibleAction]
     function actShop(string $shop, int $cost) {
+        // FIXME pay by LP
         if (!$this->globals->get("actionComplete")) {
             $name = "";
             switch ($shop) {
                 case "dice":
-                    $this->game->dice->pickCardsForLocation(($cost + 1) / 3, "deck", "reveal");
+                    $this->game->dice->pickCardsForLocation(($cost + 1) / 2, "deck", "reveal");
+                    $name = "dice";
                     break;
                 case "rod":
                     $name = "rods";

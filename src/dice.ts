@@ -1,21 +1,19 @@
 // Three equations for brightness of dice based on rotation
 // Depends on angle: main side, top side, bottom side (45deg off each other)
 /*
-<div id="scene">
-    <div class="redP" id="dice">
-        <div class="face" id="f1"></div>
-        <div class="face" id="f2"></div>
-        <div class="face" id="f3"></div>
-        <div class="face" id="f4"></div>
-        <div class="triangle top" id="t1"></div>
-        <div class="triangle top" id="t2"></div>
-        <div class="triangle top" id="t3"></div>
-        <div class="triangle top" id="t4"></div>
-        <div class="triangle bottom" id="t5"></div>
-        <div class="triangle bottom" id="t6"></div>
-        <div class="triangle bottom" id="t7"></div>
-        <div class="triangle bottom" id="t8"></div>
-    </div>
+<div class="redP" id="dice">
+    <div class="face" id="f1"></div>
+    <div class="face" id="f2"></div>
+    <div class="face" id="f3"></div>
+    <div class="face" id="f4"></div>
+    <div class="triangle top" id="t1"></div>
+    <div class="triangle top" id="t2"></div>
+    <div class="triangle top" id="t3"></div>
+    <div class="triangle top" id="t4"></div>
+    <div class="triangle bottom" id="t5"></div>
+    <div class="triangle bottom" id="t6"></div>
+    <div class="triangle bottom" id="t7"></div>
+    <div class="triangle bottom" id="t8"></div>
 </div>
  */
 const faceEq = (x: number): number => (1/4 * Math.cos(-19 * Math.PI / 180 * Math.cos(x + Math.PI / 4) + Math.PI / 2) + 9/10);
@@ -25,7 +23,7 @@ const bottomEq = (x: number): number => (1/4 * Math.cos(-19 * Math.PI / 180 * Ma
 // Original setup of dice
 function diceSetup(elementId: string) {
     // Element to apply to
-    let el: HTMLElement = document.getElementById(elementId)!;
+    let el: HTMLElement = $("dice-" + elementId)!;
     
     // Finding the rotation on correct axis
     let style = window.getComputedStyle(el).transform;
@@ -40,42 +38,41 @@ function diceSetup(elementId: string) {
     // For each side (90deg off each other)
     let add = 0;
     ["f1", "f2", "f3", "f4"].forEach(id => {
-        document.getElementById(id)!.style.filter = `brightness(${faceEq(rotateY + add)})`;
+        $(id + "-" + elementId)!.style.filter = `brightness(${faceEq(rotateY + add)})`;
         add += Math.PI / 2;
     });
     ["t1", "t2", "t3", "t4"].forEach(id => {
-        document.getElementById(id)!.style.filter = `brightness(${topEq(rotateY + add)})`;
+        $(id + "-" + elementId)!.style.filter = `brightness(${topEq(rotateY + add)})`;
         add += Math.PI / 2;
     });
     ["t5", "t6", "t7", "t8"].forEach(id => {
-        document.getElementById(id)!.style.filter = `brightness(${bottomEq(rotateY + add)})`;
+        $(id + "-" + elementId)!.style.filter = `brightness(${bottomEq(rotateY + add)})`;
         add += Math.PI / 2;
     });
 }
 
 // EventListener for when it rotates (for now click)
-function diceRotation(elementId: string) {
-    let el: HTMLElement = document.getElementById(elementId)!;
+function diceRotation(elementId: string, rotation: number) {
+    let el: HTMLElement = $("dice-" + elementId)!;
     let rot = 0;
-    el.addEventListener("click", () => {
-        // Set rotation / transformation
-        rot += 810;
-        el.style.transform = `rotateY(${rot}deg)`;
 
-        // Start time
-        let start = performance.now();
-        function update(t: number) {
-            // Find how long it's been
-            let progress = Math.min((t-start) / 1000, 2);
+    // Set rotation / transformation
+    rot -= 720 + 90 * rotation;
+    el.style.transform = `rotateY(${rot}deg)`;
 
-            diceSetup(el.id);
+    // Start time
+    let start = performance.now();
+    function update(t: number) {
+        // Find how long it's been
+        let progress = Math.min((t-start) / 1000, 2);
 
-            // Recursively repeat until done
-            if (progress < 2) requestAnimationFrame(update);
-        }
+        diceSetup(elementId);
 
-        requestAnimationFrame(update);
-    })
+        // Recursively repeat until done
+        if (progress < 2) requestAnimationFrame(update);
+    }
+
+    requestAnimationFrame(update);
 
 }
 
