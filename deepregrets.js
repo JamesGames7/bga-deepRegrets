@@ -646,12 +646,13 @@ var DeepRegrets = /** @class */ (function (_super) {
                             case "client_DropSinker": return [3 /*break*/, 5];
                             case "client_CanOfWorms": return [3 /*break*/, 6];
                             case "CanOfWorms": return [3 /*break*/, 7];
-                            case "client_Sell": return [3 /*break*/, 8];
-                            case "ShopReveal": return [3 /*break*/, 9];
-                            case "client_Mount": return [3 /*break*/, 13];
-                            case "client_Confirm": return [3 /*break*/, 14];
+                            case "client_ShopValue": return [3 /*break*/, 8];
+                            case "client_Sell": return [3 /*break*/, 9];
+                            case "ShopReveal": return [3 /*break*/, 10];
+                            case "client_Mount": return [3 /*break*/, 14];
+                            case "client_Confirm": return [3 /*break*/, 15];
                         }
-                        return [3 /*break*/, 15];
+                        return [3 /*break*/, 16];
                     case 1:
                         if (this.isCurrentPlayerActive()) {
                             args.args.possibleChoices.forEach(function (id) {
@@ -663,7 +664,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 });
                             });
                         }
-                        return [3 /*break*/, 15];
+                        return [3 /*break*/, 16];
                     case 2:
                         if (this.isCurrentPlayerActive()) {
                             if (!args.args.casted) {
@@ -690,7 +691,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 }
                             }
                         }
-                        return [3 /*break*/, 15];
+                        return [3 /*break*/, 16];
                     case 3:
                         if (this.isCurrentPlayerActive()) {
                             shoalArr = shoalnumToArr(args.args.selected);
@@ -729,7 +730,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 });
                             }
                         }
-                        return [3 /*break*/, 15];
+                        return [3 /*break*/, 16];
                     case 4:
                         lifeboat = $("lifeboat-".concat(this.player_id));
                         if (args.args.lifeboat && !args.args.casted) {
@@ -750,10 +751,10 @@ var DeepRegrets = /** @class */ (function (_super) {
                             });
                         }
                         this.freshStock[this.player_id].setSelectionMode("none");
-                        return [3 /*break*/, 15];
+                        return [3 /*break*/, 16];
                     case 5:
                         this.freshStock[this.player_id].setSelectionMode("single");
-                        return [3 /*break*/, 15];
+                        return [3 /*break*/, 16];
                     case 6:
                         this.shoalStocks.forEach(function (depth) {
                             depth.forEach(function (shoal) {
@@ -769,15 +770,53 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 });
                             });
                         });
-                        return [3 /*break*/, 15];
+                        return [3 /*break*/, 16];
                     case 7:
                         $("shoal_".concat(args.args.shoal[0], "_").concat(args.args.shoal[1])).classList.add("selected");
                         if (this.isCurrentPlayerActive()) {
                             fish = args.args["_private"].fish;
                             this.shoalStocks[args.args.shoal[0] - 1][args.args.shoal[1] - 1].flipCard(cardTemplate(args.args.shoalNum - 10, this.SHOAL_SIZE[fish.size], fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty), { updateData: true });
                         }
-                        return [3 /*break*/, 15];
+                        return [3 /*break*/, 16];
                     case 8:
+                        if ($("FP-LP-" + this.player_id).contains($('LP'))) {
+                            $('LP').classList.add("selectable");
+                            $('lifePreserverPanel').classList.add("selectable");
+                            $('LP').addEventListener("click", function () {
+                                if (!$('LP').classList.contains("selected")) {
+                                    $('LP').classList.add("selected");
+                                    $('lifePreserverPanel').classList.add("selected");
+                                    _this.gamedatas.gamestate.args.num -= 2;
+                                    _this.gamedatas.gamestate.args.num = Math.max(0, args.args.num);
+                                }
+                                else {
+                                    $('LP').classList.remove("selected");
+                                    $('lifePreserverPanel').classList.remove("selected");
+                                    _this.gamedatas.gamestate.args.num += 2;
+                                    _this.gamedatas.gamestate.args.num = Math.min(5, args.args.num);
+                                    _this.gamedatas.gamestate.args.num = args.args.num % 2 == 0 ? args.args.num - 1 : args.args.num;
+                                }
+                                _this.statusBar.setTitle("${you} are visiting the ${shop} shop and spending ${num} fishbucks", args.args);
+                            });
+                            $('lifePreserverPanel').addEventListener("click", function () {
+                                if (!$('LP').classList.contains("selected")) {
+                                    $('LP').classList.add("selected");
+                                    $('lifePreserverPanel').classList.add("selected");
+                                    _this.gamedatas.gamestate.args.num -= 2;
+                                    _this.gamedatas.gamestate.args.num = Math.max(0, args.args.num);
+                                }
+                                else {
+                                    $('LP').classList.remove("selected");
+                                    $('lifePreserverPanel').classList.remove("selected");
+                                    _this.gamedatas.gamestate.args.num += 2;
+                                    _this.gamedatas.gamestate.args.num = Math.min(5, args.args.num);
+                                    _this.gamedatas.gamestate.args.num = args.args.num % 2 == 0 ? args.args.num - 1 : args.args.num;
+                                }
+                                _this.statusBar.setTitle("${you} are visiting the ${shop} shop and spending ${num} fishbucks", args.args);
+                            });
+                        }
+                        return [3 /*break*/, 16];
+                    case 9:
                         this.fishHandStock.setSelectionMode("multiple");
                         this.fishHandStock.onSelectionChange = function (selection, lastChange) {
                             var pm = lastChange.sell + _this.REGRET_VALUES[args.madness][lastChange.type];
@@ -793,17 +832,17 @@ var DeepRegrets = /** @class */ (function (_super) {
                             _this.gamedatas.gamestate.args.display = args.args.newFishbucks + parseInt(args.args.curFishbucks) > 10 ? 10 : args.args.newFishbucks;
                             _this.statusBar.setTitle("${you} are selling ${num} fish for ${display} fishbucks", args.args);
                         };
-                        return [3 /*break*/, 15];
-                    case 9:
-                        if (!this.isCurrentPlayerActive()) return [3 /*break*/, 12];
+                        return [3 /*break*/, 16];
+                    case 10:
+                        if (!this.isCurrentPlayerActive()) return [3 /*break*/, 13];
                         $('game_play_area').insertAdjacentHTML("afterbegin", "<div id=\"reveal_area\" class=\"whiteblock\"></div>");
-                        if (!(args.args.shop != "dice")) return [3 /*break*/, 11];
+                        if (!(args.args.shop != "dice")) return [3 /*break*/, 12];
                         this.revealStock = new BgaCards.LineStock(this[args.args.shop + "Manager"], $("reveal_area"));
                         return [4 /*yield*/, this.revealStock.addCards(args.args["_private"].reveal, { fromStock: this[args.args.shop + "Deck"], preserveScale: true, autoUpdateCardNumber: false })];
-                    case 10:
-                        _b.sent();
-                        _b.label = 11;
                     case 11:
+                        _b.sent();
+                        _b.label = 12;
+                    case 12:
                         switch (args.args.shop) {
                             case "rods":
                             case "reels":
@@ -834,17 +873,17 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 });
                                 break;
                         }
-                        _b.label = 12;
-                    case 12: return [3 /*break*/, 15];
-                    case 13:
-                        this.fishHandStock.setSelectionMode("multiple");
-                        return [3 /*break*/, 15];
+                        _b.label = 13;
+                    case 13: return [3 /*break*/, 16];
                     case 14:
+                        this.fishHandStock.setSelectionMode("multiple");
+                        return [3 /*break*/, 16];
+                    case 15:
                         if (args.args.selectedId) {
                             $(args.args.selectedId).classList.add("selected");
                         }
-                        return [3 /*break*/, 15];
-                    case 15: return [2 /*return*/];
+                        return [3 /*break*/, 16];
+                    case 16: return [2 /*return*/];
                 }
             });
         });
@@ -955,18 +994,24 @@ var DeepRegrets = /** @class */ (function (_super) {
                     break;
                 case "client_ShopValue":
                     this.statusBar.addActionButton("+", function () {
-                        if (args.num < 5) {
+                        if (args.num < ($('LP').classList.contains("selected") ? 3 : 5)) {
                             _this.gamedatas.gamestate.args.num += 2;
+                            _this.gamedatas.gamestate.args.num = args.num % 2 == 0 ? args.num - 1 : args.num;
                             _this.statusBar.setTitle("${you} are visiting the ${shop} shop and spending ${num} fishbucks", args);
                         }
                     }, { color: "secondary" });
                     this.statusBar.addActionButton("-", function () {
-                        if (args.num > 1) {
+                        if (args.num > ($('LP').classList.contains("selected") ? 0 : 1)) {
                             _this.gamedatas.gamestate.args.num -= 2;
+                            _this.gamedatas.gamestate.args.num = Math.max(args.num, 0);
                             _this.statusBar.setTitle("${you} are visiting the ${shop} shop and spending ${num} fishbucks", args);
                         }
                     }, { color: "secondary" });
-                    this.statusBar.addActionButton("Confirm", function () { return _this.bgaPerformAction("actShop", { shop: args.shop, cost: args.num }); });
+                    this.statusBar.addActionButton("Confirm", function () {
+                        var reduction = 0;
+                        reduction += $('LP').classList.contains("selected") ? 2 : 0;
+                        _this.bgaPerformAction("actShop", { shop: args.shop, cost: args.num, reduction: reduction });
+                    });
                     this.statusBar.addActionButton("Back", function () { return _this.setClientState("client_Shop", Object.assign(args, { "descriptionmyturn": "${you} are visiting shops" })); }, { color: "alert" });
                     break;
                 case "client_Sell":
@@ -1184,7 +1229,8 @@ var DeepRegrets = /** @class */ (function (_super) {
                 switch (_a.label) {
                     case 0:
                         this.gamedatas.gamestate.args.actionComplete = true;
-                        curFishbucks = document.querySelector(".fishbuck-slot:not(.hide)");
+                        if (!(args.curFishbucks != args.total)) return [3 /*break*/, 2];
+                        curFishbucks = $("fishbuck-slot-".concat(args.player_id, "-").concat(args.curFishbucks));
                         curLeft = curFishbucks.style.left;
                         curFishbucks.style.left = "calc(295px + ".concat(args.total, " * 35.1px)");
                         return [4 /*yield*/, new Promise(function (r) { return setTimeout(r, 800); })];
@@ -1193,6 +1239,8 @@ var DeepRegrets = /** @class */ (function (_super) {
                         $("fishbuck-slot-".concat(args.player_id, "-").concat(args.total)).classList.remove("hide");
                         curFishbucks.classList.add("hide");
                         curFishbucks.style.left = curLeft;
+                        _a.label = 2;
+                    case 2:
                         args.ids.forEach(function (id) { return __awaiter(_this, void 0, void 0, function () {
                             var fish;
                             return __generator(this, function (_a) {
@@ -1256,6 +1304,28 @@ var DeepRegrets = /** @class */ (function (_super) {
                         this.spentStock[args.player_id].addCards(args.spent, { fromElement: $('reveal_area') });
                         $('reveal_area').remove();
                         return [2 /*return*/];
+                }
+            });
+        });
+    };
+    DeepRegrets.prototype.notif_spendFishbucks = function (args) {
+        return __awaiter(this, void 0, void 0, function () {
+            var curFishbucks, curLeft;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!(args.curFishbucks != args.newFishbucks)) return [3 /*break*/, 2];
+                        curFishbucks = $("fishbuck-slot-".concat(args.player_id, "-").concat(args.curFishbucks));
+                        curLeft = curFishbucks.style.left;
+                        curFishbucks.style.left = "calc(295px + ".concat(args.newFishbucks, " * 35.1px)");
+                        return [4 /*yield*/, new Promise(function (r) { return setTimeout(r, 800); })];
+                    case 1:
+                        _a.sent();
+                        $("fishbuck-slot-".concat(args.player_id, "-").concat(args.newFishbucks)).classList.remove("hide");
+                        curFishbucks.classList.add("hide");
+                        curFishbucks.style.left = curLeft;
+                        _a.label = 2;
+                    case 2: return [2 /*return*/];
                 }
             });
         });

@@ -854,6 +854,42 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 																							{updateData: true});
 				}
 				break;
+			case "client_ShopValue":
+				if ($("FP-LP-" + this.player_id).contains($('LP'))) {
+					$('LP').classList.add("selectable");
+					$('lifePreserverPanel').classList.add("selectable");
+					$('LP').addEventListener("click", () => {
+						if (!$('LP').classList.contains("selected")) {
+							$('LP').classList.add("selected");
+							$('lifePreserverPanel').classList.add("selected");
+							this.gamedatas.gamestate.args.num -= 2;
+							this.gamedatas.gamestate.args.num = Math.max(0, args.args.num)
+						} else {
+							$('LP').classList.remove("selected");
+							$('lifePreserverPanel').classList.remove("selected");
+							this.gamedatas.gamestate.args.num += 2;
+							this.gamedatas.gamestate.args.num = Math.min(5, args.args.num)
+							this.gamedatas.gamestate.args.num = args.args.num % 2 == 0 ? args.args.num - 1 : args.args.num;
+						}
+						this.statusBar.setTitle("${you} are visiting the ${shop} shop and spending ${num} fishbucks", args.args);
+					})
+					$('lifePreserverPanel').addEventListener("click", () => {
+						if (!$('LP').classList.contains("selected")) {
+							$('LP').classList.add("selected");
+							$('lifePreserverPanel').classList.add("selected");
+							this.gamedatas.gamestate.args.num -= 2;
+							this.gamedatas.gamestate.args.num = Math.max(0, args.args.num)
+						} else {
+							$('LP').classList.remove("selected");
+							$('lifePreserverPanel').classList.remove("selected");
+							this.gamedatas.gamestate.args.num += 2;
+							this.gamedatas.gamestate.args.num = Math.min(5, args.args.num)
+							this.gamedatas.gamestate.args.num = args.args.num % 2 == 0 ? args.args.num - 1 : args.args.num;
+						}
+						this.statusBar.setTitle("${you} are visiting the ${shop} shop and spending ${num} fishbucks", args.args);
+					})
+				}
+				break;
 			case "client_Sell":
 				this.fishHandStock.setSelectionMode("multiple");
 				this.fishHandStock.onSelectionChange = (selection, lastChange) => {
@@ -1043,18 +1079,24 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					break;
 				case "client_ShopValue":
 					this.statusBar.addActionButton("+", () => {
-						if (args.num < 5) {
+						if (args.num < ($('LP').classList.contains("selected") ? 3 : 5)) {
 							this.gamedatas.gamestate.args.num += 2;
+							this.gamedatas.gamestate.args.num = args.num % 2 == 0 ? args.num - 1 : args.num;
 							this.statusBar.setTitle("${you} are visiting the ${shop} shop and spending ${num} fishbucks", args);
 						}
 					}, {color: "secondary"});
 					this.statusBar.addActionButton("-", () => {
-						if (args.num > 1) {
+						if (args.num > ($('LP').classList.contains("selected") ? 0 : 1)) {
 							this.gamedatas.gamestate.args.num -= 2;
+							this.gamedatas.gamestate.args.num = Math.max(args.num, 0);
 							this.statusBar.setTitle("${you} are visiting the ${shop} shop and spending ${num} fishbucks", args);
 						}
 					}, {color: "secondary"});
-					this.statusBar.addActionButton("Confirm", () => this.bgaPerformAction("actShop", {shop: args.shop, cost: args.num}));
+					this.statusBar.addActionButton("Confirm", () => {
+						let reduction = 0;
+						reduction += $('LP').classList.contains("selected") ? 2 : 0;
+						this.bgaPerformAction("actShop", {shop: args.shop, cost: args.num, reduction: reduction})
+					});
 					this.statusBar.addActionButton("Back", () => this.setClientState("client_Shop", Object.assign(args, {"descriptionmyturn": "${you} are visiting shops"})), {color: "alert"})
 					break;
 				case "client_Sell":
@@ -1234,14 +1276,16 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 
 	public async notif_sellFish(args: any) {
 		this.gamedatas.gamestate.args.actionComplete = true;
-		let curFishbucks = document.querySelector(".fishbuck-slot:not(.hide)");
-		let curLeft = (curFishbucks as HTMLElement).style.left;
-		(curFishbucks as HTMLElement).style.left = `calc(295px + ${args.total} * 35.1px)`;
+		if (args.curFishbucks != args.total) {
+			let curFishbucks = $(`fishbuck-slot-${args.player_id}-${args.curFishbucks}`);
+			let curLeft = (curFishbucks as HTMLElement).style.left;
+			(curFishbucks as HTMLElement).style.left = `calc(295px + ${args.total} * 35.1px)`;
 
-		await new Promise(r => setTimeout(r, 800));
-		$(`fishbuck-slot-${args.player_id}-${args.total}`).classList.remove("hide");		
-		(curFishbucks as HTMLElement).classList.add("hide");
-		(curFishbucks as HTMLElement).style.left = curLeft;
+			await new Promise(r => setTimeout(r, 800));
+			$(`fishbuck-slot-${args.player_id}-${args.total}`).classList.remove("hide");		
+			(curFishbucks as HTMLElement).classList.add("hide");
+			(curFishbucks as HTMLElement).style.left = curLeft;
+		}
 
 		args.ids.forEach(async id => {
 			let fish = this.fishHandStock.getCards().filter(card => card.id == id)[0];
@@ -1275,6 +1319,19 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		})
 		this.spentStock[args.player_id].addCards(args.spent, {fromElement: $('reveal_area')})
 		$('reveal_area').remove();
+	}
+
+	public async notif_spendFishbucks(args: any) {
+		if (args.curFishbucks != args.newFishbucks) {
+			let curFishbucks = $(`fishbuck-slot-${args.player_id}-${args.curFishbucks}`);
+			let curLeft = (curFishbucks as HTMLElement).style.left;
+			(curFishbucks as HTMLElement).style.left = `calc(295px + ${args.newFishbucks} * 35.1px)`;
+
+			await new Promise(r => setTimeout(r, 800));
+			$(`fishbuck-slot-${args.player_id}-${args.newFishbucks}`).classList.remove("hide");		
+			(curFishbucks as HTMLElement).classList.add("hide");
+			(curFishbucks as HTMLElement).style.left = curLeft;
+		}
 	}
 
 	public notif_test(args: any) {

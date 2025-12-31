@@ -64,6 +64,15 @@ class ShopReveal extends GameState
 
     function onEnteringState(int $activePlayerId) {
         // the code to run when entering the state
+        $curFishbucks = $this->game->getUniqueValueFromDB("SELECT `fishbucks` FROM `player` WHERE `player_id` = $activePlayerId");
+        $newFishbucks = $curFishbucks - $this->globals->get("payingCost");
+        $this->game->DbQuery("UPDATE `player` SET `fishbucks` = $newFishbucks WHERE `player_id` = $activePlayerId");
+
+        $this->notify->all("spendFishbucks", '', [
+            "newFishbucks" => $newFishbucks,
+            "curFishbucks" => $curFishbucks,
+            "player_id" => $activePlayerId
+        ]);
     }   
 
     #[PossibleAction]

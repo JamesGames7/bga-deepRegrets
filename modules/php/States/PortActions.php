@@ -63,26 +63,34 @@ class PortActions extends GameState
     }   
 
     #[PossibleAction]
-    function actShop(string $shop, int $cost) {
+    function actShop(string $shop, int $cost, int $reduction, int $activePlayerId) {
         // FIXME pay by LP
         if (!$this->globals->get("actionComplete")) {
-            $name = "";
-            switch ($shop) {
-                case "dice":
-                    $this->game->dice->pickCardsForLocation(($cost + 1) / 2, "deck", "reveal");
-                    $name = "dice";
-                    break;
-                case "rod":
-                    $name = "rods";
-                case "reel":
-                    if (!$name) $name = "reels";
-                case "supply":
-                    if (!$name) $name = "supplies";
-                    $this->game->$name->pickCardsForLocation($cost, "deck", "reveal");
-                    break;
+            $curFishbucks = $this->game->getUniqueValueFromDB("SELECT `fishbucks` FROM `player` WHERE `player_id` = $activePlayerId");
+            $realCost = $cost + $reduction;
+            $realCost -= $realCost % 2 == 0 ? 1 : 0;
+            if ($cost <= $curFishbucks) {
+                $name = "";
+                switch ($shop) {
+                    case "dice":
+                        $this->game->dice->pickCardsForLocation(($realCost + 1) / 2, "deck", "reveal");
+                        $name = "dice";
+                        break;
+                    case "rod":
+                        $name = "rods";
+                    case "reel":
+                        if (!$name) $name = "reels";
+                    case "supply":
+                        if (!$name) $name = "supplies";
+                        $this->game->$name->pickCardsForLocation($realCost, "deck", "reveal");
+                        break;
+                }
+                $this->game->globals->set("payingCost", $cost);
+                $this->game->globals->set("curShop", $name);
+                return "shop";
+            } else {
+                throw new \BgaUserException("Cannot afford this price");
             }
-            $this->game->globals->set("curShop", $name);
-            return "shop";
         } else {
             throw new \BgaUserException("Already performed an action this turn");
         }
@@ -120,6 +128,7 @@ class PortActions extends GameState
                 "player_name" => $this->game->getActivePlayerName(),
                 "player_id" => $activePlayerId,
                 "num" => $num,
+                "curFishbucks" => $this->getArgs($activePlayerId)["curFishbucks"],
                 "fishbucks" => $inc,
                 "total" => $total,
                 "ids" => $cards
