@@ -179,6 +179,8 @@ class Game extends \Bga\GameFramework\Table
         // ! WARNING: We must only return information visible by the current player.
         $current_player_id = (int) $this->getCurrentPlayerId();
 
+        $this->fish->moveAllCardsInLocation("shoal_1", "hand", null, $current_player_id);
+
         // Get information about players.
         // NOTE: you can retrieve some extra field you added for "player" table in `dbmodel.sql` if you need it.
         $result["players"] = $this->getCollectionFromDb(
@@ -197,6 +199,11 @@ class Game extends \Bga\GameFramework\Table
             $result["players"][$id]["hand"]["reels"] = $current_player_id == $id ? $reelHandData : $this->fish->countCardInLocation("hand", $id);
             $result["players"][$id]["hand"]["rods"] = $current_player_id == $id ? $rodHandData : $this->fish->countCardInLocation("hand", $id);
             $result["players"][$id]["hand"]["supplies"] = $current_player_id == $id ? $supplyHandData : $this->fish->countCardInLocation("hand", $id);
+            $result["players"][$id]["mount"] = [
+                $this->fish->getCardsInLocation("mount1", $id),
+                $this->fish->getCardsInLocation("mount2", $id),
+                $this->fish->getCardsInLocation("mount3", $id),
+            ];
         }
 
         $result["playerOrder"] = $this->getNextPlayerTable();

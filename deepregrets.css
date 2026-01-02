@@ -399,15 +399,28 @@ Setup in js:
   pointer-events: auto;
 }
 
-.playerBoard {
-  background-image: url("img/boards/playerBoards.jpg");
+.playerBoard-wrap {
+  background-image: none;
+  pointer-events: none;
   width: calc(100% - 20px);
-  aspect-ratio: 1020/450;
-  background-size: 200% 500%;
   margin: 10px;
   max-width: 720px;
+  aspect-ratio: 1020/450;
   position: relative;
+}
+
+.playerBoard {
+  background-image: url("img/boards/playerBoards.jpg");
+  width: 100%;
+  aspect-ratio: 1020/450;
+  background-size: 200% 500%;
   border-radius: 5px;
+  pointer-events: auto;
+  z-index: 1;
+  position: absolute;
+}
+.playerBoard > * {
+  z-index: 2;
 }
 .playerBoard .freshGrid {
   width: 245px;
@@ -435,6 +448,30 @@ Setup in js:
 }
 .playerBoard .dice {
   pointer-events: auto;
+}
+
+.mountingSlots {
+  display: grid;
+  width: 689px;
+  column-gap: 6px;
+  position: absolute;
+  left: 16px;
+  height: 90px;
+  bottom: 275px;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
+  pointer-events: none;
+}
+.mountingSlots > * {
+  border-radius: 0 0 13px 13px;
+  scale: 1.41;
+  top: 35px;
+  pointer-events: auto;
+  z-index: 0;
+  transition: 0.8s ease all;
+}
+.mountingSlots > *:hover {
+  top: -215px;
 }
 
 .hide {
@@ -499,6 +536,8 @@ button.hide {
   justify-content: flex-start;
   flex-wrap: wrap;
   align-items: center;
+  margin-top: 50px;
+  pointer-events: none;
 }
 .playerComponents .provisions {
   height: 300px;

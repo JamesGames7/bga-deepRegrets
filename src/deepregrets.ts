@@ -42,6 +42,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 	public suppliesDeck = {};
 	public shipDecks: any[] = [];
 	public dinkDeck = {};
+	public mountingSlots = {};
 
 	private COLOUR_POSITION = {
 		"488fc7": 0,
@@ -516,8 +517,17 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			} else {
 				space = "beforeend";
 			}
-			$("playerBoards").insertAdjacentHTML(space, `
-				<div id="playerComponents-${player["id"]}" class="playerComponents"><div id="${id}" class="playerBoard"></div></div>
+			$("playerBoards").insertAdjacentHTML(space, /*html*/`
+				<div id="playerComponents-${player["id"]}" class="playerComponents">
+					<div id="${id}-wrap" class="playerBoard-wrap">
+						<div id="${id}" class="playerBoard"></div>
+						<div class="mountingSlots" id="mountingSlots-${player["id"]}">
+							<div id="mount-1-${player["id"]}"></div>
+							<div id="mount-2-${player["id"]}"></div>
+							<div id="mount-3-${player["id"]}"></div>
+						</div>
+					</div>
+				</div>
 			`);
 			let playerBoard: HTMLElement = $(id);
 			playerBoard.style.backgroundPositionY = `${this.COLOUR_POSITION[colour]}%`;
@@ -549,6 +559,14 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				if (player.fishbucks != i) {
 					$(`fishbuck-slot-${player["id"]}-${i}`).classList.add("hide");
 				}
+			}
+
+			this.mountingSlots[player["id"]] = []
+
+			for (let i = 1; i <= 3; i++) {
+				this.mountingSlots[player["id"]].push(new BgaCards.LineStock(this.seaCardManager, $(`mount-${i}-${player["id"]}`)));
+				this.mountingSlots[player["id"]][i - 1].addCard(cardTemplate(118 + player["id"] + i, "large", 2, [0, 8], "Test", "foul", 6, 5))
+				console.log(player);
 			}
 
 			playerBoard.insertAdjacentHTML("beforeend", `

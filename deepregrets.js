@@ -81,6 +81,7 @@ var DeepRegrets = /** @class */ (function (_super) {
         _this.suppliesDeck = {};
         _this.shipDecks = [];
         _this.dinkDeck = {};
+        _this.mountingSlots = {};
         _this.COLOUR_POSITION = {
             "488fc7": 0,
             "69ba35": -100,
@@ -461,7 +462,7 @@ var DeepRegrets = /** @class */ (function (_super) {
             else {
                 space = "beforeend";
             }
-            $("playerBoards").insertAdjacentHTML(space, "\n\t\t\t\t<div id=\"playerComponents-".concat(player["id"], "\" class=\"playerComponents\"><div id=\"").concat(id, "\" class=\"playerBoard\"></div></div>\n\t\t\t"));
+            $("playerBoards").insertAdjacentHTML(space, /*html*/ "\n\t\t\t\t<div id=\"playerComponents-".concat(player["id"], "\" class=\"playerComponents\">\n\t\t\t\t\t<div id=\"").concat(id, "-wrap\" class=\"playerBoard-wrap\">\n\t\t\t\t\t\t<div id=\"").concat(id, "\" class=\"playerBoard\"></div>\n\t\t\t\t\t\t<div class=\"mountingSlots\" id=\"mountingSlots-").concat(player["id"], "\">\n\t\t\t\t\t\t\t<div id=\"mount-1-").concat(player["id"], "\"></div>\n\t\t\t\t\t\t\t<div id=\"mount-2-").concat(player["id"], "\"></div>\n\t\t\t\t\t\t\t<div id=\"mount-3-").concat(player["id"], "\"></div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t"));
             var playerBoard = $(id);
             playerBoard.style.backgroundPositionY = "".concat(_this.COLOUR_POSITION[colour], "%");
             var position;
@@ -487,6 +488,12 @@ var DeepRegrets = /** @class */ (function (_super) {
                 if (player.fishbucks != i) {
                     $("fishbuck-slot-".concat(player["id"], "-").concat(i)).classList.add("hide");
                 }
+            }
+            _this.mountingSlots[player["id"]] = [];
+            for (var i = 1; i <= 3; i++) {
+                _this.mountingSlots[player["id"]].push(new BgaCards.LineStock(_this.seaCardManager, $("mount-".concat(i, "-").concat(player["id"]))));
+                _this.mountingSlots[player["id"]][i - 1].addCard(cardTemplate(118 + player["id"] + i, "large", 2, [0, 8], "Test", "foul", 6, 5));
+                console.log(player);
             }
             playerBoard.insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"FP-LP-".concat(player["id"], "\" class=\"FP-LP\"></div>\n\t\t\t\t<div id=\"freshGrid-").concat(player["id"], "\" class=\"freshGrid\"></div>\n\t\t\t\t<div id=\"spentGrid-").concat(player["id"], "\" class=\"spentGrid\"></div>\n\t\t\t\t<div id=\"hand-").concat(player["id"], "\" class=\"handStock\"></div>\n\t\t\t"));
             var fpLP = $("FP-LP-".concat(player["id"]));
