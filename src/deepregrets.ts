@@ -45,6 +45,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 	public mountingSlots = {};
 	public newMounted = [];
 	public clearedSpots = [];
+	public actionComplete = false;
 
 	private COLOUR_POSITION = {
 		"488fc7": 0,
@@ -1101,16 +1102,19 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					this.statusBar.addActionButton(_("Bottom"), () => this.bgaPerformAction("actSetPlace", {"place": "bottom"}));
 					break;
 				case "PortActions":
-					if (!args.actionComplete) {
+					if (!(this.gamedatas.gamestate.args.actionComplete || this.actionComplete)) {
 						this.statusBar.addActionButton("Visit a Shop", () => this.setClientState("client_Shop", Object.assign(args, {"descriptionmyturn": "${you} are visiting shops"})));
 						this.statusBar.addActionButton("Sell Fish", () => this.setClientState("client_Sell", Object.assign(args, {"descriptionmyturn": "${you} are selling ${num} fish for ${newFishbucks} fishbucks"})));
 						this.statusBar.addActionButton("Mount Fish", () => this.setClientState("client_Mount", Object.assign(args, {"descriptionmyturn": "${you} are mounting fish"})));
 						this.statusBar.addActionButton("Free Actions", () => console.log("fA"), {color: "secondary"});
+						// TODO pass
 						this.statusBar.addActionButton("Pass", () => console.log("pass"), {color: "alert"});
+						this.actionComplete = false;
 					} else {
 						// TODO add free actions port
 						this.statusBar.addActionButton("Free Actions", () => console.log("fA"), {color: "secondary"});
 						this.statusBar.addActionButton("End Turn", () => this.bgaPerformAction("actEndTurn"), {color: "alert"});
+						this.actionComplete = false;
 					}
 					break;
 				case "client_Shop":
@@ -1180,8 +1184,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 						}, {color: "secondary"});
 					} else {
 						this.statusBar.addActionButton("Roll", () => {
-							console.log(this.gamedatas.gamestate.args);
-							console.log(args["_private"].reveal);
 							let children = $('reveal_area').children;
 							for (let i = 0; i < children.length; i++) {
 								let child: any = children[i];
@@ -1388,7 +1390,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 	}
 
 	public async notif_chooseFresh(args: any) {
-		console.log(args);
 		document.querySelectorAll(".outlineDice.selected").forEach(dice => {
 			dice.remove();
 		})
@@ -1414,11 +1415,12 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 	}
 
 	public async notif_mountFish(args: any) {
-		console.log(args);
 		let fish = args.fish
 		if (!this.isCurrentPlayerActive()) {
 			this.mountingSlots[args.player_id][args.slot - 1].addCard(cardTemplate(fish.name, fish.size, fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty), {fromElement: "player_board_" + this.player_id})
 		}
+		this.actionComplete = true;
+		this.restoreServerGameState();
 	}
 
 	public notif_test(args: any) {

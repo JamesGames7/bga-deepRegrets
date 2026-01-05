@@ -84,6 +84,7 @@ var DeepRegrets = /** @class */ (function (_super) {
         _this.mountingSlots = {};
         _this.newMounted = [];
         _this.clearedSpots = [];
+        _this.actionComplete = false;
         _this.COLOUR_POSITION = {
             "488fc7": 0,
             "69ba35": -100,
@@ -999,17 +1000,20 @@ var DeepRegrets = /** @class */ (function (_super) {
                     this.statusBar.addActionButton(_("Bottom"), function () { return _this.bgaPerformAction("actSetPlace", { "place": "bottom" }); });
                     break;
                 case "PortActions":
-                    if (!args.actionComplete) {
+                    if (!(this.gamedatas.gamestate.args.actionComplete || this.actionComplete)) {
                         this.statusBar.addActionButton("Visit a Shop", function () { return _this.setClientState("client_Shop", Object.assign(args, { "descriptionmyturn": "${you} are visiting shops" })); });
                         this.statusBar.addActionButton("Sell Fish", function () { return _this.setClientState("client_Sell", Object.assign(args, { "descriptionmyturn": "${you} are selling ${num} fish for ${newFishbucks} fishbucks" })); });
                         this.statusBar.addActionButton("Mount Fish", function () { return _this.setClientState("client_Mount", Object.assign(args, { "descriptionmyturn": "${you} are mounting fish" })); });
                         this.statusBar.addActionButton("Free Actions", function () { return console.log("fA"); }, { color: "secondary" });
+                        // TODO pass
                         this.statusBar.addActionButton("Pass", function () { return console.log("pass"); }, { color: "alert" });
+                        this.actionComplete = false;
                     }
                     else {
                         // TODO add free actions port
                         this.statusBar.addActionButton("Free Actions", function () { return console.log("fA"); }, { color: "secondary" });
                         this.statusBar.addActionButton("End Turn", function () { return _this.bgaPerformAction("actEndTurn"); }, { color: "alert" });
+                        this.actionComplete = false;
                     }
                     break;
                 case "client_Shop":
@@ -1080,8 +1084,6 @@ var DeepRegrets = /** @class */ (function (_super) {
                     }
                     else {
                         this.statusBar.addActionButton("Roll", function () {
-                            console.log(_this.gamedatas.gamestate.args);
-                            console.log(args["_private"].reveal);
                             var children = $('reveal_area').children;
                             for (var i = 0; i < children.length; i++) {
                                 var child = children[i];
@@ -1354,7 +1356,6 @@ var DeepRegrets = /** @class */ (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        console.log(args);
                         document.querySelectorAll(".outlineDice.selected").forEach(function (dice) {
                             dice.remove();
                         });
@@ -1397,11 +1398,12 @@ var DeepRegrets = /** @class */ (function (_super) {
         return __awaiter(this, void 0, void 0, function () {
             var fish;
             return __generator(this, function (_a) {
-                console.log(args);
                 fish = args.fish;
                 if (!this.isCurrentPlayerActive()) {
                     this.mountingSlots[args.player_id][args.slot - 1].addCard(cardTemplate(fish.name, fish.size, fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty), { fromElement: "player_board_" + this.player_id });
                 }
+                this.actionComplete = true;
+                this.restoreServerGameState();
                 return [2 /*return*/];
             });
         });
