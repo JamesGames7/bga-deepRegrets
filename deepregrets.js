@@ -82,6 +82,8 @@ var DeepRegrets = /** @class */ (function (_super) {
         _this.shipDecks = [];
         _this.dinkDeck = {};
         _this.mountingSlots = {};
+        _this.newMounted = [];
+        _this.clearedSpots = [];
         _this.COLOUR_POSITION = {
             "488fc7": 0,
             "69ba35": -100,
@@ -195,7 +197,7 @@ var DeepRegrets = /** @class */ (function (_super) {
         this.seaCardManager = new BgaCards.Manager({
             animationManager: this.animationManager,
             type: 'fish',
-            getId: function (card) { return card.id; },
+            getId: function (card) { return card.id || card.name; },
             cardWidth: 156,
             cardHeight: 215,
             isCardVisible: function (card) {
@@ -462,7 +464,7 @@ var DeepRegrets = /** @class */ (function (_super) {
             else {
                 space = "beforeend";
             }
-            $("playerBoards").insertAdjacentHTML(space, /*html*/ "\n\t\t\t\t<div id=\"playerComponents-".concat(player["id"], "\" class=\"playerComponents\">\n\t\t\t\t\t<div id=\"").concat(id, "-wrap\" class=\"playerBoard-wrap\">\n\t\t\t\t\t\t<div id=\"").concat(id, "\" class=\"playerBoard\"></div>\n\t\t\t\t\t\t<div class=\"mountingSlots\" id=\"mountingSlots-").concat(player["id"], "\">\n\t\t\t\t\t\t\t<div id=\"mount-1-").concat(player["id"], "\"></div>\n\t\t\t\t\t\t\t<div id=\"mount-2-").concat(player["id"], "\"></div>\n\t\t\t\t\t\t\t<div id=\"mount-3-").concat(player["id"], "\"></div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t"));
+            $("playerBoards").insertAdjacentHTML(space, /*html*/ "\n\t\t\t\t<div id=\"playerComponents-".concat(player["id"], "\" class=\"playerComponents\">\n\t\t\t\t\t<div id=\"").concat(id, "-wrap\" class=\"playerBoard-wrap\">\n\t\t\t\t\t\t<div id=\"").concat(id, "\" class=\"playerBoard\"></div>\n\t\t\t\t\t\t<div class=\"mountingSlots\" id=\"mountingSlots-").concat(player["id"], "\">\n\t\t\t\t\t\t\t<div id=\"mount-1-").concat(player["id"], "\"></div>\n\t\t\t\t\t\t\t<div id=\"mount-2-").concat(player["id"], "\"></div>\n\t\t\t\t\t\t\t<div id=\"mount-3-").concat(player["id"], "\"></div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"mountClicks\">\n\t\t\t\t\t\t\t<div id=\"mount-click-1-").concat(player["id"], "\" class=\"mountClick-").concat(player["id"], "\"></div>\n\t\t\t\t\t\t\t<div id=\"mount-click-2-").concat(player["id"], "\" class=\"mountClick-").concat(player["id"], "\"></div>\n\t\t\t\t\t\t\t<div id=\"mount-click-3-").concat(player["id"], "\" class=\"mountClick-").concat(player["id"], "\"></div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div id=\"hand-").concat(player["id"], "\" class=\"handStock\"></div>\n\t\t\t"));
             var playerBoard = $(id);
             playerBoard.style.backgroundPositionY = "".concat(_this.COLOUR_POSITION[colour], "%");
             var position;
@@ -492,10 +494,12 @@ var DeepRegrets = /** @class */ (function (_super) {
             _this.mountingSlots[player["id"]] = [];
             for (var i = 1; i <= 3; i++) {
                 _this.mountingSlots[player["id"]].push(new BgaCards.LineStock(_this.seaCardManager, $("mount-".concat(i, "-").concat(player["id"]))));
-                _this.mountingSlots[player["id"]][i - 1].addCard(cardTemplate(118 + player["id"] + i, "large", 2, [0, 8], "Test", "foul", 6, 5));
-                console.log(player);
+                if (player.mount[i - 1]) {
+                    var fish = player.mount[i - 1];
+                    _this.mountingSlots[player["id"]][i - 1].addCard(cardTemplate(fish.name, fish.size, fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty));
+                }
             }
-            playerBoard.insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"FP-LP-".concat(player["id"], "\" class=\"FP-LP\"></div>\n\t\t\t\t<div id=\"freshGrid-").concat(player["id"], "\" class=\"freshGrid\"></div>\n\t\t\t\t<div id=\"spentGrid-").concat(player["id"], "\" class=\"spentGrid\"></div>\n\t\t\t\t<div id=\"hand-").concat(player["id"], "\" class=\"handStock\"></div>\n\t\t\t"));
+            playerBoard.insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"FP-LP-".concat(player["id"], "\" class=\"FP-LP\"></div>\n\t\t\t\t<div id=\"freshGrid-").concat(player["id"], "\" class=\"freshGrid\"></div>\n\t\t\t\t<div id=\"spentGrid-").concat(player["id"], "\" class=\"spentGrid\"></div>\n\t\t\t"));
             var fpLP = $("FP-LP-".concat(player["id"]));
             if (gamedatas.firstPlayer == player["id"]) {
                 fpLP.insertAdjacentHTML("beforeend", "<div id=\"FP\"></div>");
@@ -883,7 +887,31 @@ var DeepRegrets = /** @class */ (function (_super) {
                         _b.label = 13;
                     case 13: return [3 /*break*/, 16];
                     case 14:
-                        this.fishHandStock.setSelectionMode("multiple");
+                        this.fishHandStock.setSelectionMode("single");
+                        this.fishHandStock.onCardClick = function (card) {
+                            var el = document.querySelector(".selected");
+                            _this.fishHandStock.setSelectionMode("none");
+                            el.classList.add("selected");
+                            document.querySelectorAll(".mountClicks").forEach(function (el) { return el.style.pointerEvents = "auto"; });
+                            // TODO pass to backend (parse there which have already been added)
+                            document.querySelectorAll(".mountClick-" + _this.player_id).forEach(function (el) {
+                                if (!$(el.id.replace("click-", "")).dataset.empty || $(el.id.replace("click-", "")).dataset.empty == 'true') {
+                                    el.classList.add("selectable");
+                                    el.addEventListener("click", function (e) {
+                                        _this.newMounted.push(card);
+                                        _this.clearedSpots.push(parseInt(e.target.id.substring(12, 13)));
+                                        _this.mountingSlots[_this.player_id][parseInt(e.target.id.substring(12, 13)) - 1].addCard(card);
+                                        document.querySelectorAll(".selectable").forEach(function (el) {
+                                            el.classList.remove("selectable");
+                                            el.replaceWith(el.cloneNode(true));
+                                        });
+                                        _this.fishHandStock.setSelectionMode("none");
+                                        _this.fishHandStock.setSelectionMode("single");
+                                        document.querySelectorAll(".mountClicks").forEach(function (el) { return el.style.pointerEvents = "none"; });
+                                    });
+                                }
+                            });
+                        };
                         return [3 /*break*/, 16];
                     case 15:
                         if (args.args.selectedId) {
@@ -1093,9 +1121,37 @@ var DeepRegrets = /** @class */ (function (_super) {
                     }
                     break;
                 case "client_Mount":
-                    this.statusBar.addActionButton("Confirm", function () { return console.log("mount"); });
-                    this.statusBar.addActionButton("Reset", function () { return console.log("reset"); }, { color: "secondary" });
-                    this.statusBar.addActionButton("Back", function () { return _this.restoreServerGameState(); }, { color: "alert" });
+                    var ms_1 = this.mountingSlots[this.player_id];
+                    this.statusBar.addActionButton("Confirm", function () { return _this.bgaPerformAction("actMount", { "mounted": JSON.stringify([ms_1[0].getCards()[0], ms_1[1].getCards()[0], ms_1[2].getCards()[0]]) }); });
+                    this.statusBar.addActionButton("Reset", function () {
+                        _this.fishHandStock.addCards(_this.newMounted);
+                        _this.newMounted = [];
+                        document.querySelectorAll(".mountClick-".concat(_this.player_id)).forEach(function (el) {
+                            if (_this.clearedSpots.includes(parseInt(el.id.substring(12, 13)))) {
+                                el.dataset.empty = 'true';
+                            }
+                        });
+                        _this.clearedSpots = [];
+                        document.querySelectorAll(".selectable").forEach(function (el) {
+                            el.classList.remove("selectable");
+                            el.replaceWith(el.cloneNode(true));
+                        });
+                        _this.fishHandStock.setSelectionMode("none");
+                        document.querySelectorAll(".mountClicks").forEach(function (el) { return el.style.pointerEvents = "none"; });
+                        _this.fishHandStock.setSelectionMode("single");
+                    }, { color: "secondary" });
+                    this.statusBar.addActionButton("Back", function () {
+                        _this.fishHandStock.addCards(_this.newMounted);
+                        _this.newMounted = [];
+                        document.querySelectorAll(".mountClick-".concat(_this.player_id)).forEach(function (el) {
+                            if (_this.clearedSpots.includes(parseInt(el.id.substring(12, 13)))) {
+                                el.dataset.empty = 'true';
+                            }
+                        });
+                        document.querySelectorAll(".mountClicks").forEach(function (el) { return el.style.pointerEvents = "none"; });
+                        _this.clearedSpots = [];
+                        _this.restoreServerGameState();
+                    }, { color: "alert" });
                     break;
                 case "client_Confirm":
                     this.statusBar.addActionButton(_("Confirm"), function () { _this.bgaPerformAction(args.name, args.args); _this.restoreServerGameState(); });
@@ -1334,6 +1390,19 @@ var DeepRegrets = /** @class */ (function (_super) {
                         _a.label = 2;
                     case 2: return [2 /*return*/];
                 }
+            });
+        });
+    };
+    DeepRegrets.prototype.notif_mountFish = function (args) {
+        return __awaiter(this, void 0, void 0, function () {
+            var fish;
+            return __generator(this, function (_a) {
+                console.log(args);
+                fish = args.fish;
+                if (!this.isCurrentPlayerActive()) {
+                    this.mountingSlots[args.player_id][args.slot - 1].addCard(cardTemplate(fish.name, fish.size, fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty), { fromElement: "player_board_" + this.player_id });
+                }
+                return [2 /*return*/];
             });
         });
     };

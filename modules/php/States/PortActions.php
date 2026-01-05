@@ -139,8 +139,35 @@ class PortActions extends GameState
     }
 
     #[PossibleAction]
-    function actMount(int $fishId) {
-        
+    function actMount(string $mounted, int $activePlayerId) {
+        $mounted = json_decode($mounted);
+        $change = false;
+        for ($i = 1; $i <= 3; $i++) {
+            if ($mounted[$i - 1] && count($this->game->fish->getCardsInLocation("mount$i")) == 0) {
+                $change = true;
+
+                $target = array_filter($this->game->lists->getFish(), fn($fish) => $fish->getName() == $mounted[$i - 1]->name);
+
+                $targetDeck = $this->game->fish->getCardsOfTypeInLocation(array_keys($target)[0], null, "hand", $activePlayerId);
+
+                if (count($targetDeck) != 0) {
+                    $this->game->fish->moveCard(array_keys($targetDeck)[0], "mount$i", $activePlayerId);
+                    $this->notify->all("mountFish", '${player_name} mounted the ${name} in slot ${slot}', [
+                        "player_name" => $this->game->getActivePlayerName(),
+                        "player_id" => $activePlayerId,
+                        "name" => array_values($target)[0]->getName(),
+                        "slot" => $i,
+                        "fish" => array_values($target)[0]->getData()
+                    ]);
+                } else {
+                    throw new \BgaUserException("Unexpected error, please submit a bug report titled 'mount from hand issue'");
+                }
+            }
+        }
+
+        if (!$change) {
+            throw new \BgaUserException("Must mount at least one fish");
+        }
     }
 
     #[PossibleAction]

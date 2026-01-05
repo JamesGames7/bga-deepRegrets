@@ -43,6 +43,8 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 	public shipDecks: any[] = [];
 	public dinkDeck = {};
 	public mountingSlots = {};
+	public newMounted = [];
+	public clearedSpots = [];
 
 	private COLOUR_POSITION = {
 		"488fc7": 0,
@@ -213,7 +215,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
         this.seaCardManager = new BgaCards.Manager({
             animationManager: this.animationManager,
             type: 'fish',
-            getId: (card) => (card as any).id,
+            getId: (card) => (card as any).id || (card as any).name,
 			cardWidth: 156,
 			cardHeight: 215,
 			isCardVisible(card: {coords}) {
@@ -526,8 +528,14 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 							<div id="mount-2-${player["id"]}"></div>
 							<div id="mount-3-${player["id"]}"></div>
 						</div>
+						<div class="mountClicks">
+							<div id="mount-click-1-${player["id"]}" class="mountClick-${player["id"]}"></div>
+							<div id="mount-click-2-${player["id"]}" class="mountClick-${player["id"]}"></div>
+							<div id="mount-click-3-${player["id"]}" class="mountClick-${player["id"]}"></div>
+						</div>
 					</div>
 				</div>
+				<div id="hand-${player["id"]}" class="handStock"></div>
 			`);
 			let playerBoard: HTMLElement = $(id);
 			playerBoard.style.backgroundPositionY = `${this.COLOUR_POSITION[colour]}%`;
@@ -565,15 +573,16 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 
 			for (let i = 1; i <= 3; i++) {
 				this.mountingSlots[player["id"]].push(new BgaCards.LineStock(this.seaCardManager, $(`mount-${i}-${player["id"]}`)));
-				this.mountingSlots[player["id"]][i - 1].addCard(cardTemplate(118 + player["id"] + i, "large", 2, [0, 8], "Test", "foul", 6, 5))
-				console.log(player);
+				if (player.mount[i - 1]) {
+					let fish = player.mount[i - 1]
+					this.mountingSlots[player["id"]][i - 1].addCard(cardTemplate(fish.name, fish.size, fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty))
+				}
 			}
 
 			playerBoard.insertAdjacentHTML("beforeend", `
 				<div id="FP-LP-${player["id"]}" class="FP-LP"></div>
 				<div id="freshGrid-${player["id"]}" class="freshGrid"></div>
 				<div id="spentGrid-${player["id"]}" class="spentGrid"></div>
-				<div id="hand-${player["id"]}" class="handStock"></div>
 			`)
 
 			let fpLP = $(`FP-LP-${player["id"]}`);
@@ -981,7 +990,31 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				}
 				break;
 			case "client_Mount":
-				this.fishHandStock.setSelectionMode("multiple");
+				this.fishHandStock.setSelectionMode("single");
+				this.fishHandStock.onCardClick = (card) => {
+					let el = document.querySelector(".selected")
+					this.fishHandStock.setSelectionMode("none");
+					el.classList.add("selected")
+					document.querySelectorAll(".mountClicks").forEach(el => (el as HTMLElement).style.pointerEvents = "auto");
+					// TODO pass to backend (parse there which have already been added)
+					document.querySelectorAll(".mountClick-" + this.player_id).forEach(el => {
+						if (!$(el.id.replace("click-", "")).dataset.empty || $(el.id.replace("click-", "")).dataset.empty == 'true') {
+							el.classList.add("selectable")
+							el.addEventListener("click", e => {
+								this.newMounted.push(card);
+								this.clearedSpots.push(parseInt((e.target as HTMLElement).id.substring(12, 13)))
+								this.mountingSlots[this.player_id][parseInt((e.target as HTMLElement).id.substring(12, 13)) - 1].addCard(card)
+								document.querySelectorAll(".selectable").forEach(el => {
+									el.classList.remove("selectable");
+									el.replaceWith(el.cloneNode(true))
+								})
+								this.fishHandStock.setSelectionMode("none");
+								this.fishHandStock.setSelectionMode("single");
+								document.querySelectorAll(".mountClicks").forEach(el => (el as HTMLElement).style.pointerEvents = "none");
+							})
+						}
+					})
+				}
 				break;
 			case "client_Confirm":
 				if (args.args.selectedId) {
@@ -1186,9 +1219,37 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					}
 					break;
 				case "client_Mount":
-					this.statusBar.addActionButton("Confirm", () => console.log("mount"));
-					this.statusBar.addActionButton("Reset", () => console.log("reset"), {color: "secondary"});
-					this.statusBar.addActionButton("Back", () => this.restoreServerGameState(), {color: "alert"});
+					let ms = this.mountingSlots[this.player_id];
+					this.statusBar.addActionButton("Confirm", () => this.bgaPerformAction("actMount", {"mounted": JSON.stringify([ms[0].getCards()[0], ms[1].getCards()[0], ms[2].getCards()[0]])}));
+					this.statusBar.addActionButton("Reset", () => {
+						this.fishHandStock.addCards(this.newMounted); 
+						this.newMounted = []
+						document.querySelectorAll(`.mountClick-${this.player_id}`).forEach(el => {
+							if (this.clearedSpots.includes(parseInt(el.id.substring(12, 13)))) {
+								(el as HTMLElement).dataset.empty = 'true'
+							}
+						})
+						this.clearedSpots = []
+						document.querySelectorAll(".selectable").forEach(el => {
+							el.classList.remove("selectable");
+							el.replaceWith(el.cloneNode(true))
+						})
+						this.fishHandStock.setSelectionMode("none");
+						document.querySelectorAll(".mountClicks").forEach(el => (el as HTMLElement).style.pointerEvents = "none");
+						this.fishHandStock.setSelectionMode("single");
+					}, {color: "secondary"})
+					this.statusBar.addActionButton("Back", () => {
+						this.fishHandStock.addCards(this.newMounted); 
+						this.newMounted = []
+						document.querySelectorAll(`.mountClick-${this.player_id}`).forEach(el => {
+							if (this.clearedSpots.includes(parseInt(el.id.substring(12, 13)))) {
+								(el as HTMLElement).dataset.empty = 'true'
+							}
+						})
+						document.querySelectorAll(".mountClicks").forEach(el => (el as HTMLElement).style.pointerEvents = "none");
+						this.clearedSpots = []
+						this.restoreServerGameState()
+					}, {color: "alert"});
 					break;
 				case "client_Confirm":
 					this.statusBar.addActionButton(_("Confirm"), () => {this.bgaPerformAction(args.name, args.args); this.restoreServerGameState()});
@@ -1349,6 +1410,14 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			$(`fishbuck-slot-${args.player_id}-${args.newFishbucks}`).classList.remove("hide");		
 			(curFishbucks as HTMLElement).classList.add("hide");
 			(curFishbucks as HTMLElement).style.left = curLeft;
+		}
+	}
+
+	public async notif_mountFish(args: any) {
+		console.log(args);
+		let fish = args.fish
+		if (!this.isCurrentPlayerActive()) {
+			this.mountingSlots[args.player_id][args.slot - 1].addCard(cardTemplate(fish.name, fish.size, fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty), {fromElement: "player_board_" + this.player_id})
 		}
 	}
 

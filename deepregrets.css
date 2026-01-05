@@ -472,6 +472,27 @@ Setup in js:
 }
 .mountingSlots > *:hover {
   top: -215px;
+  z-index: 5;
+}
+
+.mountClicks {
+  display: grid;
+  width: 689px;
+  column-gap: 6px;
+  position: absolute;
+  left: 16px;
+  height: 90px;
+  bottom: 275px;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
+  z-index: 5;
+  pointer-events: auto;
+}
+.mountClicks > * {
+  border-radius: 13px;
+}
+.mountClicks > *.selectable, .mountClicks > *.selected, .mountClicks > *.selectable:hover {
+  outline-width: 3px;
 }
 
 .hide {
@@ -538,6 +559,8 @@ button.hide {
   align-items: center;
   margin-top: 50px;
   pointer-events: none;
+  position: relative;
+  z-index: 1;
 }
 .playerComponents .provisions {
   height: 300px;
@@ -608,7 +631,7 @@ button.hide {
 #madness_board {
   position: fixed;
   bottom: 5px;
-  z-index: 6;
+  z-index: 20;
   transition: all 1s ease;
 }
 #madness_board #tinyMadness {
@@ -812,7 +835,7 @@ button.hide {
   position: fixed;
   bottom: -175px;
   left: 170px;
-  z-index: 5;
+  z-index: 10;
   width: fit-content;
   max-width: calc(100vw - 440px);
   transition: all 0.8s ease;

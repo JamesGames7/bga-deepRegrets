@@ -58,6 +58,7 @@ class RodReel extends GameState
 
     function onEnteringState(int $activePlayerId) {
         // the code to run when entering the state
+        // TODO handle front end
         $totalRods = $this->game->rods->countCardsInLocation("hand", $activePlayerId) + $this->game->rods->countCardsInLocation("equip", $activePlayerId);
         $totalReels = $this->game->reels->countCardsInLocation("hand", $activePlayerId) + $this->game->reels->countCardsInLocation("equip", $activePlayerId);
         if ($totalRods <= 1 && $totalReels <= 1) {
