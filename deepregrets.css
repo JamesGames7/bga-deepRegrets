@@ -486,7 +486,7 @@ Setup in js:
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr;
   z-index: 5;
-  pointer-events: auto;
+  pointer-events: none;
 }
 .mountClicks > * {
   border-radius: 13px;
@@ -744,6 +744,11 @@ button.hide {
   background-position-x: -100%;
   background-position-y: -20%;
   background-size: 200% auto;
+}
+
+.icon {
+  height: 1em;
+  width: 1em;
 }
 
 #firstPlayerPanel {

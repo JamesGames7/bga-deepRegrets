@@ -38,7 +38,8 @@ class FinishFish extends GameState
             "selected" => $selected,
             "LP" => $this->globals->get("lifePreserver") == $activePlayerId,
             "target" => $targetCard->getDifficulty(),
-            "num" => 0
+            "num" => 0,
+            "gameUrl" => ''
         ];
     } 
 

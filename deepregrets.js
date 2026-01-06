@@ -706,6 +706,8 @@ var DeepRegrets = /** @class */ (function (_super) {
                         return [3 /*break*/, 16];
                     case 3:
                         if (this.isCurrentPlayerActive()) {
+                            this.gamedatas.gamestate.args.gameUrl = g_gamethemeurl;
+                            this.statusBar.setTitle('${you} must pay for the fish (${num}<img src="' + g_gamethemeurl + 'img/icons/Catch.png" alt="fishbucks" class="icon"> / ${target}<img src="' + g_gamethemeurl + 'img/icons/Catch.png" alt="fishbucks" class="icon">)', args.args);
                             shoalArr = shoalnumToArr(args.args.selected);
                             shoal = $("shoal_".concat(shoalArr[0], "_").concat(shoalArr[1]));
                             shoal.classList.add("selected");
@@ -719,7 +721,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 }
                                 args.args.num = _this.gamedatas.gamestate.args.num;
                                 $("finishFishButton").disabled = args.args.num < args.args.target;
-                                _this.statusBar.setTitle('${you} must pay for the fish (${num} / ${target})', args.args);
+                                _this.statusBar.setTitle('${you} must pay for the fish (${num}<img src="' + g_gamethemeurl + 'img/icons/Catch.png" alt="fishbucks" class="icon"> / ${target}<img src="' + g_gamethemeurl + 'img/icons/Catch.png" alt="fishbucks" class="icon">)', args.args);
                             };
                             if (args.args.LP) {
                                 ["LP", "lifePreserverPanel"].forEach(function (id) {
@@ -737,7 +739,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                                         }
                                         args.args.num = _this.gamedatas.gamestate.args.num;
                                         $("finishFishButton").disabled = args.args.num < args.args.target;
-                                        _this.statusBar.setTitle('${you} must pay for the fish (${num} / ${target})', args.args);
+                                        _this.statusBar.setTitle('${you} must pay for the fish (${num}<img src="' + g_gamethemeurl + 'img/icons/Catch.png" alt="fishbucks" class="icon"> / ${target}<img src="' + g_gamethemeurl + 'img/icons/Catch.png" alt="fishbucks" class="icon">)', args.args);
                                     });
                                 });
                             }
@@ -808,7 +810,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                                     _this.gamedatas.gamestate.args.num = Math.min(5, args.args.num);
                                     _this.gamedatas.gamestate.args.num = args.args.num % 2 == 0 ? args.args.num - 1 : args.args.num;
                                 }
-                                _this.statusBar.setTitle("${you} are visiting the ${shop} shop and spending ${num} fishbucks", args.args);
+                                _this.statusBar.setTitle('${you} are visiting the ${shop} shop and spending ${num} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args.args);
                             });
                             $('lifePreserverPanel').addEventListener("click", function () {
                                 if (!$('LP').classList.contains("selected")) {
@@ -824,7 +826,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                                     _this.gamedatas.gamestate.args.num = Math.min(5, args.args.num);
                                     _this.gamedatas.gamestate.args.num = args.args.num % 2 == 0 ? args.args.num - 1 : args.args.num;
                                 }
-                                _this.statusBar.setTitle("${you} are visiting the ${shop} shop and spending ${num} fishbucks", args.args);
+                                _this.statusBar.setTitle('${you} are visiting the ${shop} shop and spending ${num} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args.args);
                             });
                         }
                         return [3 /*break*/, 16];
@@ -842,7 +844,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 _this.gamedatas.gamestate.args.num--;
                             }
                             _this.gamedatas.gamestate.args.display = args.args.newFishbucks + parseInt(args.args.curFishbucks) > 10 ? 10 : args.args.newFishbucks;
-                            _this.statusBar.setTitle("${you} are selling ${num} fish for ${display} fishbucks", args.args);
+                            _this.statusBar.setTitle('${you} are selling ${num} fish for ${display} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args.args);
                         };
                         return [3 /*break*/, 16];
                     case 10:
@@ -965,7 +967,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                         }
                         _this.gamedatas.gamestate.args.num = 0;
                         $("finishFishButton").disabled = true;
-                        _this.statusBar.setTitle('${you} must pay for the fish (${num} / ${target})', args);
+                        _this.statusBar.setTitle('${you} must pay for the fish (${num}<img src="' + g_gamethemeurl + 'img/icons/Catch.png" alt="fishbucks" class="icon"> / ${target}<img src="' + g_gamethemeurl + 'img/icons/Catch.png" alt="fishbucks" class="icon">)', args);
                     }, { color: "secondary" });
                     break;
                 case "client_FreeSeaActions":
@@ -1002,7 +1004,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                 case "PortActions":
                     if (!(this.gamedatas.gamestate.args.actionComplete || this.actionComplete)) {
                         this.statusBar.addActionButton("Visit a Shop", function () { return _this.setClientState("client_Shop", Object.assign(args, { "descriptionmyturn": "${you} are visiting shops" })); });
-                        this.statusBar.addActionButton("Sell Fish", function () { return _this.setClientState("client_Sell", Object.assign(args, { "descriptionmyturn": "${you} are selling ${num} fish for ${newFishbucks} fishbucks" })); });
+                        this.statusBar.addActionButton("Sell Fish", function () { return _this.setClientState("client_Sell", Object.assign(args, { "descriptionmyturn": '${you} are selling ${num} fish for ${newFishbucks} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">' })); });
                         this.statusBar.addActionButton("Mount Fish", function () { return _this.setClientState("client_Mount", Object.assign(args, { "descriptionmyturn": "${you} are mounting fish" })); });
                         this.statusBar.addActionButton("Free Actions", function () { return console.log("fA"); }, { color: "secondary" });
                         // TODO pass
@@ -1018,16 +1020,16 @@ var DeepRegrets = /** @class */ (function (_super) {
                     break;
                 case "client_Shop":
                     if (!args.dice) {
-                        this.statusBar.addActionButton("Dice Shop", function () { return _this.setClientState("client_ShopValue", { descriptionmyturn: "${you} are visiting the ${shop} shop and spending ${num} fishbucks", args: { shop: "dice", num: 1 } }); });
+                        this.statusBar.addActionButton("Dice Shop", function () { return _this.setClientState("client_ShopValue", { descriptionmyturn: '${you} are visiting the ${shop} shop and spending ${num} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args: { shop: "dice", num: 1 } }); });
                     }
                     if (!args.rods) {
-                        this.statusBar.addActionButton("Rod Shop", function () { return _this.setClientState("client_ShopValue", { descriptionmyturn: "${you} are visiting the ${shop} shop and spending ${num} fishbucks", args: { shop: "rod", num: 1 } }); });
+                        this.statusBar.addActionButton("Rod Shop", function () { return _this.setClientState("client_ShopValue", { descriptionmyturn: '${you} are visiting the ${shop} shop and spending ${num} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args: { shop: "rod", num: 1 } }); });
                     }
                     if (!args.reels) {
-                        this.statusBar.addActionButton("Reel Shop", function () { return _this.setClientState("client_ShopValue", { descriptionmyturn: "${you} are visiting the ${shop} shop and spending ${num} fishbucks", args: { shop: "reel", num: 1 } }); });
+                        this.statusBar.addActionButton("Reel Shop", function () { return _this.setClientState("client_ShopValue", { descriptionmyturn: '${you} are visiting the ${shop} shop and spending ${num} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args: { shop: "reel", num: 1 } }); });
                     }
                     if (!args.supplies) {
-                        this.statusBar.addActionButton("Supply Shop", function () { return _this.setClientState("client_ShopValue", { descriptionmyturn: "${you} are visiting the ${shop} shop and spending ${num} fishbucks", args: { shop: "supply", num: 1 } }); });
+                        this.statusBar.addActionButton("Supply Shop", function () { return _this.setClientState("client_ShopValue", { descriptionmyturn: '${you} are visiting the ${shop} shop and spending ${num} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args: { shop: "supply", num: 1 } }); });
                     }
                     this.statusBar.addActionButton("Back", function () { return _this.restoreServerGameState(); }, { color: "alert" });
                     break;
@@ -1036,14 +1038,14 @@ var DeepRegrets = /** @class */ (function (_super) {
                         if (args.num < ($('LP').classList.contains("selected") ? 3 : 5)) {
                             _this.gamedatas.gamestate.args.num += 2;
                             _this.gamedatas.gamestate.args.num = args.num % 2 == 0 ? args.num - 1 : args.num;
-                            _this.statusBar.setTitle("${you} are visiting the ${shop} shop and spending ${num} fishbucks", args);
+                            _this.statusBar.setTitle('${you} are visiting the ${shop} shop and spending ${num} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args);
                         }
                     }, { color: "secondary" });
                     this.statusBar.addActionButton("-", function () {
                         if (args.num > ($('LP').classList.contains("selected") ? 0 : 1)) {
                             _this.gamedatas.gamestate.args.num -= 2;
                             _this.gamedatas.gamestate.args.num = Math.max(args.num, 0);
-                            _this.statusBar.setTitle("${you} are visiting the ${shop} shop and spending ${num} fishbucks", args);
+                            _this.statusBar.setTitle('${you} are visiting the ${shop} shop and spending ${num} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args);
                         }
                     }, { color: "secondary" });
                     this.statusBar.addActionButton("Confirm", function () {
@@ -1063,14 +1065,14 @@ var DeepRegrets = /** @class */ (function (_super) {
                         _this.gamedatas.gamestate.args.newFishbucks = totalSelection;
                         _this.gamedatas.gamestate.args.display = args.newFishbucks + parseInt(args.curFishbucks) > 10 ? 10 : args.newFishbucks;
                         _this.gamedatas.gamestate.args.num = _this.fishHandStock.getSelection().length;
-                        _this.statusBar.setTitle("${you} are selling ${num} fish for ${display} fishbucks", args);
+                        _this.statusBar.setTitle('${you} are selling ${num} fish for ${display} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args);
                     }, { color: "secondary" });
                     this.statusBar.addActionButton("Reset", function () {
                         _this.fishHandStock.unselectAll(true);
                         _this.gamedatas.gamestate.args.newFishbucks = 0;
                         _this.gamedatas.gamestate.args.display = 0;
                         _this.gamedatas.gamestate.args.num = 0;
-                        _this.statusBar.setTitle("${you} are selling ${num} fish for ${display} fishbucks", args);
+                        _this.statusBar.setTitle('${you} are selling ${num} fish for ${display} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args);
                     }, { color: "secondary" });
                     this.statusBar.addActionButton("Back", function () { return _this.restoreServerGameState(); }, { color: "alert" });
                     break;

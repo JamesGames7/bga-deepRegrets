@@ -179,7 +179,8 @@ class Game extends \Bga\GameFramework\Table
         // ! WARNING: We must only return information visible by the current player.
         $current_player_id = (int) $this->getCurrentPlayerId();
 
-        $this->fish->moveAllCardsInLocation("shoal_1", "hand", null, $current_player_id);
+        // FIXME remove
+        $this->fish->moveAllCardsInLocation("hand", "hand", null, $current_player_id);
 
         // Get information about players.
         // NOTE: you can retrieve some extra field you added for "player" table in `dbmodel.sql` if you need it.

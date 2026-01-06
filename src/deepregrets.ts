@@ -795,6 +795,8 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				break;
 			case "FinishFish":
 				if (this.isCurrentPlayerActive()) {
+					this.gamedatas.gamestate.args.gameUrl = g_gamethemeurl;
+					this.statusBar.setTitle('${you} must pay for the fish (${num}<img src="' + g_gamethemeurl + 'img/icons/Catch.png" alt="fishbucks" class="icon"> / ${target}<img src="' + g_gamethemeurl + 'img/icons/Catch.png" alt="fishbucks" class="icon">)', args.args);
 					let shoalArr = shoalnumToArr(args.args.selected);
 					let shoal = $(`shoal_${shoalArr[0]}_${shoalArr[1]}`);
 					shoal.classList.add("selected");
@@ -808,7 +810,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 						}
 						args.args.num = this.gamedatas.gamestate.args.num;
 						($("finishFishButton") as any).disabled = args.args.num < args.args.target;
-						this.statusBar.setTitle('${you} must pay for the fish (${num} / ${target})', args.args);
+						this.statusBar.setTitle('${you} must pay for the fish (${num}<img src="' + g_gamethemeurl + 'img/icons/Catch.png" alt="fishbucks" class="icon"> / ${target}<img src="' + g_gamethemeurl + 'img/icons/Catch.png" alt="fishbucks" class="icon">)', args.args);
 					}
 
 					if (args.args.LP) {
@@ -826,7 +828,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 								}
 								args.args.num = this.gamedatas.gamestate.args.num;
 								($("finishFishButton") as any).disabled = args.args.num < args.args.target;
-								this.statusBar.setTitle('${you} must pay for the fish (${num} / ${target})', args.args);
+								this.statusBar.setTitle('${you} must pay for the fish (${num}<img src="' + g_gamethemeurl + 'img/icons/Catch.png" alt="fishbucks" class="icon"> / ${target}<img src="' + g_gamethemeurl + 'img/icons/Catch.png" alt="fishbucks" class="icon">)', args.args);
 							})
 						})
 					}
@@ -899,7 +901,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 							this.gamedatas.gamestate.args.num = Math.min(5, args.args.num)
 							this.gamedatas.gamestate.args.num = args.args.num % 2 == 0 ? args.args.num - 1 : args.args.num;
 						}
-						this.statusBar.setTitle("${you} are visiting the ${shop} shop and spending ${num} fishbucks", args.args);
+						this.statusBar.setTitle('${you} are visiting the ${shop} shop and spending ${num} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args.args);
 					})
 					$('lifePreserverPanel').addEventListener("click", () => {
 						if (!$('LP').classList.contains("selected")) {
@@ -914,7 +916,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 							this.gamedatas.gamestate.args.num = Math.min(5, args.args.num)
 							this.gamedatas.gamestate.args.num = args.args.num % 2 == 0 ? args.args.num - 1 : args.args.num;
 						}
-						this.statusBar.setTitle("${you} are visiting the ${shop} shop and spending ${num} fishbucks", args.args);
+						this.statusBar.setTitle('${you} are visiting the ${shop} shop and spending ${num} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args.args);
 					})
 				}
 				break;
@@ -931,7 +933,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 						this.gamedatas.gamestate.args.num--;
 					}
 					this.gamedatas.gamestate.args.display = args.args.newFishbucks + parseInt(args.args.curFishbucks) > 10 ? 10 : args.args.newFishbucks;
-					this.statusBar.setTitle("${you} are selling ${num} fish for ${display} fishbucks", args.args)
+					this.statusBar.setTitle('${you} are selling ${num} fish for ${display} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args.args)
 				}
 				break;
 			case "ShopReveal":
@@ -1065,7 +1067,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 						}
 						this.gamedatas.gamestate.args.num = 0;
 						($("finishFishButton") as any).disabled = true;
-						this.statusBar.setTitle('${you} must pay for the fish (${num} / ${target})', args);
+						this.statusBar.setTitle('${you} must pay for the fish (${num}<img src="' + g_gamethemeurl + 'img/icons/Catch.png" alt="fishbucks" class="icon"> / ${target}<img src="' + g_gamethemeurl + 'img/icons/Catch.png" alt="fishbucks" class="icon">)', args);
 					}, {color: "secondary"})
 					break;
 				case "client_FreeSeaActions":
@@ -1104,7 +1106,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				case "PortActions":
 					if (!(this.gamedatas.gamestate.args.actionComplete || this.actionComplete)) {
 						this.statusBar.addActionButton("Visit a Shop", () => this.setClientState("client_Shop", Object.assign(args, {"descriptionmyturn": "${you} are visiting shops"})));
-						this.statusBar.addActionButton("Sell Fish", () => this.setClientState("client_Sell", Object.assign(args, {"descriptionmyturn": "${you} are selling ${num} fish for ${newFishbucks} fishbucks"})));
+						this.statusBar.addActionButton("Sell Fish", () => this.setClientState("client_Sell", Object.assign(args, {"descriptionmyturn": '${you} are selling ${num} fish for ${newFishbucks} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">'})));
 						this.statusBar.addActionButton("Mount Fish", () => this.setClientState("client_Mount", Object.assign(args, {"descriptionmyturn": "${you} are mounting fish"})));
 						this.statusBar.addActionButton("Free Actions", () => console.log("fA"), {color: "secondary"});
 						// TODO pass
@@ -1119,16 +1121,16 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					break;
 				case "client_Shop":
 					if (!args.dice) {
-						this.statusBar.addActionButton("Dice Shop", () => this.setClientState("client_ShopValue", {descriptionmyturn: "${you} are visiting the ${shop} shop and spending ${num} fishbucks", args: {shop: "dice", num: 1}}));
+						this.statusBar.addActionButton("Dice Shop", () => this.setClientState("client_ShopValue", {descriptionmyturn: '${you} are visiting the ${shop} shop and spending ${num} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args: {shop: "dice", num: 1}}));
 					}
 					if (!args.rods) {
-						this.statusBar.addActionButton("Rod Shop", () => this.setClientState("client_ShopValue", {descriptionmyturn: "${you} are visiting the ${shop} shop and spending ${num} fishbucks", args: {shop: "rod", num: 1}}));
+						this.statusBar.addActionButton("Rod Shop", () => this.setClientState("client_ShopValue", {descriptionmyturn: '${you} are visiting the ${shop} shop and spending ${num} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args: {shop: "rod", num: 1}}));
 					}
 					if (!args.reels) {
-						this.statusBar.addActionButton("Reel Shop", () => this.setClientState("client_ShopValue", {descriptionmyturn: "${you} are visiting the ${shop} shop and spending ${num} fishbucks", args: {shop: "reel", num: 1}}));
+						this.statusBar.addActionButton("Reel Shop", () => this.setClientState("client_ShopValue", {descriptionmyturn: '${you} are visiting the ${shop} shop and spending ${num} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args: {shop: "reel", num: 1}}));
 					}
 					if (!args.supplies) {
-						this.statusBar.addActionButton("Supply Shop", () => this.setClientState("client_ShopValue", {descriptionmyturn: "${you} are visiting the ${shop} shop and spending ${num} fishbucks", args: {shop: "supply", num: 1}}));
+						this.statusBar.addActionButton("Supply Shop", () => this.setClientState("client_ShopValue", {descriptionmyturn: '${you} are visiting the ${shop} shop and spending ${num} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args: {shop: "supply", num: 1}}));
 					}
 					this.statusBar.addActionButton("Back", () => this.restoreServerGameState(), {color: "alert"});
 					break;
@@ -1137,14 +1139,14 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 						if (args.num < ($('LP').classList.contains("selected") ? 3 : 5)) {
 							this.gamedatas.gamestate.args.num += 2;
 							this.gamedatas.gamestate.args.num = args.num % 2 == 0 ? args.num - 1 : args.num;
-							this.statusBar.setTitle("${you} are visiting the ${shop} shop and spending ${num} fishbucks", args);
+							this.statusBar.setTitle('${you} are visiting the ${shop} shop and spending ${num} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args);
 						}
 					}, {color: "secondary"});
 					this.statusBar.addActionButton("-", () => {
 						if (args.num > ($('LP').classList.contains("selected") ? 0 : 1)) {
 							this.gamedatas.gamestate.args.num -= 2;
 							this.gamedatas.gamestate.args.num = Math.max(args.num, 0);
-							this.statusBar.setTitle("${you} are visiting the ${shop} shop and spending ${num} fishbucks", args);
+							this.statusBar.setTitle('${you} are visiting the ${shop} shop and spending ${num} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args);
 						}
 					}, {color: "secondary"});
 					this.statusBar.addActionButton("Confirm", () => {
@@ -1164,14 +1166,14 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 						this.gamedatas.gamestate.args.newFishbucks = totalSelection;
 						this.gamedatas.gamestate.args.display = args.newFishbucks + parseInt(args.curFishbucks) > 10 ? 10 : args.newFishbucks;
 						this.gamedatas.gamestate.args.num = this.fishHandStock.getSelection().length;
-						this.statusBar.setTitle("${you} are selling ${num} fish for ${display} fishbucks", args);
+						this.statusBar.setTitle('${you} are selling ${num} fish for ${display} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args);
 					}, {color: "secondary"});
 					this.statusBar.addActionButton("Reset", () => {
 						this.fishHandStock.unselectAll(true);
 						this.gamedatas.gamestate.args.newFishbucks = 0;
 						this.gamedatas.gamestate.args.display = 0;
 						this.gamedatas.gamestate.args.num = 0;
-						this.statusBar.setTitle("${you} are selling ${num} fish for ${display} fishbucks", args);
+						this.statusBar.setTitle('${you} are selling ${num} fish for ${display} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args);
 					}, {color: "secondary"});
 					this.statusBar.addActionButton("Back", () => this.restoreServerGameState(), {color: "alert"});
 					break;
