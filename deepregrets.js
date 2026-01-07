@@ -409,7 +409,6 @@ var DeepRegrets = /** @class */ (function (_super) {
                 div.style.borderRadius = "5px";
             },
             setupFrontDiv: function (dink, div) {
-                console.log(dink);
                 div.style.backgroundSize = "700% 400%";
                 if (dink.type) {
                     div.style.backgroundPositionX = "-".concat(dink.type[0], "00%");
@@ -559,7 +558,6 @@ var DeepRegrets = /** @class */ (function (_super) {
                 $("hand-".concat(player["id"])).insertAdjacentHTML("beforeend", "<div id=\"dinkHand\"></div>");
                 _this.dinkHandStock = new BgaCards.LineStock(_this.dinksManager, $("dinkHand"), { gap: "5px", wrap: "nowrap", center: false });
                 player.hand.dinks.forEach(function (dink) {
-                    console.log(dink);
                     _this.dinkHandStock.addCard(dink);
                 });
             }
@@ -1023,8 +1021,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                         this.statusBar.addActionButton("Sell Fish", function () { return _this.setClientState("client_Sell", Object.assign(args, { "descriptionmyturn": '${you} are selling ${num} fish for ${newFishbucks} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">' })); });
                         this.statusBar.addActionButton("Mount Fish", function () { return _this.setClientState("client_Mount", Object.assign(args, { "descriptionmyturn": "${you} are mounting fish" })); });
                         this.statusBar.addActionButton("Free Actions", function () { return console.log("fA"); }, { color: "secondary" });
-                        // TODO pass
-                        this.statusBar.addActionButton("Pass", function () { return console.log("pass"); }, { color: "alert" });
+                        this.statusBar.addActionButton("Pass", function () { return _this.bgaPerformAction("actPass"); }, { color: "alert" });
                         this.actionComplete = false;
                     }
                     else {
@@ -1172,6 +1169,10 @@ var DeepRegrets = /** @class */ (function (_super) {
                         _this.clearedSpots = [];
                         _this.restoreServerGameState();
                     }, { color: "alert" });
+                    break;
+                case "PassAction":
+                    this.statusBar.addActionButton("Discard Regret", function () { return console.log("discard"); });
+                    this.statusBar.addActionButton("Draw Dink", function () { return _this.bgaPerformAction("actDraw"); });
                     break;
                 case "client_Confirm":
                     this.statusBar.addActionButton(_("Confirm"), function () { _this.bgaPerformAction(args.name, args.args); _this.restoreServerGameState(); });
@@ -1416,12 +1417,28 @@ var DeepRegrets = /** @class */ (function (_super) {
         return __awaiter(this, void 0, void 0, function () {
             var fish;
             return __generator(this, function (_a) {
-                fish = args.fish;
-                if (!this.isCurrentPlayerActive()) {
-                    this.mountingSlots[args.player_id][args.slot - 1].addCard(cardTemplate(fish.name, fish.size, fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty), { fromElement: "player_board_" + this.player_id });
+                switch (_a.label) {
+                    case 0:
+                        fish = args.fish;
+                        if (!!this.isCurrentPlayerActive()) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.mountingSlots[args.player_id][args.slot - 1].addCard(cardTemplate(fish.name, fish.size, fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty), { fromElement: "player_board_" + this.player_id })];
+                    case 1:
+                        _a.sent();
+                        _a.label = 2;
+                    case 2:
+                        this.actionComplete = true;
+                        this.restoreServerGameState();
+                        return [2 /*return*/];
                 }
-                this.actionComplete = true;
-                this.restoreServerGameState();
+            });
+        });
+    };
+    DeepRegrets.prototype.notif_drawDink = function (args) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                if (this.isCurrentPlayerActive()) {
+                    this.dinkHandStock.addCard(args["_private"][0], { fromElement: $('dink_deck'), fadeIn: false });
+                }
                 return [2 /*return*/];
             });
         });

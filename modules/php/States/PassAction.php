@@ -47,6 +47,30 @@ class PassAction extends GameState
         // the code to run when entering the state
     }   
 
+    #[PossibleAction]
+    function actDiscard (int $activePlayerId, int $id) {
+        
+    }
+
+    #[PossibleAction]
+    function actDraw (int $activePlayerId) {
+        $card = $this->game->dinks->getCardOnTop("deck");
+        $passCard = ["id" => intval($card["id"]), "type" => $this->game->lists->getDinks()[$card["type"]]->getCoords()];
+        $this->game->dinks->pickCard("deck", $activePlayerId);
+
+        $this->notify->all("drawDink", '${player_name} drew a dink', [
+            "player_name" => $this->game->getActivePlayerName(),
+            "player_id" => $activePlayerId,
+            "_private" => [
+                $activePlayerId => [
+                    $passCard
+                ]
+            ]
+        ]);
+
+        return "nextPlayer";
+    }
+
     function zombie(int $playerId): string {
         // the code to run when the player is a Zombie
         return "";

@@ -457,7 +457,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				div.style.borderRadius = "5px";
 			},
             setupFrontDiv: (dink: any, div) => {
-				console.log(dink);
 				div.style.backgroundSize = "700% 400%";
 				if (dink.type) {
 					div.style.backgroundPositionX = `-${dink.type[0]}00%`;
@@ -655,7 +654,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				$(`hand-${player["id"]}`).insertAdjacentHTML("beforeend", `<div id="dinkHand"></div>`)
 				this.dinkHandStock = new BgaCards.LineStock(this.dinksManager, $(`dinkHand`), {gap: "5px", wrap: "nowrap", center: false});
 				player.hand.dinks.forEach(dink => {
-					console.log(dink);
 					this.dinkHandStock.addCard(dink);
 				});
 			}
@@ -1129,8 +1127,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 						this.statusBar.addActionButton("Sell Fish", () => this.setClientState("client_Sell", Object.assign(args, {"descriptionmyturn": '${you} are selling ${num} fish for ${newFishbucks} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">'})));
 						this.statusBar.addActionButton("Mount Fish", () => this.setClientState("client_Mount", Object.assign(args, {"descriptionmyturn": "${you} are mounting fish"})));
 						this.statusBar.addActionButton("Free Actions", () => console.log("fA"), {color: "secondary"});
-						// TODO pass
-						this.statusBar.addActionButton("Pass", () => console.log("pass"), {color: "alert"});
+						this.statusBar.addActionButton("Pass", () => this.bgaPerformAction("actPass"), {color: "alert"});
 						this.actionComplete = false;
 					} else {
 						// TODO add free actions port
@@ -1274,6 +1271,10 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 						this.clearedSpots = []
 						this.restoreServerGameState()
 					}, {color: "alert"});
+					break;
+				case "PassAction":
+					this.statusBar.addActionButton("Discard Regret", () => console.log("discard"));
+					this.statusBar.addActionButton("Draw Dink", () => this.bgaPerformAction("actDraw"));
 					break;
 				case "client_Confirm":
 					this.statusBar.addActionButton(_("Confirm"), () => {this.bgaPerformAction(args.name, args.args); this.restoreServerGameState()});
@@ -1439,10 +1440,16 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 	public async notif_mountFish(args: any) {
 		let fish = args.fish
 		if (!this.isCurrentPlayerActive()) {
-			this.mountingSlots[args.player_id][args.slot - 1].addCard(cardTemplate(fish.name, fish.size, fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty), {fromElement: "player_board_" + this.player_id})
+			await this.mountingSlots[args.player_id][args.slot - 1].addCard(cardTemplate(fish.name, fish.size, fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty), {fromElement: "player_board_" + this.player_id})
 		}
 		this.actionComplete = true;
 		this.restoreServerGameState();
+	}
+
+	public async notif_drawDink(args: any) {
+		if (this.isCurrentPlayerActive()) {
+			this.dinkHandStock.addCard(args["_private"][0], {fromElement: $('dink_deck'), fadeIn: false})
+		}
 	}
 
 	public notif_test(args: any) {
