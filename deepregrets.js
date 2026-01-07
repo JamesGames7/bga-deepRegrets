@@ -276,8 +276,8 @@ var DeepRegrets = /** @class */ (function (_super) {
                 div.style.borderRadius = "12px";
             },
             setupFrontDiv: function (card, div) {
-                div.style.backgroundPositionX = "-".concat(card.type % 10, "%");
-                div.style.backgroundPositionY = "-".concat(Math.floor(card.type / 10));
+                div.style.backgroundPositionX = "-".concat(card.type % 10, "00%");
+                div.style.backgroundPositionY = "-".concat(Math.floor(card.type / 10), "00%");
                 div.style.backgroundSize = "1000% 700%";
                 div.style.borderRadius = "12px";
                 _this.addTooltipHtml(div.id, "Regret of magnitude ".concat(card.type_arg));
@@ -394,10 +394,10 @@ var DeepRegrets = /** @class */ (function (_super) {
         this.dinksManager = new BgaCards.Manager({
             animationManager: this.animationManager,
             type: 'dinks',
-            getId: function (dink) { return -1; },
+            getId: function (dink) { return dink.id; },
             cardWidth: 103,
             cardHeight: 147,
-            isCardVisible: function (card) { return false; },
+            isCardVisible: function (card) { return typeof card.id == "number"; },
             setupDiv: function (dink, div) {
                 // div.dataset.type = dink.type;
                 // div.dataset.typeArg = dink.type_arg;
@@ -409,7 +409,12 @@ var DeepRegrets = /** @class */ (function (_super) {
                 div.style.borderRadius = "5px";
             },
             setupFrontDiv: function (dink, div) {
+                console.log(dink);
                 div.style.backgroundSize = "700% 400%";
+                if (dink.type) {
+                    div.style.backgroundPositionX = "-".concat(dink.type[0], "00%");
+                    div.style.backgroundPositionY = "-".concat(dink.type[1], "00%");
+                }
                 div.style.boxShadow = "none";
                 _this.addTooltipHtml(div.id, "Dink");
                 div.style.backgroundImage = "url(".concat(g_gamethemeurl, "img/dinks.png)");
@@ -545,6 +550,17 @@ var DeepRegrets = /** @class */ (function (_super) {
                 _this.supplyHandStock = new BgaCards.LineStock(_this.suppliesManager, $("supplyHand"), { gap: "5px", wrap: "nowrap", center: false });
                 player.hand.supplies.forEach(function (supply) {
                     _this.supplyHandStock.addCard(supply);
+                });
+                $("hand-".concat(player["id"])).insertAdjacentHTML("beforeend", "<div id=\"regretHand\"></div>");
+                _this.regretHandStock = new BgaCards.LineStock(_this.regretManager, $("regretHand"), { gap: "5px", wrap: "nowrap", center: false });
+                player.hand.regrets.forEach(function (regret) {
+                    _this.regretHandStock.addCard(regret);
+                });
+                $("hand-".concat(player["id"])).insertAdjacentHTML("beforeend", "<div id=\"dinkHand\"></div>");
+                _this.dinkHandStock = new BgaCards.LineStock(_this.dinksManager, $("dinkHand"), { gap: "5px", wrap: "nowrap", center: false });
+                player.hand.dinks.forEach(function (dink) {
+                    console.log(dink);
+                    _this.dinkHandStock.addCard(dink);
                 });
             }
             _this.freshStock[player["id"]].onSelectionChange = function () {

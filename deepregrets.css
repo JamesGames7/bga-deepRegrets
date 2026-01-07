@@ -849,8 +849,11 @@ button.hide {
   flex-wrap: nowrap;
   column-gap: 5px;
 }
-.handStock .bga-cards_card:not(.fish) {
+.handStock .bga-cards_card:not(.fish):not(.dinks) {
   zoom: 0.445;
+}
+.handStock .dinks {
+  zoom: 1.2;
 }
 .handStock .selectable, .handStock .selected {
   outline: none;

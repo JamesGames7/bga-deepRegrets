@@ -36,6 +36,8 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 	public fishHandStock: any;
 	public reelHandStock: any;
 	public rodHandStock: any;
+	public regretHandStock: any;
+	public dinkHandStock: any;
 	public supplyHandStock: any;
 	public reelsDeck = {};
 	public rodsDeck = {};
@@ -296,8 +298,8 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				div.style.borderRadius = `12px`;
 			},
             setupFrontDiv: (card: any, div) => {
-				div.style.backgroundPositionX = `-${card.type % 10}%`; 
-				div.style.backgroundPositionY = `-${Math.floor(card.type / 10)}`;
+				div.style.backgroundPositionX = `-${card.type % 10}00%`; 
+				div.style.backgroundPositionY = `-${Math.floor(card.type / 10)}00%`;
 				div.style.backgroundSize = "1000% 700%";
 				div.style.borderRadius = `12px`;
                 this.addTooltipHtml(div.id, `Regret of magnitude ${card.type_arg}`);
@@ -440,10 +442,10 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		this.dinksManager = new BgaCards.Manager({
             animationManager: this.animationManager,
             type: 'dinks',
-            getId: (dink: any) => -1,
+            getId: (dink: any) => dink.id,
 			cardWidth: 103,
 			cardHeight: 147,
-			isCardVisible: (card) => false,
+			isCardVisible: (card) => typeof card.id == "number",
 			setupDiv: (dink: any, div) => {
 				// div.dataset.type = dink.type;
 				// div.dataset.typeArg = dink.type_arg;
@@ -455,7 +457,12 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				div.style.borderRadius = "5px";
 			},
             setupFrontDiv: (dink: any, div) => {
+				console.log(dink);
 				div.style.backgroundSize = "700% 400%";
+				if (dink.type) {
+					div.style.backgroundPositionX = `-${dink.type[0]}00%`;
+					div.style.backgroundPositionY = `-${dink.type[1]}00%`;
+				}
 				div.style.boxShadow = "none";
                 this.addTooltipHtml(div.id, `Dink`);
 				div.style.backgroundImage = `url(${g_gamethemeurl}img/dinks.png)`;
@@ -637,6 +644,19 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				this.supplyHandStock = new BgaCards.LineStock(this.suppliesManager, $(`supplyHand`), {gap: "5px", wrap: "nowrap", center: false});
 				player.hand.supplies.forEach(supply => {
 					this.supplyHandStock.addCard(supply);
+				});
+
+				$(`hand-${player["id"]}`).insertAdjacentHTML("beforeend", `<div id="regretHand"></div>`)
+				this.regretHandStock = new BgaCards.LineStock(this.regretManager, $(`regretHand`), {gap: "5px", wrap: "nowrap", center: false});
+				player.hand.regrets.forEach(regret => {
+					this.regretHandStock.addCard(regret);
+				});
+
+				$(`hand-${player["id"]}`).insertAdjacentHTML("beforeend", `<div id="dinkHand"></div>`)
+				this.dinkHandStock = new BgaCards.LineStock(this.dinksManager, $(`dinkHand`), {gap: "5px", wrap: "nowrap", center: false});
+				player.hand.dinks.forEach(dink => {
+					console.log(dink);
+					this.dinkHandStock.addCard(dink);
 				});
 			}
 

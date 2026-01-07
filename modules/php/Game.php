@@ -180,7 +180,9 @@ class Game extends \Bga\GameFramework\Table
         $current_player_id = (int) $this->getCurrentPlayerId();
 
         // FIXME remove
-        $this->fish->moveAllCardsInLocation("hand", "hand", null, $current_player_id);
+        $this->dinks->moveCard(1, "hand", $current_player_id);
+        $this->dinks->moveCard(5, "hand", $current_player_id);
+        $this->dinks->moveCard(15, "hand", $current_player_id);
 
         // Get information about players.
         // NOTE: you can retrieve some extra field you added for "player" table in `dbmodel.sql` if you need it.
@@ -192,6 +194,8 @@ class Game extends \Bga\GameFramework\Table
         $reelHandData = array_values(array_map(fn($card) => ["name" => $this->lists->getReels()[$card["type"]]->getName(), "type" => $card["type"]], $this->reels->getCardsInLocation("hand", $current_player_id)));
         $rodHandData = array_values(array_map(fn($card) => ["name" => $this->lists->getRods()[$card["type"]]->getName(), "type" => $card["type"]], $this->rods->getCardsInLocation("hand", $current_player_id)));
         $supplyHandData = array_values(array_map(fn($card) => ["name" => $this->lists->getSupplies()[$card["type"]]->getName(), "type" => $card["type"]], $this->supplies->getCardsInLocation("hand", $current_player_id)));
+        $regretHandData = array_values(array_map(fn($card) => ["type" => intval($card["type"]), "id" => $card["id"], "type_arg" => $card["type_arg"]], $this->regrets->getCardsInLocation("hand", $current_player_id)));
+        $dinkHandData = array_values(array_map(fn($card) => ["type" => $this->lists->getDinks()[$card["type"]]->getCoords(), "id" => intval($card["type"])], $this->dinks->getCardsInLocation("hand", $current_player_id)));
 
         foreach(array_keys($this->loadPlayersBasicInfos()) as $id) {
             $result["players"][$id]["dice"] = $this->dice->getCardsInLocation(["spent", "fresh", "roll"], $id);
@@ -200,6 +204,8 @@ class Game extends \Bga\GameFramework\Table
             $result["players"][$id]["hand"]["reels"] = $current_player_id == $id ? $reelHandData : $this->fish->countCardInLocation("hand", $id);
             $result["players"][$id]["hand"]["rods"] = $current_player_id == $id ? $rodHandData : $this->fish->countCardInLocation("hand", $id);
             $result["players"][$id]["hand"]["supplies"] = $current_player_id == $id ? $supplyHandData : $this->fish->countCardInLocation("hand", $id);
+            $result["players"][$id]["hand"]["regrets"] = $current_player_id == $id ? $regretHandData : $this->regrets->countCardInLocation("hand", $id);
+            $result["players"][$id]["hand"]["dinks"] = $current_player_id == $id ? $dinkHandData : $this->dinks->countCardInLocation("hand", $id);
             $result["players"][$id]["mount"] = [
                 count($this->fish->getCardsInLocation("mount1", $id)) > 0 ? $this->lists->getFish()[array_values($this->fish->getCardsInLocation("mount1", $id))[0]["type"]]->getData() : null,
                 count($this->fish->getCardsInLocation("mount2", $id)) > 0 ? $this->lists->getFish()[array_values($this->fish->getCardsInLocation("mount2", $id))[0]["type"]]->getData() : null,

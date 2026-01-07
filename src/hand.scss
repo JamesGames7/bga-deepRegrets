@@ -11,8 +11,12 @@
     flex-wrap: nowrap;
     column-gap: 5px;
     
-    .bga-cards_card:not(.fish) {
+    .bga-cards_card:not(.fish):not(.dinks) {
         zoom: 0.445;
+    }
+
+    .dinks {
+        zoom: 1.2;
     }
 
     .selectable, .selected {
