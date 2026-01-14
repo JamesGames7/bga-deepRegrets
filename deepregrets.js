@@ -283,6 +283,8 @@ var DeepRegrets = /** @class */ (function (_super) {
                 _this.addTooltipHtml(div.id, "Regret of magnitude ".concat(card.type_arg));
                 div.style.backgroundImage = "url(".concat(g_gamethemeurl, "img/regrets.png)");
             },
+            selectableCardStyle: { class: "selectable" },
+            selectedCardStyle: { class: "selected" },
         });
         // create the rods / reels / supplies managers
         this.reelsManager = new BgaCards.Manager({
@@ -550,6 +552,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                 player.hand.supplies.forEach(function (supply) {
                     _this.supplyHandStock.addCard(supply);
                 });
+                // TODO figure out sorting
                 $("hand-".concat(player["id"])).insertAdjacentHTML("beforeend", "<div id=\"regretHand\"></div>");
                 _this.regretHandStock = new BgaCards.LineStock(_this.regretManager, $("regretHand"), { gap: "5px", wrap: "nowrap", center: false });
                 player.hand.regrets.forEach(function (regret) {
@@ -617,6 +620,10 @@ var DeepRegrets = /** @class */ (function (_super) {
         });
         this.regretDeck = new BgaCards.Deck(this.regretManager, $("regretDeck"), { cardNumber: gamedatas.regrets[0] });
         this.regretDiscard = new BgaCards.Deck(this.regretManager, $("regretDiscard"), { cardNumber: gamedatas.regrets[1] });
+        this.regretDiscard.onCardAdded = function (card) {
+            _this.regretManager.setCardVisible(card, false);
+        };
+        console.log(gamedatas.regrets);
         // FIXME Displays empty when taking cards out on reload
         this.reelsDeck = new BgaCards.Deck(this.reelsManager, $("reelsDeck"), { cardNumber: parseInt(gamedatas.reels) });
         this.rodsDeck = new BgaCards.Deck(this.rodsManager, $("rodsDeck"), { cardNumber: parseInt(gamedatas.rods) });
@@ -677,8 +684,9 @@ var DeepRegrets = /** @class */ (function (_super) {
                             case "ShopReveal": return [3 /*break*/, 10];
                             case "client_Mount": return [3 /*break*/, 14];
                             case "client_Confirm": return [3 /*break*/, 15];
+                            case "PassAction": return [3 /*break*/, 16];
                         }
-                        return [3 /*break*/, 16];
+                        return [3 /*break*/, 17];
                     case 1:
                         if (this.isCurrentPlayerActive()) {
                             args.args.possibleChoices.forEach(function (id) {
@@ -690,7 +698,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 });
                             });
                         }
-                        return [3 /*break*/, 16];
+                        return [3 /*break*/, 17];
                     case 2:
                         if (this.isCurrentPlayerActive()) {
                             if (!args.args.casted) {
@@ -717,7 +725,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 }
                             }
                         }
-                        return [3 /*break*/, 16];
+                        return [3 /*break*/, 17];
                     case 3:
                         if (this.isCurrentPlayerActive()) {
                             this.gamedatas.gamestate.args.gameUrl = g_gamethemeurl;
@@ -758,7 +766,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 });
                             }
                         }
-                        return [3 /*break*/, 16];
+                        return [3 /*break*/, 17];
                     case 4:
                         lifeboat = $("lifeboat-".concat(this.player_id));
                         if (args.args.lifeboat && !args.args.casted) {
@@ -779,10 +787,10 @@ var DeepRegrets = /** @class */ (function (_super) {
                             });
                         }
                         this.freshStock[this.player_id].setSelectionMode("none");
-                        return [3 /*break*/, 16];
+                        return [3 /*break*/, 17];
                     case 5:
                         this.freshStock[this.player_id].setSelectionMode("single");
-                        return [3 /*break*/, 16];
+                        return [3 /*break*/, 17];
                     case 6:
                         this.shoalStocks.forEach(function (depth) {
                             depth.forEach(function (shoal) {
@@ -798,14 +806,14 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 });
                             });
                         });
-                        return [3 /*break*/, 16];
+                        return [3 /*break*/, 17];
                     case 7:
                         $("shoal_".concat(args.args.shoal[0], "_").concat(args.args.shoal[1])).classList.add("selected");
                         if (this.isCurrentPlayerActive()) {
                             fish = args.args["_private"].fish;
                             this.shoalStocks[args.args.shoal[0] - 1][args.args.shoal[1] - 1].flipCard(cardTemplate(args.args.shoalNum - 10, this.SHOAL_SIZE[fish.size], fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty), { updateData: true });
                         }
-                        return [3 /*break*/, 16];
+                        return [3 /*break*/, 17];
                     case 8:
                         if ($("FP-LP-" + this.player_id).contains($('LP'))) {
                             $('LP').classList.add("selectable");
@@ -843,7 +851,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 _this.statusBar.setTitle('${you} are visiting the ${shop} shop and spending ${num} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args.args);
                             });
                         }
-                        return [3 /*break*/, 16];
+                        return [3 /*break*/, 17];
                     case 9:
                         this.fishHandStock.setSelectionMode("multiple");
                         this.fishHandStock.onSelectionChange = function (selection, lastChange) {
@@ -860,7 +868,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                             _this.gamedatas.gamestate.args.display = args.args.newFishbucks + parseInt(args.args.curFishbucks) > 10 ? 10 : args.args.newFishbucks;
                             _this.statusBar.setTitle('${you} are selling ${num} fish for ${display} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args.args);
                         };
-                        return [3 /*break*/, 16];
+                        return [3 /*break*/, 17];
                     case 10:
                         if (!this.isCurrentPlayerActive()) return [3 /*break*/, 13];
                         $('game_play_area').insertAdjacentHTML("afterbegin", "<div id=\"reveal_area\" class=\"whiteblock\"></div>");
@@ -902,7 +910,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 break;
                         }
                         _b.label = 13;
-                    case 13: return [3 /*break*/, 16];
+                    case 13: return [3 /*break*/, 17];
                     case 14:
                         this.fishHandStock.setSelectionMode("single");
                         this.fishHandStock.onCardClick = function (card) {
@@ -929,13 +937,16 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 }
                             });
                         };
-                        return [3 /*break*/, 16];
+                        return [3 /*break*/, 17];
                     case 15:
                         if (args.args.selectedId) {
                             $(args.args.selectedId).classList.add("selected");
                         }
-                        return [3 /*break*/, 16];
-                    case 16: return [2 /*return*/];
+                        return [3 /*break*/, 17];
+                    case 16:
+                        this.regretHandStock.setSelectionMode("single");
+                        return [3 /*break*/, 17];
+                    case 17: return [2 /*return*/];
                 }
             });
         });
@@ -1171,7 +1182,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                     }, { color: "alert" });
                     break;
                 case "PassAction":
-                    this.statusBar.addActionButton("Discard Regret", function () { return console.log("discard"); });
+                    this.statusBar.addActionButton("Discard Regret", function () { return _this.bgaPerformAction("actDiscard", { id: _this.regretHandStock.getSelection()[0]["id"] || -1 }); });
                     this.statusBar.addActionButton("Draw Dink", function () { return _this.bgaPerformAction("actDraw"); });
                     break;
                 case "client_Confirm":
@@ -1436,10 +1447,37 @@ var DeepRegrets = /** @class */ (function (_super) {
     DeepRegrets.prototype.notif_drawDink = function (args) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                if (this.isCurrentPlayerActive()) {
-                    this.dinkHandStock.addCard(args["_private"][0], { fromElement: $('dink_deck'), fadeIn: false });
+                switch (_a.label) {
+                    case 0:
+                        if (!this.isCurrentPlayerActive()) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.dinkHandStock.addCard(args["_private"][0], { fromElement: $('dink_deck'), fadeIn: false })];
+                    case 1:
+                        _a.sent();
+                        _a.label = 2;
+                    case 2: return [2 /*return*/];
                 }
-                return [2 /*return*/];
+            });
+        });
+    };
+    DeepRegrets.prototype.notif_discardRegret = function (args) {
+        return __awaiter(this, void 0, void 0, function () {
+            var regret;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        console.log(args);
+                        regret = this.regretHandStock.getCards().filter(function (card) { return parseInt(card.id) == args.regret; })[0];
+                        if (!this.isCurrentPlayerActive()) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.regretDiscard.addCard(regret)];
+                    case 1:
+                        _a.sent();
+                        return [3 /*break*/, 4];
+                    case 2: return [4 /*yield*/, this.regretDiscard.addCard(regret, { fromElement: "player_board_".concat(args.player_id) })];
+                    case 3:
+                        _a.sent();
+                        _a.label = 4;
+                    case 4: return [2 /*return*/];
+                }
             });
         });
     };

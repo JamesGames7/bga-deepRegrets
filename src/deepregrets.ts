@@ -305,6 +305,8 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
                 this.addTooltipHtml(div.id, `Regret of magnitude ${card.type_arg}`);
 				div.style.backgroundImage = `url(${g_gamethemeurl}img/regrets.png)`;
             },
+			selectableCardStyle: {class: "selectable"},
+			selectedCardStyle: {class: "selected"},
         });
 
 		// create the rods / reels / supplies managers
@@ -645,6 +647,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					this.supplyHandStock.addCard(supply);
 				});
 
+				// TODO figure out sorting
 				$(`hand-${player["id"]}`).insertAdjacentHTML("beforeend", `<div id="regretHand"></div>`)
 				this.regretHandStock = new BgaCards.LineStock(this.regretManager, $(`regretHand`), {gap: "5px", wrap: "nowrap", center: false});
 				player.hand.regrets.forEach(regret => {
@@ -729,6 +732,10 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 
 		this.regretDeck = new BgaCards.Deck(this.regretManager, $(`regretDeck`), {cardNumber: gamedatas.regrets[0]});
 		this.regretDiscard = new BgaCards.Deck(this.regretManager, $(`regretDiscard`), {cardNumber: gamedatas.regrets[1]});
+		(this.regretDiscard as any).onCardAdded = (card) => {
+			this.regretManager.setCardVisible(card, false);
+		}
+		console.log(gamedatas.regrets);
 
 		// FIXME Displays empty when taking cards out on reload
 		this.reelsDeck = new BgaCards.Deck(this.reelsManager, $(`reelsDeck`), {cardNumber: parseInt(gamedatas.reels)});
@@ -1042,6 +1049,9 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					$(args.args.selectedId).classList.add("selected");
 				}
 				break;
+			case "PassAction":
+				this.regretHandStock.setSelectionMode("single");
+				break;
 		}		
 	}
 	public onLeavingState(stateName: string) {
@@ -1273,7 +1283,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					}, {color: "alert"});
 					break;
 				case "PassAction":
-					this.statusBar.addActionButton("Discard Regret", () => console.log("discard"));
+					this.statusBar.addActionButton("Discard Regret", () => this.bgaPerformAction("actDiscard", {id: this.regretHandStock.getSelection()[0]["id"] || -1}));
 					this.statusBar.addActionButton("Draw Dink", () => this.bgaPerformAction("actDraw"));
 					break;
 				case "client_Confirm":
@@ -1448,7 +1458,18 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 
 	public async notif_drawDink(args: any) {
 		if (this.isCurrentPlayerActive()) {
-			this.dinkHandStock.addCard(args["_private"][0], {fromElement: $('dink_deck'), fadeIn: false})
+			await this.dinkHandStock.addCard(args["_private"][0], {fromElement: $('dink_deck'), fadeIn: false})
+		}
+	}
+
+	public async notif_discardRegret(args: any) {
+		console.log(args);
+		// FIXME only works for active player
+		let regret = this.regretHandStock.getCards().filter(card => parseInt(card.id) == args.regret)[0];
+		if (this.isCurrentPlayerActive()) {
+			await (this.regretDiscard as any).addCard(regret)
+		} else {
+			await (this.regretDiscard as any).addCard(regret, {fromElement: `player_board_${args.player_id}`});
 		}
 	}
 

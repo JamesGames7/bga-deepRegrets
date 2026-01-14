@@ -862,7 +862,7 @@ button.hide {
   content: "";
   inset: 0px;
   position: absolute;
-  border: 3px solid;
+  border: 6px solid;
 }
 .handStock .selected::after, .handStock .selectable:hover::after {
   border-color: red;

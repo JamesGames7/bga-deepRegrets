@@ -49,7 +49,19 @@ class PassAction extends GameState
 
     #[PossibleAction]
     function actDiscard (int $activePlayerId, int $id) {
-        
+        // TODO make discard work on reload - not saving in discard
+        if ($id >= 0) {
+            $this->game->regrets->insertCardOnExtremePosition($id, "discard", true);
+            $this->notify->all("discardRegret", '${player_name} discards a regret', [
+                "regret" => $id,
+                "location" => $this->game->regrets->getCard($id),
+                "player_name" => $this->game->getActivePlayerName(),
+                "player_id" => $activePlayerId
+            ]);
+            return "nextPlayer";
+        } else {
+            throw new \BgaUserException("Must select a regret to discard");
+        }
     }
 
     #[PossibleAction]
