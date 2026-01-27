@@ -211,17 +211,17 @@
     }
     .spentGrid {
         width: 137px;
-        height: 133px;
         position: absolute;
         left: 564px;
-        top: 127px;
+        top: 154px;
+        pointer-events: auto;
     }
 
     &.selectable, &.selectable:hover {
         outline-width: 5px;
     }
 
-    .freshGrid, .spentGrid, .fishbuck-slot, .FP-LP {
+    .freshGrid, .fishbuck-slot, .FP-LP {
         pointer-events: none;
     }
 

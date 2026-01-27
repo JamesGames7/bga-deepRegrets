@@ -47,19 +47,31 @@ class SelectFreshPRIV extends GameState
     public function getArgs(): array
     {
         // the data sent to the front when entering the state
-        return [];
+        return [$this->game->dice->getCardsInLocation("roll")];
     } 
 
+    // TODO work frontend without reload
     #[PossibleAction]
-    function actChooseDice(int $currentPlayerId, array $diceArray) {
-        $idArray = [];
-        foreach ($diceArray as $die) {
-            $id = $die["id"];
-            $idArray[] = $id;
-        }
+    function actChooseDice(int $currentPlayerId, string $diceArray) {
+        $dice = json_decode($diceArray);
+        $moveSize = count($dice);
+        $freshSize = $this->game->dice->countCardsInLocation("fresh", $currentPlayerId);
+        $allowedSize = $this->MADNESS[$this->game->regrets->countCardsInLocation("hand", $currentPlayerId)];
+        if ($allowedSize == $moveSize + $freshSize) {
+            $this->game->dice->moveCards($dice, "fresh", $currentPlayerId);
 
-        $this->game->dice->moveCards($idArray, "fresh", $currentPlayerId);
-        $this->game->dice->moveAllCardsInLocation("roll", "spent", $currentPlayerId, $currentPlayerId);
+            $this->notify->all("selectFresh", '', [
+                "ids" => array_map(fn($d) => $this->game->dice->getCard($d), $dice),
+                "player_id" => $currentPlayerId,
+                "other" => array_values($this->game->dice->getCardsInLocation("roll", $currentPlayerId))
+            ]);
+
+            $this->game->dice->moveAllCardsInLocation("roll", "spent", $currentPlayerId, $currentPlayerId);
+
+            $this->gamestate->setPlayerNonMultiactive($currentPlayerId, "");
+        } else {
+            throw new \BgaUserException('Wrong number of dice (${num} expected)', 100, ["num" => $allowedSize]);
+        }
     }
 
     function onEnteringState(int $playerId) {
@@ -72,7 +84,6 @@ class SelectFreshPRIV extends GameState
 
             $this->game->DbQuery("UPDATE `dice` SET `card_type_arg` = $newSide WHERE `card_id` = $id");
         }
-        // ! Notify
 
         $regrets = $this->game->regrets->countCardsInLocation("hand", $playerId);
         $regrets > 13 ? $regrets = 13 : $regrets = $regrets;

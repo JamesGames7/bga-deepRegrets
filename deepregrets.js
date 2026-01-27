@@ -148,7 +148,8 @@ var DeepRegrets = /** @class */ (function (_super) {
     DeepRegrets.prototype.setup = function (gamedatas) {
         var _this = this;
         this.setupNotifications();
-        $("game_play_area").insertAdjacentHTML("beforeend", "\n\t\t\t<div id=\"boards\">\n\t\t\t\t<div id=\"sea_board\" style=\"zoom: ".concat(localStorage.getItem("sea_board") || (($("board").clientWidth / 726) > 1 ? $("board").clientWidth / 726 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"sea_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"shoal_grid\">\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_graveyard\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_graveyard\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_graveyard\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"ship_grid_sea\">\n\t\t\t\t\t\t<div id=\"ship_grid_1\" class=\"ship_depth\"></div>\n\t\t\t\t\t\t<div id=\"ship_grid_2\" class=\"ship_depth\"></div>\n\t\t\t\t\t\t<div id=\"ship_grid_3\" class=\"ship_depth\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"dink_deck\"></div>\n\t\t\t\t</div>\n\t\t\t\t<div id=\"port_board\" style=\"zoom: ").concat(localStorage.getItem("port_board") || (($("board").clientWidth / 1500) > 1 ? $("board").clientWidth / 1500 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"port_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"regret_grid\">\n\t\t\t\t\t\t<div class=\"regret\" id=\"regretDeck\"></div>\n\t\t\t\t\t\t<div class=\"regret\" id=\"regretDiscard\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"reelsDeck\" class=\"itemDeck\"></div>\n\t\t\t\t\t<div id=\"rodsDeck\" class=\"itemDeck\"></div>\n\t\t\t\t\t<div id=\"suppliesDeck\" class=\"itemDeck\"></div>\n\t\t\t\t\t<div id=\"ship_port\"></div>\n\t\t\t\t</div>\t\t\t\n\t\t\t</div>\n\t\t\t<div id=\"playerBoards\"></div>\n\t\t\t<div id=\"lineGrid\"></div>\n\t\t"));
+        $("game_play_area").insertAdjacentHTML("beforeend", "\n\t\t\t<div id=\"boards\"></div>\n\t\t\t<div id=\"playerBoards\"></div>\n\t\t\t<div id=\"lineGrid\"></div>\n\t\t");
+        $('boards').insertAdjacentHTML("beforeend", "\n\t\t\t\t<div id=\"sea_board\" style=\"zoom: ".concat(localStorage.getItem("sea_board") || (($("boards").clientWidth / 726) > 1 ? $("boards").clientWidth / 726 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"sea_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"sea_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"shoal_grid\">\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_1_graveyard\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_2_graveyard\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_1\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_2\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_3\"></div>\n\t\t\t\t\t\t<div class=\"shoal\" id=\"shoal_3_graveyard\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"ship_grid_sea\">\n\t\t\t\t\t\t<div id=\"ship_grid_1\" class=\"ship_depth\"></div>\n\t\t\t\t\t\t<div id=\"ship_grid_2\" class=\"ship_depth\"></div>\n\t\t\t\t\t\t<div id=\"ship_grid_3\" class=\"ship_depth\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"dink_deck\"></div>\n\t\t\t\t</div>\n\t\t\t\t<div id=\"port_board\" style=\"zoom: ").concat(localStorage.getItem("port_board") || (($("boards").clientWidth / 1500) > 1 ? $("boards").clientWidth / 1500 : 1), "\">\n\t\t\t\t\t<div class=\"size_buttons\">\n\t\t\t\t\t\t<div id=\"port_home\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_large\" class=\"utility_button\"></div>\n\t\t\t\t\t\t<div id=\"port_small\" class=\"utility_button\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"regret_grid\">\n\t\t\t\t\t\t<div class=\"regret\" id=\"regretDeck\"></div>\n\t\t\t\t\t\t<div class=\"regret\" id=\"regretDiscard\"></div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div id=\"reelsDeck\" class=\"itemDeck\"></div>\n\t\t\t\t\t<div id=\"rodsDeck\" class=\"itemDeck\"></div>\n\t\t\t\t\t<div id=\"suppliesDeck\" class=\"itemDeck\"></div>\n\t\t\t\t\t<div id=\"ship_port\"></div>\n\t\t\t\t</div>\t\t\t\n\t\t"));
         document.querySelectorAll(".utility_button").forEach(function (button) {
             var boards = $("boards");
             var id = button.id;
@@ -516,8 +517,9 @@ var DeepRegrets = /** @class */ (function (_super) {
             }
             _this.freshStock[player["id"]] = new BgaCards.LineStock(_this.diceManager, $("freshGrid-".concat(player["id"])), { sort: BgaCards.sort('type_arg', 'type') });
             // REVIEW change to scrollable?
-            _this.spentStock[player["id"]] = new BgaCards.LineStock(_this.diceManager, $("spentGrid-".concat(player["id"])), { sort: BgaCards.sort('type_arg', 'type') });
+            _this.spentStock[player["id"]] = new BgaCards.ScrollableStock(_this.diceManager, $("spentGrid-".concat(player["id"])), { leftButton: { classes: ["hidden"] }, rightButton: { classes: ["hidden"] }, sort: BgaCards.sort('type_arg', 'type') });
             Object.values(player.dice).forEach(function (die) {
+                console.log(die);
                 switch (die["location"]) {
                     case "fresh":
                         _this.freshStock[player["id"]].addCard(die);
@@ -525,8 +527,23 @@ var DeepRegrets = /** @class */ (function (_super) {
                     case "spent":
                         _this.spentStock[player["id"]].addCard(die);
                         break;
+                    case "roll":
+                        if (player["id"] == _this.player_id) {
+                            if (!$('reveal_area')) {
+                                $('boards').insertAdjacentHTML('beforebegin', /*html*/ "<div id=\"reveal_area\" class=\"reveal_area roll scene whiteblock\"></div>");
+                            }
+                            $('reveal_area').insertAdjacentHTML('beforeend', /*html*/ "<div class=\"outlineDice selectable\" id=\"outline-".concat(die.id, "\"><div id=\"dice-").concat(die.id, "\" class=\"").concat(die.type, " dice\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"face f1\" id=\"f1-").concat(die.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"face f2\" id=\"f2-").concat(die.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"face f3\" id=\"f3-").concat(die.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"face f4\" id=\"f4-").concat(die.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"triangle top t1\" id=\"t1-").concat(die.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"triangle top t2\" id=\"t2-").concat(die.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"triangle top t3\" id=\"t3-").concat(die.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"triangle top t4\" id=\"t4-").concat(die.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"triangle bottom t5\" id=\"t5-").concat(die.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"triangle bottom t6\" id=\"t6-").concat(die.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"triangle bottom t7\" id=\"t7-").concat(die.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"triangle bottom t8\" id=\"t8-").concat(die.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</div></div>"));
+                            diceSetup("".concat(die.id));
+                            diceRotation(die.id, parseInt(die.type_arg));
+                            $("dice-".concat(die.id)).dataset.type = die.type;
+                            $("dice-".concat(die.id)).dataset.type_arg = die.type_arg;
+                        }
+                        else {
+                            _this.spentStock[player["id"]].addCard(die);
+                        }
+                        break;
                     default:
-                        _this.showMessage(die["location"] + "has not yet been defined", "error");
+                        _this.showMessage(die["location"] + " has not yet been defined", "error");
                         break;
                 }
             });
@@ -685,8 +702,9 @@ var DeepRegrets = /** @class */ (function (_super) {
                             case "client_Mount": return [3 /*break*/, 14];
                             case "client_Confirm": return [3 /*break*/, 15];
                             case "PassAction": return [3 /*break*/, 16];
+                            case "SelectFreshPRIV": return [3 /*break*/, 17];
                         }
-                        return [3 /*break*/, 17];
+                        return [3 /*break*/, 18];
                     case 1:
                         if (this.isCurrentPlayerActive()) {
                             args.args.possibleChoices.forEach(function (id) {
@@ -698,7 +716,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 });
                             });
                         }
-                        return [3 /*break*/, 17];
+                        return [3 /*break*/, 18];
                     case 2:
                         if (this.isCurrentPlayerActive()) {
                             if (!args.args.casted) {
@@ -725,7 +743,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 }
                             }
                         }
-                        return [3 /*break*/, 17];
+                        return [3 /*break*/, 18];
                     case 3:
                         if (this.isCurrentPlayerActive()) {
                             this.gamedatas.gamestate.args.gameUrl = g_gamethemeurl;
@@ -766,7 +784,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 });
                             }
                         }
-                        return [3 /*break*/, 17];
+                        return [3 /*break*/, 18];
                     case 4:
                         lifeboat = $("lifeboat-".concat(this.player_id));
                         if (args.args.lifeboat && !args.args.casted) {
@@ -787,10 +805,10 @@ var DeepRegrets = /** @class */ (function (_super) {
                             });
                         }
                         this.freshStock[this.player_id].setSelectionMode("none");
-                        return [3 /*break*/, 17];
+                        return [3 /*break*/, 18];
                     case 5:
                         this.freshStock[this.player_id].setSelectionMode("single");
-                        return [3 /*break*/, 17];
+                        return [3 /*break*/, 18];
                     case 6:
                         this.shoalStocks.forEach(function (depth) {
                             depth.forEach(function (shoal) {
@@ -806,14 +824,14 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 });
                             });
                         });
-                        return [3 /*break*/, 17];
+                        return [3 /*break*/, 18];
                     case 7:
                         $("shoal_".concat(args.args.shoal[0], "_").concat(args.args.shoal[1])).classList.add("selected");
                         if (this.isCurrentPlayerActive()) {
                             fish = args.args["_private"].fish;
                             this.shoalStocks[args.args.shoal[0] - 1][args.args.shoal[1] - 1].flipCard(cardTemplate(args.args.shoalNum - 10, this.SHOAL_SIZE[fish.size], fish.depth, fish.coords, fish.name, fish.type, fish.sell, fish.difficulty), { updateData: true });
                         }
-                        return [3 /*break*/, 17];
+                        return [3 /*break*/, 18];
                     case 8:
                         if ($("FP-LP-" + this.player_id).contains($('LP'))) {
                             $('LP').classList.add("selectable");
@@ -851,7 +869,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 _this.statusBar.setTitle('${you} are visiting the ${shop} shop and spending ${num} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args.args);
                             });
                         }
-                        return [3 /*break*/, 17];
+                        return [3 /*break*/, 18];
                     case 9:
                         this.fishHandStock.setSelectionMode("multiple");
                         this.fishHandStock.onSelectionChange = function (selection, lastChange) {
@@ -868,7 +886,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                             _this.gamedatas.gamestate.args.display = args.args.newFishbucks + parseInt(args.args.curFishbucks) > 10 ? 10 : args.args.newFishbucks;
                             _this.statusBar.setTitle('${you} are selling ${num} fish for ${display} <img src="' + g_gamethemeurl + 'img/icons/Fishbucks.png" alt="fishbucks" class="icon">', args.args);
                         };
-                        return [3 /*break*/, 17];
+                        return [3 /*break*/, 18];
                     case 10:
                         if (!this.isCurrentPlayerActive()) return [3 /*break*/, 13];
                         $('game_play_area').insertAdjacentHTML("afterbegin", "<div id=\"reveal_area\" class=\"whiteblock\"></div>");
@@ -910,7 +928,7 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 break;
                         }
                         _b.label = 13;
-                    case 13: return [3 /*break*/, 17];
+                    case 13: return [3 /*break*/, 18];
                     case 14:
                         this.fishHandStock.setSelectionMode("single");
                         this.fishHandStock.onCardClick = function (card) {
@@ -937,16 +955,28 @@ var DeepRegrets = /** @class */ (function (_super) {
                                 }
                             });
                         };
-                        return [3 /*break*/, 17];
+                        return [3 /*break*/, 18];
                     case 15:
                         if (args.args.selectedId) {
                             $(args.args.selectedId).classList.add("selected");
                         }
-                        return [3 /*break*/, 17];
+                        return [3 /*break*/, 18];
                     case 16:
                         this.regretHandStock.setSelectionMode("single");
-                        return [3 /*break*/, 17];
-                    case 17: return [2 /*return*/];
+                        return [3 /*break*/, 18];
+                    case 17:
+                        document.querySelectorAll(".outlineDice").forEach(function (dice) {
+                            dice.addEventListener("click", function () {
+                                if (dice.classList.contains("selected")) {
+                                    dice.classList.remove("selected");
+                                }
+                                else {
+                                    dice.classList.add("selected");
+                                }
+                            });
+                        });
+                        return [3 /*break*/, 18];
+                    case 18: return [2 /*return*/];
                 }
             });
         });
@@ -1188,6 +1218,15 @@ var DeepRegrets = /** @class */ (function (_super) {
                 case "client_Confirm":
                     this.statusBar.addActionButton(_("Confirm"), function () { _this.bgaPerformAction(args.name, args.args); _this.restoreServerGameState(); });
                     this.statusBar.addActionButton(_("Cancel"), function () { return _this.restoreServerGameState(); }, { color: "alert" });
+                    break;
+                case "SelectFreshPRIV":
+                    this.statusBar.addActionButton("Confirm", function () {
+                        var ids = [];
+                        document.querySelectorAll('.selected').forEach(function (el) {
+                            ids.push(parseInt(el.id.replace('outline-', '')));
+                        });
+                        _this.bgaPerformAction('actChooseDice', { diceArray: JSON.stringify(ids) });
+                    });
                     break;
             }
         }
@@ -1465,7 +1504,6 @@ var DeepRegrets = /** @class */ (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        console.log(args);
                         regret = this.regretHandStock.getCards().filter(function (card) { return parseInt(card.id) == args.regret; })[0];
                         if (!this.isCurrentPlayerActive()) return [3 /*break*/, 2];
                         return [4 /*yield*/, this.regretDiscard.addCard(regret)];
@@ -1480,6 +1518,18 @@ var DeepRegrets = /** @class */ (function (_super) {
                 }
             });
         });
+    };
+    DeepRegrets.prototype.notif_selectFresh = function (args) {
+        var _this = this;
+        args.ids.forEach(function (dice) {
+            $('outline-' + dice.id).remove();
+            _this.freshStock[args.player_id].addCard(dice, { fromElement: $('reveal_area') });
+        });
+        args.other.forEach(function (dice) {
+            $('outline-' + dice.id).remove();
+            _this.spentStock[args.player_id].addCard(dice, { fromElement: $('reveal_area') });
+        });
+        $('reveal_area').remove();
     };
     DeepRegrets.prototype.notif_test = function (args) {
         console.log(args);

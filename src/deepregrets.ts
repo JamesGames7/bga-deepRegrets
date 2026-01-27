@@ -117,8 +117,13 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		this.setupNotifications();
 
 		$("game_play_area").insertAdjacentHTML("beforeend", `
-			<div id="boards">
-				<div id="sea_board" style="zoom: ${localStorage.getItem("sea_board") || (($("board").clientWidth / 726) > 1 ? $("board").clientWidth / 726 : 1)}">
+			<div id="boards"></div>
+			<div id="playerBoards"></div>
+			<div id="lineGrid"></div>
+		`)
+
+		$('boards').insertAdjacentHTML("beforeend", `
+				<div id="sea_board" style="zoom: ${localStorage.getItem("sea_board") || (($("boards").clientWidth / 726) > 1 ? $("boards").clientWidth / 726 : 1)}">
 					<div class="size_buttons">
 						<div id="sea_home" class="utility_button"></div>
 						<div id="sea_large" class="utility_button"></div>
@@ -145,7 +150,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					</div>
 					<div id="dink_deck"></div>
 				</div>
-				<div id="port_board" style="zoom: ${localStorage.getItem("port_board") || (($("board").clientWidth / 1500) > 1 ? $("board").clientWidth / 1500 : 1)}">
+				<div id="port_board" style="zoom: ${localStorage.getItem("port_board") || (($("boards").clientWidth / 1500) > 1 ? $("boards").clientWidth / 1500 : 1)}">
 					<div class="size_buttons">
 						<div id="port_home" class="utility_button"></div>
 						<div id="port_large" class="utility_button"></div>
@@ -160,9 +165,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					<div id="suppliesDeck" class="itemDeck"></div>
 					<div id="ship_port"></div>
 				</div>			
-			</div>
-			<div id="playerBoards"></div>
-			<div id="lineGrid"></div>
 		`)
 
 		document.querySelectorAll(".utility_button").forEach(button => {
@@ -606,8 +608,11 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			this.freshStock[player["id"]] = new BgaCards.LineStock(this.diceManager, $(`freshGrid-${player["id"]}`), {sort: BgaCards.sort('type_arg', 'type')});
 
 			// REVIEW change to scrollable?
-			this.spentStock[player["id"]] = new BgaCards.LineStock(this.diceManager, $(`spentGrid-${player["id"]}`), {sort: BgaCards.sort('type_arg', 'type')});
+			this.spentStock[player["id"]] = new BgaCards.ScrollableStock(this.diceManager, $(`spentGrid-${player["id"]}`), {leftButton: {classes: ["hidden"]}, rightButton: {classes: ["hidden"]}, sort: BgaCards.sort('type_arg', 'type')});
+			
+			
 			Object.values(player.dice).forEach(die => {
+				console.log(die);
 				switch (die["location"]) {
 					case "fresh":
 						this.freshStock[player["id"]].addCard(die);
@@ -615,8 +620,35 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					case "spent":
 						this.spentStock[player["id"]].addCard(die);
 						break;
+					case "roll":
+						if (player["id"] == this.player_id) {
+							if (!$('reveal_area')) {
+								$('boards').insertAdjacentHTML('beforebegin', /*html*/`<div id="reveal_area" class="reveal_area roll scene whiteblock"></div>`);
+							}
+							$('reveal_area').insertAdjacentHTML('beforeend', /*html*/`<div class="outlineDice selectable" id="outline-${(die as any).id}"><div id="dice-${(die as any).id}" class="${(die as any).type} dice">
+																						<div class="face f1" id="f1-${(die as any).id}"></div>
+																						<div class="face f2" id="f2-${(die as any).id}"></div>
+																						<div class="face f3" id="f3-${(die as any).id}"></div>
+																						<div class="face f4" id="f4-${(die as any).id}"></div>
+																						<div class="triangle top t1" id="t1-${(die as any).id}"></div>
+																						<div class="triangle top t2" id="t2-${(die as any).id}"></div>
+																						<div class="triangle top t3" id="t3-${(die as any).id}"></div>
+																						<div class="triangle top t4" id="t4-${(die as any).id}"></div>
+																						<div class="triangle bottom t5" id="t5-${(die as any).id}"></div>
+																						<div class="triangle bottom t6" id="t6-${(die as any).id}"></div>
+																						<div class="triangle bottom t7" id="t7-${(die as any).id}"></div>
+																						<div class="triangle bottom t8" id="t8-${(die as any).id}"></div>
+																					</div></div>`);
+							diceSetup(`${(die as any).id}`);
+							diceRotation((die as any).id, parseInt((die as any).type_arg))
+							$(`dice-${(die as any).id}`).dataset.type = (die as any).type;
+							$(`dice-${(die as any).id}`).dataset.type_arg = (die as any).type_arg;
+						} else {
+							this.spentStock[player["id"]].addCard(die);
+						}
+						break;
 					default:
-						this.showMessage(die["location"] + "has not yet been defined", "error");
+						this.showMessage(die["location"] + " has not yet been defined", "error");
 						break;
 				}
 			})
@@ -1052,6 +1084,17 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			case "PassAction":
 				this.regretHandStock.setSelectionMode("single");
 				break;
+			case "SelectFreshPRIV":
+				document.querySelectorAll(".outlineDice").forEach(dice => {
+					dice.addEventListener("click", () => {
+						if (dice.classList.contains("selected")) {
+							dice.classList.remove("selected");
+						} else {
+							dice.classList.add("selected");
+						}
+					})
+				})
+				break;
 		}		
 	}
 	public onLeavingState(stateName: string) {
@@ -1290,6 +1333,15 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					this.statusBar.addActionButton(_("Confirm"), () => {this.bgaPerformAction(args.name, args.args); this.restoreServerGameState()});
 					this.statusBar.addActionButton(_("Cancel"), () => this.restoreServerGameState(), {color: "alert"});
 					break;
+				case "SelectFreshPRIV":
+					this.statusBar.addActionButton("Confirm", () => {
+						let ids = [];
+						document.querySelectorAll('.selected').forEach(el => {
+							ids.push(parseInt(el.id.replace('outline-', '')));
+						})
+						this.bgaPerformAction('actChooseDice', {diceArray: JSON.stringify(ids)});
+					});
+					break;
 			}
 		}
 	}
@@ -1463,14 +1515,24 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 	}
 
 	public async notif_discardRegret(args: any) {
-		console.log(args);
-		// FIXME only works for active player
 		let regret = this.regretHandStock.getCards().filter(card => parseInt(card.id) == args.regret)[0];
 		if (this.isCurrentPlayerActive()) {
 			await (this.regretDiscard as any).addCard(regret)
 		} else {
 			await (this.regretDiscard as any).addCard(regret, {fromElement: `player_board_${args.player_id}`});
 		}
+	}
+
+	public notif_selectFresh(args: any) {
+		args.ids.forEach(dice => {
+			$('outline-' + dice.id).remove();
+			this.freshStock[args.player_id].addCard(dice, {fromElement: $('reveal_area')})
+		});
+		args.other.forEach(dice => {
+			$('outline-' + dice.id).remove();
+			this.spentStock[args.player_id].addCard(dice, {fromElement: $('reveal_area')})
+		});
+		$('reveal_area').remove();
 	}
 
 	public notif_test(args: any) {

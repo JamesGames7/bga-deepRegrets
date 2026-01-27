@@ -9,7 +9,6 @@ use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\Games\DeepRegrets\Game;
 
-// TODO: Correct values
 class SelectRollPRIV extends GameState
 {
     function __construct(
@@ -33,6 +32,7 @@ class SelectRollPRIV extends GameState
         return [];
     } 
 
+    // TODO front end
     #[PossibleAction]
     function actChooseDice(int $currentPlayerId, array $diceArray): void {
         foreach ($diceArray as $die) {
