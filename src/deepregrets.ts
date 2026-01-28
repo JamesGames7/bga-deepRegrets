@@ -607,7 +607,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 
 			this.freshStock[player["id"]] = new BgaCards.LineStock(this.diceManager, $(`freshGrid-${player["id"]}`), {sort: BgaCards.sort('type_arg', 'type')});
 
-			// REVIEW change to scrollable?
 			this.spentStock[player["id"]] = new BgaCards.ScrollableStock(this.diceManager, $(`spentGrid-${player["id"]}`), {leftButton: {classes: ["hidden"]}, rightButton: {classes: ["hidden"]}, sort: BgaCards.sort('type_arg', 'type')});
 			
 			
@@ -622,7 +621,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					case "roll":
 						if (player["id"] == this.player_id) {
 							if (!$('reveal_area')) {
-								//ANCHOR - here
 								$('boards').insertAdjacentHTML('beforebegin', /*html*/`<div id="reveal_area" class="reveal_area roll scene whiteblock"></div>`);
 							}
 							$('reveal_area').insertAdjacentHTML('beforeend', /*html*/`<div class="outlineDice selectable" id="outline-${(die as any).id}"><div id="dice-${(die as any).id}" class="${(die as any).type} dice">
@@ -1055,7 +1053,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					this.fishHandStock.setSelectionMode("none");
 					el.classList.add("selected")
 					document.querySelectorAll(".mountClicks").forEach(el => (el as HTMLElement).style.pointerEvents = "auto");
-					// TODO pass to backend (parse there which have already been added)
 					document.querySelectorAll(".mountClick-" + this.player_id).forEach(el => {
 						if (!$(el.id.replace("click-", "")).dataset.empty || $(el.id.replace("click-", "")).dataset.empty == 'true') {
 							el.classList.add("selectable")

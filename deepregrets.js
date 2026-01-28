@@ -516,7 +516,6 @@ var DeepRegrets = /** @class */ (function (_super) {
                 fpLP.insertAdjacentHTML("beforeend", "<div id=\"LP\"></div>");
             }
             _this.freshStock[player["id"]] = new BgaCards.LineStock(_this.diceManager, $("freshGrid-".concat(player["id"])), { sort: BgaCards.sort('type_arg', 'type') });
-            // REVIEW change to scrollable?
             _this.spentStock[player["id"]] = new BgaCards.ScrollableStock(_this.diceManager, $("spentGrid-".concat(player["id"])), { leftButton: { classes: ["hidden"] }, rightButton: { classes: ["hidden"] }, sort: BgaCards.sort('type_arg', 'type') });
             Object.values(player.dice).forEach(function (die) {
                 switch (die["location"]) {
@@ -529,7 +528,6 @@ var DeepRegrets = /** @class */ (function (_super) {
                     case "roll":
                         if (player["id"] == _this.player_id) {
                             if (!$('reveal_area')) {
-                                //ANCHOR - here
                                 $('boards').insertAdjacentHTML('beforebegin', /*html*/ "<div id=\"reveal_area\" class=\"reveal_area roll scene whiteblock\"></div>");
                             }
                             $('reveal_area').insertAdjacentHTML('beforeend', /*html*/ "<div class=\"outlineDice selectable\" id=\"outline-".concat(die.id, "\"><div id=\"dice-").concat(die.id, "\" class=\"").concat(die.type, " dice\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"face f1\" id=\"f1-").concat(die.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"face f2\" id=\"f2-").concat(die.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"face f3\" id=\"f3-").concat(die.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"face f4\" id=\"f4-").concat(die.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"triangle top t1\" id=\"t1-").concat(die.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"triangle top t2\" id=\"t2-").concat(die.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"triangle top t3\" id=\"t3-").concat(die.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"triangle top t4\" id=\"t4-").concat(die.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"triangle bottom t5\" id=\"t5-").concat(die.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"triangle bottom t6\" id=\"t6-").concat(die.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"triangle bottom t7\" id=\"t7-").concat(die.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"triangle bottom t8\" id=\"t8-").concat(die.id, "\"></div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</div></div>"));
@@ -936,7 +934,6 @@ var DeepRegrets = /** @class */ (function (_super) {
                             _this.fishHandStock.setSelectionMode("none");
                             el.classList.add("selected");
                             document.querySelectorAll(".mountClicks").forEach(function (el) { return el.style.pointerEvents = "auto"; });
-                            // TODO pass to backend (parse there which have already been added)
                             document.querySelectorAll(".mountClick-" + _this.player_id).forEach(function (el) {
                                 if (!$(el.id.replace("click-", "")).dataset.empty || $(el.id.replace("click-", "")).dataset.empty == 'true') {
                                     el.classList.add("selectable");

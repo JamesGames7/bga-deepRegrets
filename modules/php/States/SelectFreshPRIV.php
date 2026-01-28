@@ -9,7 +9,6 @@ use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\Games\DeepRegrets\Game;
 
-// TODO: Correct values
 class SelectFreshPRIV extends GameState
 {
     private $MADNESS = [
@@ -50,7 +49,6 @@ class SelectFreshPRIV extends GameState
         return [array_values($this->game->dice->getCardsInLocation("roll"))];
     } 
 
-    // TODO work frontend without reload
     #[PossibleAction]
     function actChooseDice(int $currentPlayerId, string $diceArray) {
         $dice = json_decode($diceArray);

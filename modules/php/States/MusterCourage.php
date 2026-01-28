@@ -22,7 +22,6 @@ use Bga\Games\DeepRegrets\Game;
  * 
  * 5. Set highest player active
  */
-// TODO: Correct values
 class MusterCourage extends GameState
 {
     private $MADNESS = [

@@ -19,7 +19,6 @@ use Bga\Games\DeepRegrets\Game;
  * 
  * 4. End the game: may also handle any final actions within or move to a yet to be created state
  */
-// TODO: Correct values
 class NextPlayer extends GameState
 {
     function __construct(

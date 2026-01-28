@@ -15,7 +15,6 @@ use Bga\Games\DeepRegrets\Game;
  * 
  * 2. Otherwise activate next player
  */
-// TODO: Correct values
 class RodReelNP extends GameState
 {
     function __construct(

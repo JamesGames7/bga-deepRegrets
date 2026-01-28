@@ -14,7 +14,6 @@ use Bga\Games\DeepRegrets\Game;
  *  
  * 1. Active player (highest total) chooses a player to receive the life preserver
  */
-// TODO: Correct values
 class LifePreserver extends GameState
 {
     function __construct(

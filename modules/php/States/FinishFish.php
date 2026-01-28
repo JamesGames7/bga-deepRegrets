@@ -9,7 +9,6 @@ use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\Games\DeepRegrets\Game;
 
-// TODO: Correct values
 class FinishFish extends GameState
 {
     function __construct(

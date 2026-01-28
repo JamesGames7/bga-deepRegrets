@@ -16,7 +16,6 @@ use Bga\Games\DeepRegrets\Game;
  * 
  * 2. Sends them to the relative state
  */
-// TODO: Correct values
 class ActionPlace extends GameState
 {
     function __construct(

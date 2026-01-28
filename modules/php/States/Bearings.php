@@ -16,7 +16,6 @@ use Bga\Games\DeepRegrets\Game;
  * 
  * 2. Either go back a state (repeat) or pass to next state
  */
-// TODO: Correct values
 class Bearings extends GameState
 {
     function __construct(

@@ -18,7 +18,6 @@ use Bga\Games\DeepRegrets\Game;
  * 
  * 3. Moves to next player state
  */
-// TODO: Correct values
 class PassAction extends GameState
 {
     function __construct(
@@ -49,7 +48,6 @@ class PassAction extends GameState
 
     #[PossibleAction]
     function actDiscard (int $activePlayerId, int $id) {
-        // TODO make discard work on reload - not saving in discard
         if ($id >= 0) {
             $this->game->regrets->insertCardOnExtremePosition($id, "discard", true);
             $this->notify->all("discardRegret", '${player_name} discards a regret', [

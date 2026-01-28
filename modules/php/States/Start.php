@@ -49,7 +49,6 @@ class Start extends GameState
         $this->game->DbQuery("UPDATE `player` SET `passed` = 'false'");
 
         // Changes active player
-        // TODO: Notifications
         if ($this->globals->get("day") > 1) {
             $this->gamestate->changeActivePlayer($this->globals->get("firstPlayer"));
             $this->game->activeNextPlayer();

@@ -11,7 +11,6 @@ use Bga\Games\DeepRegrets\Game;
 /**
  * Sets the first player for LifePreserver state
  */
-// TODO: Correct values
 class LifePreserverNP extends GameState
 {
     private $COLOUR = [
