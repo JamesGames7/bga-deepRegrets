@@ -612,7 +612,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 			
 			
 			Object.values(player.dice).forEach(die => {
-				console.log(die);
 				switch (die["location"]) {
 					case "fresh":
 						this.freshStock[player["id"]].addCard(die);
@@ -623,6 +622,7 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 					case "roll":
 						if (player["id"] == this.player_id) {
 							if (!$('reveal_area')) {
+								//ANCHOR - here
 								$('boards').insertAdjacentHTML('beforebegin', /*html*/`<div id="reveal_area" class="reveal_area roll scene whiteblock"></div>`);
 							}
 							$('reveal_area').insertAdjacentHTML('beforeend', /*html*/`<div class="outlineDice selectable" id="outline-${(die as any).id}"><div id="dice-${(die as any).id}" class="${(die as any).type} dice">
@@ -767,7 +767,6 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 		(this.regretDiscard as any).onCardAdded = (card) => {
 			this.regretManager.setCardVisible(card, false);
 		}
-		console.log(gamedatas.regrets);
 
 		// FIXME Displays empty when taking cards out on reload
 		this.reelsDeck = new BgaCards.Deck(this.reelsManager, $(`reelsDeck`), {cardNumber: parseInt(gamedatas.reels)});
@@ -1085,6 +1084,33 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 				this.regretHandStock.setSelectionMode("single");
 				break;
 			case "SelectFreshPRIV":
+				if (!$('reveal_area')) {
+					$('boards').insertAdjacentHTML('beforebegin', /*html*/`<div id="reveal_area" class="reveal_area roll scene whiteblock"></div>`);
+					args.args[0].forEach(die => {
+						this.diceManager.getCardStock(die).removeCard(die, {slideTo: $("reveal_area")});
+					});
+					await new Promise(r => setTimeout(r, 500));
+					args.args[0].forEach(die => {
+						$('reveal_area').insertAdjacentHTML('beforeend', /*html*/`<div class="outlineDice selectable" id="outline-${(die as any).id}"><div id="dice-${(die as any).id}" class="${(die as any).type} dice">
+																					<div class="face f1" id="f1-${(die as any).id}"></div>
+																					<div class="face f2" id="f2-${(die as any).id}"></div>
+																					<div class="face f3" id="f3-${(die as any).id}"></div>
+																					<div class="face f4" id="f4-${(die as any).id}"></div>
+																					<div class="triangle top t1" id="t1-${(die as any).id}"></div>
+																					<div class="triangle top t2" id="t2-${(die as any).id}"></div>
+																					<div class="triangle top t3" id="t3-${(die as any).id}"></div>
+																					<div class="triangle top t4" id="t4-${(die as any).id}"></div>
+																					<div class="triangle bottom t5" id="t5-${(die as any).id}"></div>
+																					<div class="triangle bottom t6" id="t6-${(die as any).id}"></div>
+																					<div class="triangle bottom t7" id="t7-${(die as any).id}"></div>
+																					<div class="triangle bottom t8" id="t8-${(die as any).id}"></div>
+																				</div></div>`);
+						diceSetup(`${(die as any).id}`);
+						diceRotation((die as any).id, parseInt((die as any).type_arg))
+						$(`dice-${(die as any).id}`).dataset.type = (die as any).type;
+						$(`dice-${(die as any).id}`).dataset.type_arg = (die as any).type_arg;
+					});
+				}
 				document.querySelectorAll(".outlineDice").forEach(dice => {
 					dice.addEventListener("click", () => {
 						if (dice.classList.contains("selected")) {
@@ -1094,6 +1120,9 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 						}
 					})
 				})
+				break;
+			case "SelectRollPRIV":
+				this.freshStock[this.player_id].setSelectionMode("multiple");
 				break;
 		}		
 	}
@@ -1338,6 +1367,15 @@ class DeepRegrets extends GameGui<DeepRegretsGamedatas> {
 						let ids = [];
 						document.querySelectorAll('.selected').forEach(el => {
 							ids.push(parseInt(el.id.replace('outline-', '')));
+						})
+						this.bgaPerformAction('actChooseDice', {diceArray: JSON.stringify(ids)});
+					});
+					break;
+				case "SelectRollPRIV":
+					this.statusBar.addActionButton("Confirm", () => {
+						let ids = [];
+						document.querySelectorAll('.selected').forEach(el => {
+							ids.push(parseInt(el.id.replace('dice-', '')));
 						})
 						this.bgaPerformAction('actChooseDice', {diceArray: JSON.stringify(ids)});
 					});

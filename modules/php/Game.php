@@ -178,7 +178,7 @@ class Game extends \Bga\GameFramework\Table
 
         // ! WARNING: We must only return information visible by the current player.
         $current_player_id = (int) $this->getCurrentPlayerId();
-
+        
         // Get information about players.
         // NOTE: you can retrieve some extra field you added for "player" table in `dbmodel.sql` if you need it.
         $result["players"] = $this->getCollectionFromDb(
@@ -442,6 +442,12 @@ class Game extends \Bga\GameFramework\Table
         // Activate first player once everything has been initialized and ready.
         $this->activeNextPlayer();
         $this->globals->set("firstPlayer", $this->getActivePlayerId());
+
+        $this->dice->moveCard(0, "fresh", (int) $this->getActivePlayerId());
+        $this->dice->moveCard(1, "fresh", (int) $this->getActivePlayerId());
+        $this->dice->moveCard(2, "fresh", (int) $this->getActivePlayerId());
+        $this->dice->moveCard(3, "fresh", (int) $this->getActivePlayerId());
+
         return Start::class;
     }
 

@@ -32,12 +32,10 @@ class SelectRollPRIV extends GameState
         return [];
     } 
 
-    // TODO front end
     #[PossibleAction]
-    function actChooseDice(int $currentPlayerId, array $diceArray): void {
-        foreach ($diceArray as $die) {
-            $id = $die["id"];
-            $this->game->dice->moveCard($id, "roll", $currentPlayerId);
+    function actChooseDice(int $currentPlayerId, string $diceArray): void {
+        foreach (json_decode($diceArray) as $die) {
+            $this->game->dice->moveCard($die, "roll", $currentPlayerId);
         }
         $this->gamestate->nextPrivateState($currentPlayerId, "");
     }

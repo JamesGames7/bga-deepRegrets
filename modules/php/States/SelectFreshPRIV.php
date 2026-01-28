@@ -47,7 +47,7 @@ class SelectFreshPRIV extends GameState
     public function getArgs(): array
     {
         // the data sent to the front when entering the state
-        return [$this->game->dice->getCardsInLocation("roll")];
+        return [array_values($this->game->dice->getCardsInLocation("roll"))];
     } 
 
     // TODO work frontend without reload
